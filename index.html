@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
+<title>تقرير الأداء الأسبوعي — مستشفى الدوادمي العام</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg: #080f1a;
+  --bg2: #0c1726;
+  --card: #0f1e30;
+  --card-glass: rgba(15,30,48,0.75);
+  --border: rgba(30,70,110,0.5);
+  --border2: rgba(40,90,140,0.6);
+  --border-glass: rgba(90,180,255,0.12);
+  --txt: #e2f0ff;
+  --txt-dim: #a8c8e8;
+  --muted: #4d84b0;
+  --red: #ff5f6b;
+  --amber: #f9c74f;
+  --green: #3dd68c;
+  --teal: #2de0d4;
+  --blue: #4db8ff;
+  --purple: #b197fc;
+  --line-color: #4db8ff;
+  --glow-red: rgba(255,95,107,0.35);
+  --glow-green: rgba(61,214,140,0.35);
+  --glow-blue: rgba(77,184,255,0.35);
+  --glow-amber: rgba(249,199,79,0.35);
+  --glow-teal: rgba(45,224,212,0.35);
+  --glow-purple: rgba(177,151,252,0.35);
+  --font: 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, Arial, sans-serif;
+  --nav-h: 60px;
+  --top-h: 56px;
+}
+body.light {
+  --bg: #f0f4f9;
+  --bg2: #e4ecf5;
+  --card: #ffffff;
+  --card-glass: rgba(255,255,255,0.8);
+  --border: rgba(180,210,240,0.8);
+  --border2: rgba(140,180,220,0.8);
+  --border-glass: rgba(100,160,220,0.2);
+  --txt: #0d1b2a;
+  --txt-dim: #2d4a65;
+  --muted: #3d6a90;
+  --line-color: #1a5f9e;
+  --glow-red: rgba(220,50,60,0.15);
+  --glow-green: rgba(30,160,90,0.15);
+  --glow-blue: rgba(30,100,200,0.15);
+  --glow-amber: rgba(200,140,20,0.15);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--txt);
+  direction: rtl;
+  transition: background 0.3s, color 0.3s;
+  width: 100%;
+  overflow-x: hidden;
+  padding-top: calc(var(--top-h) + var(--nav-h));
+}
+
+/* =========== TOPBAR =========== */
+.topbar {
+  background: var(--card-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-glass);
+  padding: 0 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+  position: fixed;
+  top: 0;
+  z-index: 1001;
+  width: 100%;
+  left: 0;
+  right: 0;
+  height: var(--top-h);
+  transform: translateZ(0);
+  /* لا نضع overflow:hidden هنا لكي تظهر القائمة المنسدلة خارج حدود الشريط */
+}
+.topbar-info { min-width: 0; flex: 1; overflow: hidden; }
+.topbar-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: var(--txt);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.topbar-sub { font-size: 10px; color: var(--muted); margin-top: 2px; white-space: nowrap; }
+.topbar-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+.theme-btn {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font);
+}
+.theme-btn:hover { border-color: var(--blue); color: var(--blue); }
+.badge {
+  background: rgba(77,184,255,0.12);
+  color: var(--blue);
+  font-size: 10px;
+  padding: 3px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(77,184,255,0.25);
+}
+
+/* =========== WEEK SELECTOR =========== */
+.week-selector { position: relative; }
+.week-btn {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(77,184,255,0.1);
+  border: 1px solid rgba(77,184,255,0.35);
+  color: var(--blue); padding: 5px 14px;
+  border-radius: 20px; font-size: 11px; font-weight: 600;
+  cursor: pointer; font-family: var(--font);
+  transition: all 0.2s; white-space: nowrap;
+}
+.week-btn:hover { background: rgba(77,184,255,0.18); border-color: var(--blue); }
+.week-btn .caret { font-size: 9px; opacity: 0.7; transition: transform 0.2s; }
+.week-btn.open .caret { transform: rotate(180deg); }
+.week-dropdown {
+  position: absolute; top: calc(100% + 8px); left: 0;
+  min-width: 178px; background: var(--card);
+  border: 1px solid var(--border2); border-radius: 14px;
+  overflow: hidden; z-index: 2000;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+  opacity: 0; transform: translateY(-6px) scale(0.98);
+  pointer-events: none;
+  transition: opacity 0.18s, transform 0.18s;
+}
+.week-dropdown.open {
+  opacity: 1; transform: translateY(0) scale(1); pointer-events: auto;
+}
+.wk-opt {
+  padding: 11px 16px; font-size: 12px; cursor: pointer;
+  color: var(--txt-dim); transition: background 0.15s;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.wk-opt:last-child { border-bottom: none; }
+.wk-opt:hover { background: rgba(77,184,255,0.08); color: var(--txt); }
+.wk-opt.sel { color: var(--blue); background: rgba(77,184,255,0.1); font-weight: 600; }
+.wk-opt .wk-chk { font-size: 11px; opacity: 0; transition: opacity 0.15s; }
+.wk-opt.sel .wk-chk { opacity: 1; }
+body.light .week-dropdown { box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+
+/* =========== QUICK NAV =========== */
+.quick-nav {
+  position: fixed;
+  top: var(--top-h);
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 0 12px;
+  height: var(--nav-h);
+}
+.quick-nav::-webkit-scrollbar { display: none; }
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  flex-shrink: 0;
+}
+.nav-item:hover {
+  background: rgba(77,184,255,0.08);
+  color: var(--blue);
+  border-color: rgba(77,184,255,0.2);
+}
+.nav-item.active {
+  background: rgba(77,184,255,0.12);
+  color: var(--blue);
+  border-color: rgba(77,184,255,0.3);
+}
+.nav-icon { font-size: 14px; }
+
+/* =========== CONTENT =========== */
+.content { padding: 16px 20px; width: 100%; }
+
+/* =========== FOOTER =========== */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  font-size: 10px;
+  color: var(--muted);
+  background: var(--bg2);
+  gap: 6px;
+}
+
+/* =========== SECTION HEADERS =========== */
+.section-header, .section-label {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 24px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  scroll-margin-top: calc(var(--top-h) + var(--nav-h) + 10px);
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to left, transparent, var(--border));
+}
+.section-emoji { font-size: 16px; }
+
+/* =========== KPI GRID =========== */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.kpi {
+  background: var(--card-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  padding: 14px 16px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.kpi::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+.kpi:hover {
+  transform: translateY(-2px);
+}
+.kpi-label {
+  color: var(--txt-dim);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+.kpi-val {
+  font-size: 28px;
+  font-weight: 800;
+  margin-top: 6px;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+.v-r { color: var(--red); text-shadow: 0 0 18px var(--glow-red); }
+.v-g { color: var(--green); text-shadow: 0 0 18px var(--glow-green); }
+.v-a { color: var(--amber); text-shadow: 0 0 18px var(--glow-amber); }
+.v-t { color: var(--teal); text-shadow: 0 0 18px var(--glow-teal); }
+.v-b { color: var(--blue); text-shadow: 0 0 18px var(--glow-blue); }
+.v-p { color: var(--purple); text-shadow: 0 0 18px var(--glow-purple); }
+
+/* KPI glow borders */
+.kpi:has(.v-r) { border-color: rgba(255,95,107,0.2); }
+.kpi:has(.v-g) { border-color: rgba(61,214,140,0.2); }
+.kpi:has(.v-b) { border-color: rgba(77,184,255,0.2); }
+.kpi:has(.v-t) { border-color: rgba(45,224,212,0.2); }
+.kpi:has(.v-a) { border-color: rgba(249,199,79,0.2); }
+
+/* =========== CHART GRID =========== */
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.chart-card {
+  background: var(--card-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  padding: 16px;
+  overflow: hidden;
+}
+.chart-card-title {
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  color: var(--txt-dim);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* =========== CHART ZOOM =========== */
+.chart-zoom {
+  overflow-x: auto;
+  overflow-y: hidden;
+  touch-action: pan-x pinch-zoom;
+  -webkit-overflow-scrolling: touch;
+  cursor: grab;
+  width: 100%;
+  border-radius: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border2) transparent;
+}
+.chart-zoom::-webkit-scrollbar { height: 4px; }
+.chart-zoom::-webkit-scrollbar-track { background: transparent; }
+.chart-zoom::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+.chart-zoom:active { cursor: grabbing; }
+.chart-wrap {
+  min-width: 450px;
+  width: max-content;
+  height: 290px;
+  position: relative;
+}
+
+/* =========== TABLES =========== */
+.tbl-wrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  margin-bottom: 18px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border2) transparent;
+}
+.tbl-wrap::-webkit-scrollbar { height: 4px; }
+.tbl-wrap::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 500px; }
+th {
+  background: var(--bg2);
+  color: var(--muted);
+  font-weight: 600;
+  padding: 10px 10px;
+  border-bottom: 2px solid var(--border);
+  text-align: center;
+  font-size: 11px;
+}
+td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  transition: background 0.15s;
+}
+tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: rgba(77,184,255,0.05); }
+tbody tr:hover td:first-child { background: rgba(77,184,255,0.08); }
+
+/* Sticky first column */
+td:first-child, th:first-child {
+  text-align: right;
+  position: sticky;
+  right: 0;
+  background: var(--card);
+  font-weight: 600;
+  min-width: 110px;
+  width: 130px;
+  box-shadow: -3px 0 12px -2px rgba(0,0,0,0.3);
+  border-left: 1px solid var(--border2);
+}
+th:first-child {
+  background: var(--bg2);
+  box-shadow: -3px 0 12px -2px rgba(0,0,0,0.3);
+  z-index: 4;
+}
+td:first-child { z-index: 2; }
+
+.w6 { font-weight: 700; color: var(--blue); }
+
+/* weeks table specific */
+.weeks-table { min-width: 680px; }
+.weeks-table th:first-child { width: 155px; }
+
+/* scrollable-table */
+.scrollable-table {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  max-width: 100%;
+}
+
+/* =========== MEDIA QUERIES =========== */
+@media (max-width: 640px) {
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .chart-grid { grid-template-columns: 1fr; }
+  .kpi-val { font-size: 22px; }
+  td:first-child, th:first-child { min-width: 85px; width: 100px; font-size: 10px; }
+  .content { padding: 10px 12px; }
+  :root { --nav-h: 52px; }
+  .nav-item { padding: 6px 10px; font-size: 10px; }
+}
+
+/* =========== ANIMATIONS =========== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.section-label { animation: fadeInUp 0.4s ease both; }
+.kpi { animation: fadeInUp 0.4s ease both; }
+
+/* Light mode overrides */
+body.light .kpi { background: rgba(255,255,255,0.9); }
+body.light .chart-card { background: rgba(255,255,255,0.85); }
+body.light td:first-child { background: #fff; }
+body.light th:first-child { background: var(--bg2); }
+body.light tbody tr:hover td { background: rgba(30,100,180,0.04); }
+body.light .v-r { text-shadow: none; }
+body.light .v-g { text-shadow: none; }
+body.light .v-b { text-shadow: none; }
+body.light .v-t { text-shadow: none; }
+body.light .v-a { text-shadow: none; }
+body.light .topbar { background: rgba(228,236,245,0.9); }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-info">
+    <div class="topbar-title">📊 تقرير الأداء الأسبوعي — مستشفى الدوادمي العام</div>
+    <div class="topbar-sub" id="topbar-sub">مقارنة 6 أسابيع + رسوم بيانية تفاعلية</div>
+  </div>
+  <div class="topbar-actions">
+    <!-- منتقي الأسابيع -->
+    <div class="week-selector" id="weekSelector">
+      <button class="week-btn" id="weekBtn" onclick="toggleWeekMenu(event)">
+        📅 <span id="weekBtnLabel">كل الأسابيع (6)</span>
+        <span class="caret">▾</span>
+      </button>
+      <div class="week-dropdown" id="weekDropdown">
+        <div class="wk-opt" data-n="2" onclick="setWeeks(2)">آخر أسبوعان <span class="wk-chk">✓</span></div>
+        <div class="wk-opt" data-n="3" onclick="setWeeks(3)">آخر 3 أسابيع <span class="wk-chk">✓</span></div>
+        <div class="wk-opt" data-n="4" onclick="setWeeks(4)">آخر 4 أسابيع <span class="wk-chk">✓</span></div>
+        <div class="wk-opt" data-n="5" onclick="setWeeks(5)">آخر 5 أسابيع <span class="wk-chk">✓</span></div>
+        <div class="wk-opt sel" data-n="6" onclick="setWeeks(6)">كل الأسابيع (6) <span class="wk-chk">✓</span></div>
+      </div>
+    </div>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">☀️ فاتح</button>
+  </div>
+</div>
+
+<!-- QUICK NAV -->
+<div class="quick-nav" id="quickNav">
+  <div class="nav-item active" onclick="navScrollTo('sec-quality', this)"><span class="nav-icon">🛡️</span> الجودة</div>
+  <div class="nav-item" onclick="navScrollTo('sec-emergency', this)"><span class="nav-icon">🚨</span> الطوارئ</div>
+  <div class="nav-item" onclick="navScrollTo('sec-surgery', this)"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="15" height="15" style="display:inline-block;vertical-align:middle;margin-bottom:2px" fill="none" aria-hidden="true"><path d="M3 17.5 L9.5 11" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/><path d="M8.5 12 L11 9.5" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"/><path d="M10 10.5 L17.5 3 Q13 11 10 10.5 Z" fill="currentColor"/></svg></span> الجراحة</div>
+  <div class="nav-item" onclick="navScrollTo('sec-clinics', this)"><span class="nav-icon">🏥</span> العيادات</div>
+  <div class="nav-item" onclick="navScrollTo('sec-satisfaction', this)"><span class="nav-icon">😊</span> الرضا</div>
+  <div class="nav-item" onclick="navScrollTo('sec-capacity', this)"><span class="nav-icon">📋</span> الطاقة</div>
+  <div class="nav-item" onclick="navScrollTo('sec-pharmacy', this)"><span class="nav-icon">💊</span> الصيدلية</div>
+  <div class="nav-item" onclick="navScrollTo('sec-screening', this)"><span class="nav-icon">🔬</span> الفحوصات</div>
+  <div class="nav-item" onclick="navScrollTo('sec-urgent', this)"><span class="nav-icon">🫀</span> العاجلة</div>
+  <div class="nav-item" onclick="navScrollTo('sec-home', this)"><span class="nav-icon">🏠</span> المنزلية</div>
+  <div class="nav-item" onclick="navScrollTo('sec-endo', this)"><span class="nav-icon">🔭</span> التنظير</div>
+</div>
+
+<div class="content" id="main-content"></div>
+
+<div class="footer">
+  <div>🏥 مستشفى الدوادمي العام — لوحة الأداء الأسبوعية</div>
+  <div id="footer-txt">🔄 آخر تحديث: 10 مايو 2026</div>
+</div>
+
+<script>
+// ================================ البيانات (6 أسابيع) ================================
+var WEEKS = [
+  { label:"W1", dateRange:"29 مارس-4 أبريل", quality:{se_mre:1,incident:22,good_catch:2}, emergency:{ctas12:49,ctas3:496,ctas45:3256}, surgery:{emergency:23,routine:41,waiting:34,cancelled:1,cancel_reason:"Medical Indication"}, clinics:{total:2820,virtual:572,no_show:463,no_show_pct:16}, satisfaction:{all:87.99,ed:81,clinics:88.83,inpatient:77.04}, complaints:{closed:85,not_closed:0}, capacity:{inpatients:221,bed_occ:63,lifesaving:13,emergency_ref:19,routine_ref:44}, screening:{breast:43,breast_pos:0,colon:42,colon_pos:4,stemi:'-',stroke:'-'}, pharmacy:{inpatient:2796,clinics:1207,emergency:3536}, home_care:{visits:35}, smoking:{inperson:6,virtual:2}, endoscopy:{appoint:"-", procedures:"-"} },
+  { label:"W2", dateRange:"5-11 أبريل", quality:{se_mre:1,incident:31,good_catch:1}, emergency:{ctas12:16,ctas3:549,ctas45:3147}, surgery:{emergency:18,routine:56,waiting:39,cancelled:2,cancel_reason:"Medical Indication - No Show"}, clinics:{total:2967,virtual:628,no_show:466,no_show_pct:15}, satisfaction:{all:87.32,ed:73.08,clinics:82.74,inpatient:85.15}, complaints:{closed:67,not_closed:0}, capacity:{inpatients:227,bed_occ:61,lifesaving:13,emergency_ref:16,routine_ref:51}, screening:{breast:42,breast_pos:0,colon:87,colon_pos:1,stemi:'-',stroke:'-'}, pharmacy:{inpatient:4400,clinics:1145,emergency:3438}, home_care:{visits:37}, smoking:{inperson:5,virtual:4}, endoscopy:{appoint:"-", procedures:"-"} },
+  { label:"W3", dateRange:"12-18 أبريل", quality:{se_mre:0,incident:20,good_catch:1}, emergency:{ctas12:14,ctas3:427,ctas45:3212}, surgery:{emergency:15,routine:49,waiting:46,cancelled:1,cancel_reason:"No Show"}, clinics:{total:3181,virtual:683,no_show:390,no_show_pct:12}, satisfaction:{all:86.44,ed:72.07,clinics:86.17,inpatient:85.15}, complaints:{closed:59,not_closed:0}, capacity:{inpatients:230,bed_occ:61,lifesaving:10,emergency_ref:9,routine_ref:55}, screening:{breast:52,breast_pos:2,colon:64,colon_pos:1,stemi:'-',stroke:'-'}, pharmacy:{inpatient:4539,clinics:1178,emergency:3456}, home_care:{visits:39}, smoking:{inperson:10,virtual:3}, endoscopy:{appoint:"-", procedures:"-"} },
+  { label:"W4", dateRange:"19-25 أبريل", quality:{se_mre:1,incident:25,good_catch:3}, emergency:{ctas12:15,ctas3:437,ctas45:2866}, surgery:{emergency:12,routine:64,waiting:43,cancelled:2,cancel_reason:"Medical Indication - No Show"}, clinics:{total:3389,virtual:731,no_show:442,no_show_pct:13}, satisfaction:{all:86.75,ed:75.55,clinics:82.55,inpatient:85.15}, complaints:{closed:65,not_closed:0}, capacity:{inpatients:221,bed_occ:60,lifesaving:7,emergency_ref:11,routine_ref:50}, screening:{breast:67,breast_pos:0,colon:55,colon_pos:2,stemi:0,stroke:0}, pharmacy:{inpatient:4400,clinics:1314,emergency:3182}, home_care:{visits:37}, smoking:{inperson:4,virtual:4}, endoscopy:{appoint:"-", procedures:"-"} },
+  { label:"W5", dateRange:"26 أبريل-3 مايو", quality:{se_mre:0,incident:34,good_catch:1}, emergency:{ctas12:18,ctas3:399,ctas45:3056}, surgery:{emergency:21,routine:54,waiting:48,cancelled:2,cancel_reason:"Medical Indication - No Show"}, clinics:{total:3453,virtual:717,no_show:525,no_show_pct:15}, satisfaction:{all:86.74,ed:75.21,clinics:86.58,inpatient:85.15}, complaints:{closed:82,not_closed:0}, capacity:{inpatients:224,bed_occ:64,lifesaving:10,emergency_ref:10,routine_ref:62}, screening:{breast:65,breast_pos:0,colon:50,colon_pos:2,stemi:1,stroke:3}, pharmacy:{inpatient:2982,clinics:1281,emergency:3272}, home_care:{visits:38}, smoking:{inperson:10,virtual:6}, endoscopy:{appoint:"_", procedures:"_"} },
+  { label:"W6", dateRange:"3-9 مايو", quality:{se_mre:0,incident:37,good_catch:2}, emergency:{ctas12:18,ctas3:446,ctas45:3216}, surgery:{emergency:21,routine:54,waiting:48,cancelled:2,cancel_reason:"Medical Indication - No Show"}, clinics:{total:3249,virtual:649,no_show:340,no_show_pct:10.46}, satisfaction:{all:86.89,ed:74.92,clinics:87.10,inpatient:85.15}, complaints:{closed:69,not_closed:0}, capacity:{inpatients:224,bed_occ:64,lifesaving:10,emergency_ref:10,routine_ref:62}, screening:{breast:46,breast_pos:1,colon:57,colon_pos:0,stemi:1,stroke:3}, pharmacy:{inpatient:2548,clinics:1306,emergency:3246}, home_care:{visits:38}, smoking:{inperson:10,virtual:6}, endoscopy:{appoint:14, procedures:16} }
+];
+var LW = WEEKS[WEEKS.length-1];
+var isLight = false;
+var visibleCount = 6;   // عدد الأسابيع المعروضة حالياً
+
+/* ──── دالة الحصول على الأسابيع المرئية ──── */
+function getVisibleWeeks() {
+  return WEEKS.slice(Math.max(0, WEEKS.length - visibleCount));
+}
+
+/* ──── تبديل القائمة ──── */
+function toggleWeekMenu(e) {
+  e.stopPropagation();
+  var dd  = document.getElementById('weekDropdown');
+  var btn = document.getElementById('weekBtn');
+  var isOpen = dd.classList.contains('open');
+  dd.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+}
+
+/* ──── تطبيق اختيار عدد الأسابيع ──── */
+var WK_LABELS = {
+  2:'آخر أسبوعان', 3:'آخر 3 أسابيع',
+  4:'آخر 4 أسابيع', 5:'آخر 5 أسابيع', 6:'كل الأسابيع (6)'
+};
+function setWeeks(n) {
+  visibleCount = n;
+  // تحديث التحديد في القائمة
+  document.querySelectorAll('.wk-opt').forEach(function(opt) {
+    opt.classList.toggle('sel', parseInt(opt.getAttribute('data-n')) === n);
+  });
+  // تحديث نص الزر
+  document.getElementById('weekBtnLabel').textContent = WK_LABELS[n] || n + ' أسابيع';
+  // إغلاق القائمة
+  document.getElementById('weekDropdown').classList.remove('open');
+  document.getElementById('weekBtn').classList.remove('open');
+  // إعادة الرسم
+  init();
+}
+
+/* ──── إغلاق القائمة عند النقر خارجها ──── */
+document.addEventListener('click', function(e) {
+  var sel = document.getElementById('weekSelector');
+  if (sel && !sel.contains(e.target)) {
+    document.getElementById('weekDropdown').classList.remove('open');
+    document.getElementById('weekBtn').classList.remove('open');
+  }
+});
+
+// ======= Quick Nav Scroll =======
+function navScrollTo(id, clickedEl) {
+  var el = document.getElementById(id);
+  if (el) {
+    var offset = el.getBoundingClientRect().top + window.pageYOffset;
+    var navTotalH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--top-h')) +
+                    parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) + 8;
+    window.scrollTo({ top: offset - navTotalH, behavior: 'smooth' });
+  }
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+  if (clickedEl) clickedEl.classList.add('active');
+}
+
+// ======= Colors =======
+function getColors() {
+  var s = getComputedStyle(document.body);
+  return {
+    text:   s.getPropertyValue('--txt').trim()    || '#e2f0ff',
+    muted:  s.getPropertyValue('--muted').trim()  || '#4d84b0',
+    red:    s.getPropertyValue('--red').trim()    || '#ff5f6b',
+    amber:  s.getPropertyValue('--amber').trim()  || '#f9c74f',
+    green:  s.getPropertyValue('--green').trim()  || '#3dd68c',
+    teal:   s.getPropertyValue('--teal').trim()   || '#2de0d4',
+    blue:   s.getPropertyValue('--blue').trim()   || '#4db8ff',
+    purple: s.getPropertyValue('--purple').trim() || '#b197fc',
+    bg2:    s.getPropertyValue('--bg2').trim()    || '#0c1726',
+    border: s.getPropertyValue('--border').trim() || 'rgba(30,70,110,0.5)'
+  };
+}
+
+function labels(){ return getVisibleWeeks().map(function(w){ return w.label; }); }
+function vals(fn){ return getVisibleWeeks().map(fn); }
+function fmt(n){ return String(n); }
+
+// ======= Table helpers =======
+function wkHdrs(){
+  return getVisibleWeeks().slice().reverse().map(function(w,i){
+    var cls = (i === 0) ? 'w6' : '';
+    return '<th class="'+cls+'">'+w.label+'<br><span style="font-size:9px;font-weight:400;opacity:0.7">'+w.dateRange+'</span></th>';
+  }).join('');
+}
+function row(lbl, fn, cls){
+  cls = cls || '';
+  var cells = getVisibleWeeks().slice().reverse().map(function(w, i){
+    var v = fn(w);
+    var wcls = (i === 0) ? 'w6' : '';
+    return '<td class="'+cls+' '+wcls+'">'+(typeof v==='number' ? fmt(v) : v)+'</td>';
+  }).join('');
+  return '<tr><td style="text-align:right">'+lbl+'</td>'+cells+'</tr>';
+}
+function rowRaw(lbl, fn, cls){
+  cls = cls || '';
+  var cells = getVisibleWeeks().slice().reverse().map(function(w, i){
+    var wcls = (i === 0) ? 'w6' : '';
+    return '<td class="'+cls+' '+wcls+'">'+fn(w)+'</td>';
+  }).join('');
+  return '<tr><td style="text-align:right">'+lbl+'</td>'+cells+'</tr>';
+}
+
+// ================================ SVG CHART ENGINE ================================
+function wrapWithZoom(containerId, svgElem) {
+  var cont = document.getElementById(containerId);
+  if (!cont) return;
+  cont.innerHTML = '';
+  var zoomDiv = document.createElement('div');
+  zoomDiv.className = 'chart-zoom';
+  var wrapDiv = document.createElement('div');
+  wrapDiv.className = 'chart-wrap';
+  wrapDiv.appendChild(svgElem);
+  zoomDiv.appendChild(wrapDiv);
+  cont.appendChild(zoomDiv);
+  zoomDiv.addEventListener('mousedown', function(){ zoomDiv.style.cursor='grabbing'; });
+  window.addEventListener('mouseup', function(){ zoomDiv.style.cursor='grab'; });
+}
+
+function drawGridLines(svg, ns, chartTop, chartBottom, chartLeft, chartRight, maxVal, steps, colors) {
+  var range = chartBottom - chartTop;
+  for (var s = 0; s <= steps; s++) {
+    var y = chartBottom - (s / steps) * range;
+    var line = document.createElementNS(ns, 'line');
+    line.setAttribute('x1', chartLeft);
+    line.setAttribute('y1', y);
+    line.setAttribute('x2', chartRight);
+    line.setAttribute('y2', y);
+    line.setAttribute('stroke', isLight ? 'rgba(100,140,180,0.15)' : 'rgba(255,255,255,0.06)');
+    line.setAttribute('stroke-width', '1');
+    if (s === 0) {
+      line.setAttribute('stroke', isLight ? 'rgba(100,140,180,0.4)' : 'rgba(255,255,255,0.15)');
+    }
+    svg.appendChild(line);
+    // Y-axis labels
+    var valLabel = Math.round((s / steps) * maxVal);
+    var t = document.createElementNS(ns, 'text');
+    t.setAttribute('x', chartLeft - 4);
+    t.setAttribute('y', y + 3);
+    t.setAttribute('text-anchor', 'end');
+    t.setAttribute('font-size', '8');
+    t.setAttribute('fill', colors.muted);
+    t.setAttribute('opacity', '0.7');
+    t.textContent = valLabel > 999 ? (valLabel/1000).toFixed(1)+'k' : valLabel;
+    svg.appendChild(t);
+  }
+}
+
+function addLegend(svg, ns, datasets, width, y, colors) {
+  // رسم legend: مربع ملون + نص بجانبه مباشرة على نفس السطر
+  var squareSize = 10;
+  var squareTextGap = 40;   // مسافة بين المربع والنص
+  var itemGap = 2;        // مسافة بين كل legend والتالي
+  var charW = 5;           // تقدير عرض كل حرف بـ font-size 9
+
+  // حساب العرض الكلي لتوسيط الـ legends
+  var items = datasets.map(function(ds){
+    var textW = ds.label.length * charW;
+    return { label: ds.label, color: ds.color, totalW: squareSize + squareTextGap + textW };
+  });
+  var totalW = items.reduce(function(sum, it){ return sum + it.totalW; }, 0)
+               + itemGap * (items.length - 1);
+  var x = width - totalW - 20;
+  var midY = y + 6; // المحور الأفقي للـ legend
+
+  items.forEach(function(item){
+    // المربع الملون — محاذاة رأسية للمنتصف
+    var rect = document.createElementNS(ns, 'rect');
+    rect.setAttribute('x', x);
+    rect.setAttribute('y', midY - squareSize / 2);
+    rect.setAttribute('width', squareSize);
+    rect.setAttribute('height', squareSize);
+    rect.setAttribute('fill', item.color);
+    rect.setAttribute('rx', '2');
+    svg.appendChild(rect);
+
+    // النص بجانب المربع مباشرة
+    var txt = document.createElementNS(ns, 'text');
+    txt.setAttribute('x', x + squareSize + squareTextGap+ 5);
+    txt.setAttribute('y', midY + 4);   // +4 لمحاذاة baseline مع مركز المربع
+    txt.setAttribute('text-anchor', 'start');
+    txt.setAttribute('font-size', '9');
+    txt.setAttribute('fill', colors.text);
+    txt.setAttribute('opacity', '0.75');
+    txt.textContent = item.label;
+    svg.appendChild(txt);
+
+    x += item.totalW + itemGap;
+  });
+}
+
+function drawSVGBarChart(containerId, labels, datasets) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  var W = Math.max(450, container.clientWidth || 500);
+  var H = 290;
+  var ns = "http://www.w3.org/2000/svg";
+  var svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+  svg.style.width = "100%";
+  svg.style.height = "100%";
+  svg.setAttribute("xmlns", ns);
+  var colors = getColors();
+  var n = labels.length;
+  var legendH = 30;
+  var marginTop = 14;
+  var marginLeft = 36;
+  var marginRight = 10;
+  var marginBottom = 28;
+  var chartTop = marginTop;
+  var chartBottom = H - legendH - marginBottom;
+  var chartLeft = marginLeft;
+  var chartRight = W - marginRight;
+  var chartW = chartRight - chartLeft;
+  var chartH = chartBottom - chartTop;
+  var maxVal = Math.max.apply(null, datasets.reduce(function(a,ds){ return a.concat(ds.data); }, [0]));
+  maxVal = maxVal * 1.15 || 1;
+
+  drawGridLines(svg, ns, chartTop, chartBottom, chartLeft, chartRight, maxVal, 4, colors);
+
+  var groupW = chartW / n;
+  var barW = Math.max(6, (groupW * 0.72) / datasets.length);
+  var totalBarW = barW * datasets.length;
+
+  datasets.forEach(function(ds, idx) {
+    ds.data.forEach(function(val, i) {
+      var numVal = (val === '-' || val === '—' || isNaN(val)) ? 0 : +val;
+      var bh = (numVal / maxVal) * chartH;
+      var gx = chartLeft + i * groupW + groupW / 2;
+      var bx = gx - totalBarW / 2 + idx * barW;
+      var by = chartBottom - bh;
+
+      // Bar with rounded top
+      var path = document.createElementNS(ns, 'path');
+      var r = Math.min(4, barW / 2, bh);
+      if (bh < 1) {
+        path.setAttribute('d', 'M'+bx+','+chartBottom+' h'+barW);
+      } else {
+        path.setAttribute('d',
+          'M'+(bx+r)+','+by+
+          ' Q'+bx+','+by+' '+bx+','+(by+r)+
+          ' V'+chartBottom+
+          ' H'+(bx+barW)+
+          ' V'+(by+r)+
+          ' Q'+(bx+barW)+','+by+' '+(bx+barW-r)+','+by+' Z'
+        );
+      }
+      path.setAttribute('fill', ds.color);
+      path.setAttribute('opacity', '0.9');
+      svg.appendChild(path);
+
+      // Value label — always show, above bar
+      if (numVal > 0) {
+        var lbl = document.createElementNS(ns, 'text');
+        lbl.setAttribute('x', bx + barW/2);
+        lbl.setAttribute('y', by - 3);
+        lbl.setAttribute('text-anchor', 'middle');
+        lbl.setAttribute('font-size', '7.5');
+        lbl.setAttribute('font-weight', '600');
+        lbl.setAttribute('fill', colors.text);
+        lbl.setAttribute('opacity', '0.95');
+        lbl.textContent = String(numVal);
+        svg.appendChild(lbl);
+      }
+    });
+  });
+
+  // X-axis labels
+  for (var i = 0; i < n; i++) {
+    var tx = chartLeft + i * groupW + groupW / 2;
+    var t = document.createElementNS(ns, 'text');
+    t.setAttribute('x', tx);
+    t.setAttribute('y', chartBottom + 12);
+    t.setAttribute('text-anchor', 'middle');
+    t.setAttribute('font-size', '9');
+    t.setAttribute('fill', colors.muted);
+    t.textContent = labels[i];
+    svg.appendChild(t);
+  }
+
+  addLegend(svg, ns, datasets, W, H - legendH + 2, colors);
+  wrapWithZoom(containerId, svg);
+}
+
+function drawSVGCombinedChart(containerId, labels, barData, lineData) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  var W = Math.max(450, container.clientWidth || 500);
+  var H = 290;
+  var ns = "http://www.w3.org/2000/svg";
+  var svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+  svg.style.width = "100%"; svg.style.height = "100%";
+  var colors = getColors();
+  var n = labels.length;
+  var legendH = 30;
+  var marginTop = 14;
+  var marginLeft = 36;
+  var marginRight = 10;
+  var marginBottom = 28;
+  var chartTop = marginTop;
+  var chartBottom = H - legendH - marginBottom;
+  var chartLeft = marginLeft;
+  var chartRight = W - marginRight;
+  var chartW = chartRight - chartLeft;
+  var chartH = chartBottom - chartTop;
+  var maxBar = Math.max.apply(null, barData.data) * 1.2 || 1;
+  var maxLine = Math.max.apply(null, lineData.data) * 1.2 || 1;
+  var groupW = chartW / n;
+  var barW = groupW * 0.6;
+
+  drawGridLines(svg, ns, chartTop, chartBottom, chartLeft, chartRight, maxBar, 4, colors);
+
+  // Bars
+  barData.data.forEach(function(val, i) {
+    var bh = (val / maxBar) * chartH;
+    var bx = chartLeft + i * groupW + (groupW - barW) / 2;
+    var by = chartBottom - bh;
+    var r = Math.min(4, barW / 2, bh);
+    var path = document.createElementNS(ns, 'path');
+    if (bh < 1) {
+      path.setAttribute('d','M'+bx+','+chartBottom+' h'+barW);
+    } else {
+      path.setAttribute('d',
+        'M'+(bx+r)+','+by+
+        ' Q'+bx+','+by+' '+bx+','+(by+r)+
+        ' V'+chartBottom+' H'+(bx+barW)+' V'+(by+r)+
+        ' Q'+(bx+barW)+','+by+' '+(bx+barW-r)+','+by+' Z'
+      );
+    }
+    path.setAttribute('fill', barData.color);
+    path.setAttribute('opacity', '0.85');
+    svg.appendChild(path);
+    // label always shown, centered inside bar
+    if (val > 0) {
+      var lbl = document.createElementNS(ns, 'text');
+      lbl.setAttribute('x', bx + barW/2);
+      var lblY = bh >= 18 ? by + bh/2 + 4 : by - 3;
+      lbl.setAttribute('y', lblY);
+      lbl.setAttribute('text-anchor', 'middle');
+      lbl.setAttribute('font-size', '7.5');
+      lbl.setAttribute('font-weight', '600');
+      lbl.setAttribute('fill', bh >= 18 ? '#000000' : colors.text);
+      lbl.textContent = String(val);
+      svg.appendChild(lbl);
+    }
+  });
+
+  // Line area
+  var pts = lineData.data.map(function(val, i){
+    var cx = chartLeft + i * groupW + groupW / 2;
+    var cy = chartBottom - (val / maxLine) * chartH;
+    return { x: cx, y: cy, val: val };
+  });
+  var areaPath = 'M' + pts[0].x + ',' + chartBottom;
+  pts.forEach(function(p){ areaPath += ' L'+p.x+','+p.y; });
+  areaPath += ' L'+pts[pts.length-1].x+','+chartBottom+' Z';
+  var area = document.createElementNS(ns, 'path');
+  area.setAttribute('d', areaPath);
+  area.setAttribute('fill', lineData.color);
+  area.setAttribute('opacity', '0.08');
+  svg.appendChild(area);
+
+  // Line
+  var polyPts = pts.map(function(p){ return p.x+','+p.y; }).join(' ');
+  var poly = document.createElementNS(ns, 'polyline');
+  poly.setAttribute('points', polyPts);
+  poly.setAttribute('stroke', lineData.color);
+  poly.setAttribute('stroke-width', '2');
+  poly.setAttribute('fill', 'none');
+  poly.setAttribute('stroke-linejoin', 'round');
+  svg.appendChild(poly);
+
+  // Dots + labels
+  pts.forEach(function(p){
+    var circ = document.createElementNS(ns, 'circle');
+    circ.setAttribute('cx', p.x); circ.setAttribute('cy', p.y);
+    circ.setAttribute('r', '4'); circ.setAttribute('fill', lineData.color);
+    circ.setAttribute('stroke', isLight ? '#fff' : '#080f1a');
+    circ.setAttribute('stroke-width', '2');
+    svg.appendChild(circ);
+    var bgR = document.createElementNS(ns, 'rect');
+    var ts = String(p.val)+'%'; var tw = ts.length * 5.5 + 8;
+    bgR.setAttribute('x', p.x - tw/2); bgR.setAttribute('y', p.y - 18);
+    bgR.setAttribute('width', tw); bgR.setAttribute('height', 13);
+    bgR.setAttribute('rx', 4);
+    bgR.setAttribute('fill', isLight ? 'rgba(228,236,245,0.9)' : 'rgba(8,15,26,0.85)');
+    svg.appendChild(bgR);
+    var lt = document.createElementNS(ns, 'text');
+    lt.setAttribute('x', p.x); lt.setAttribute('y', p.y - 8);
+    lt.setAttribute('text-anchor', 'middle'); lt.setAttribute('font-size', '9');
+    lt.setAttribute('font-weight', '600'); lt.setAttribute('fill', lineData.color);
+    lt.textContent = ts;
+    svg.appendChild(lt);
+  });
+
+  // X labels
+  pts.forEach(function(p, i){
+    var t = document.createElementNS(ns, 'text');
+    t.setAttribute('x', p.x); t.setAttribute('y', chartBottom + 12);
+    t.setAttribute('text-anchor', 'middle'); t.setAttribute('font-size', '9');
+    t.setAttribute('fill', colors.muted);
+    t.textContent = labels[i];
+    svg.appendChild(t);
+  });
+
+  addLegend(svg, ns, [barData, lineData], W, H - legendH + 2, colors);
+  wrapWithZoom(containerId, svg);
+}
+
+function drawSVGSatisfactionChart(containerId, labels, datasets) {
+  // Same as bar chart but with 60-100 scale
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  var W = Math.max(450, container.clientWidth || 500);
+  var H = 290;
+  var ns = "http://www.w3.org/2000/svg";
+  var svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+  svg.style.width = "100%"; svg.style.height = "100%";
+  var colors = getColors();
+  var n = labels.length;
+  var legendH = 30;
+  var marginTop = 14;
+  var marginLeft = 36;
+  var marginRight = 10;
+  var marginBottom = 28;
+  var chartTop = marginTop;
+  var chartBottom = H - legendH - marginBottom;
+  var chartLeft = marginLeft;
+  var chartRight = W - marginRight;
+  var chartW = chartRight - chartLeft;
+  var chartH = chartBottom - chartTop;
+  var minVal = 60; var maxVal = 100;
+
+  // Grid lines for 60-100
+  for (var s = 0; s <= 4; s++) {
+    var yv = minVal + (s/4)*(maxVal-minVal);
+    var yPos = chartBottom - ((yv-minVal)/(maxVal-minVal)) * chartH;
+    var gl = document.createElementNS(ns, 'line');
+    gl.setAttribute('x1', chartLeft); gl.setAttribute('y1', yPos);
+    gl.setAttribute('x2', chartRight); gl.setAttribute('y2', yPos);
+    gl.setAttribute('stroke', isLight ? 'rgba(100,140,180,0.15)' : 'rgba(255,255,255,0.06)');
+    gl.setAttribute('stroke-width', '1');
+    svg.appendChild(gl);
+    var gt = document.createElementNS(ns, 'text');
+    gt.setAttribute('x', chartLeft - 4); gt.setAttribute('y', yPos + 3);
+    gt.setAttribute('text-anchor', 'end'); gt.setAttribute('font-size', '8');
+    gt.setAttribute('fill', colors.muted); gt.setAttribute('opacity', '0.7');
+    gt.textContent = yv+'%';
+    svg.appendChild(gt);
+  }
+
+  var groupW = chartW / n;
+  var barW = Math.max(6, (groupW * 0.72) / datasets.length);
+  var totalBarW = barW * datasets.length;
+
+  datasets.forEach(function(ds, idx) {
+    ds.data.forEach(function(val, i) {
+      var numVal = +val;
+      var bh = ((numVal - minVal) / (maxVal - minVal)) * chartH;
+      var gx = chartLeft + i * groupW + groupW / 2;
+      var bx = gx - totalBarW / 2 + idx * barW;
+      var by = chartBottom - bh;
+      var r = Math.min(4, barW/2, bh);
+      var path = document.createElementNS(ns, 'path');
+      if (bh < 1) { path.setAttribute('d','M'+bx+','+chartBottom+' h'+barW); }
+      else {
+        path.setAttribute('d',
+          'M'+(bx+r)+','+by+' Q'+bx+','+by+' '+bx+','+(by+r)+
+          ' V'+chartBottom+' H'+(bx+barW)+' V'+(by+r)+
+          ' Q'+(bx+barW)+','+by+' '+(bx+barW-r)+','+by+' Z'
+        );
+      }
+      path.setAttribute('fill', ds.color); path.setAttribute('opacity', '0.9');
+      svg.appendChild(path);
+      // always show label, above bar
+      var lbl = document.createElementNS(ns, 'text');
+      lbl.setAttribute('x', bx+barW/2);
+      lbl.setAttribute('y', by - 3);
+      lbl.setAttribute('text-anchor','middle'); lbl.setAttribute('font-size','7');
+      lbl.setAttribute('font-weight','600');
+      lbl.setAttribute('fill', colors.text);
+      lbl.textContent = Math.round(numVal)+'%';
+      svg.appendChild(lbl);
+    });
+  });
+
+  for (var i=0; i<n; i++) {
+    var t = document.createElementNS(ns, 'text');
+    t.setAttribute('x', chartLeft + i*groupW + groupW/2);
+    t.setAttribute('y', chartBottom+12);
+    t.setAttribute('text-anchor','middle'); t.setAttribute('font-size','9');
+    t.setAttribute('fill', colors.muted);
+    t.textContent = labels[i];
+    svg.appendChild(t);
+  }
+  addLegend(svg, ns, datasets, W, H - legendH + 2, colors);
+  wrapWithZoom(containerId, svg);
+}
+
+// ================================ BUILD HTML ================================
+function buildFullHTML() {
+  return `
+    <div class="section-label" id="sec-quality"><span class="section-emoji">🛡️</span> الجودة وسلامة المرضى</div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">SE / MRE</div><div class="kpi-val v-r">${LW.quality.se_mre}</div></div>
+      <div class="kpi"><div class="kpi-label">Incident</div><div class="kpi-val v-a">${LW.quality.incident}</div></div>
+      <div class="kpi"><div class="kpi-label">Good Catch</div><div class="kpi-val v-g">${LW.quality.good_catch}</div></div>
+    </div>
+    <div class="chart-grid"><div class="chart-card"><div class="chart-card-title">📊 مؤشرات الجودة</div><div id="ch-quality"></div></div></div>
+    <div class="tbl-wrap"><table class="weeks-table"><thead><tr><th>مؤشر الجودة</th>${wkHdrs()}</tr></thead><tbody>
+      ${row('SE / MRE', function(w){return w.quality.se_mre;}, 'v-r')}
+      ${row('Incident', function(w){return w.quality.incident;}, 'v-a')}
+      ${row('Good Catch', function(w){return w.quality.good_catch;}, 'v-g')}
+    </tbody></table></div>
+
+    <div class="section-label" id="sec-emergency"><span class="section-emoji">🚨</span> تصنيفات CTAS — الطوارئ</div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">CTAS 1,2</div><div class="kpi-val v-r">${LW.emergency.ctas12}</div></div>
+      <div class="kpi"><div class="kpi-label">CTAS 3</div><div class="kpi-val v-a">${LW.emergency.ctas3}</div></div>
+      <div class="kpi"><div class="kpi-label">CTAS 4,5</div><div class="kpi-val v-g">${LW.emergency.ctas45}</div></div>
+    </div>
+    <div class="chart-grid"><div class="chart-card"><div class="chart-card-title">📊 مراجعات الطوارئ حسب CTAS</div><div id="ch-ctas"></div></div></div>
+    <div class="tbl-wrap"><table class="weeks-table"><thead><tr><th>تصنيف CTAS</th>${wkHdrs()}</tr></thead><tbody>
+      ${row('CTAS 1,2', function(w){return w.emergency.ctas12;}, 'v-r')}
+      ${row('CTAS 3', function(w){return w.emergency.ctas3;}, 'v-a')}
+      ${row('CTAS 4,5', function(w){return w.emergency.ctas45;}, 'v-g')}
+    </tbody></table></div>
+
+    <div class="section-label" id="sec-surgery"><span class="section-emoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="17" height="17" style="display:inline-block;vertical-align:middle;margin-bottom:2px" fill="none" aria-hidden="true"><path d="M3 17.5 L9.5 11" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/><path d="M8.5 12 L11 9.5" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"/><path d="M10 10.5 L17.5 3 Q13 11 10 10.5 Z" fill="currentColor"/></svg></span> العمليات الجراحية</div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">طارئة منجزة</div><div class="kpi-val v-r">${LW.surgery.emergency}</div></div>
+      <div class="kpi"><div class="kpi-label">روتينية منجزة</div><div class="kpi-val v-g">${LW.surgery.routine}</div></div>
+      <div class="kpi"><div class="kpi-label">بالانتظار</div><div class="kpi-val v-a">${LW.surgery.waiting}</div></div>
+      <div class="kpi"><div class="kpi-label">ملغاة</div><div class="kpi-val v-r">${LW.surgery.cancelled}</div></div>
+    </div>
+    <div class="chart-grid"><div class="chart-card"><div class="chart-card-title">📊 العمليات الجراحية</div><div id="ch-surg"></div></div></div>
+    <div class="tbl-wrap"><table class="weeks-table"><thead><tr><th>العمليات</th>${wkHdrs()}</tr></thead><tbody>
+      ${row('طارئة', function(w){return w.surgery.emergency;}, 'v-r')}
+      ${row('روتينية', function(w){return w.surgery.routine;}, 'v-g')}
+      ${row('بالانتظار', function(w){return w.surgery.waiting;}, 'v-a')}
+      ${row('ملغاة', function(w){return w.surgery.cancelled;}, 'v-r')}
+      ${rowRaw('سبب الإلغاء', function(w){return w.surgery.cancel_reason;}, '')}
+    </tbody></table></div>
+
+    <div class="section-label" id="sec-clinics"><span class="section-emoji">🏥</span> العيادات الخارجية</div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">إجمالي المراجعين</div><div class="kpi-val v-t">${LW.clinics.total}</div></div>
+      <div class="kpi"><div class="kpi-label">مواعيد افتراضية</div><div class="kpi-val v-b">${LW.clinics.virtual}</div></div>
+      <div class="kpi"><div class="kpi-label">No Show</div><div class="kpi-val v-r">${LW.clinics.no_show}</div></div>
+      <div class="kpi"><div class="kpi-label">نسبة No Show</div><div class="kpi-val v-a">${LW.clinics.no_show_pct}%</div></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-card"><div class="chart-card-title">📊 إجمالي مراجعي العيادات</div><div id="ch-clinic"></div></div>
+      <div class="chart-card"><div class="chart-card-title">📊 No Show + النسبة</div><div id="ch-noshow"></div></div>
+    </div>
+    <div class="tbl-wrap"><table class="weeks-table"><thead><tr><th>العيادات</th>${wkHdrs()}</tr></thead><tbody>
+      ${row('إجمالي المراجعين', function(w){return w.clinics.total;}, 'v-t')}
+      ${row('مواعيد افتراضية', function(w){return w.clinics.virtual;}, 'v-b')}
+      ${row('No Show', function(w){return w.clinics.no_show;}, 'v-r')}
+      ${rowRaw('نسبة No Show %', function(w){return w.clinics.no_show_pct+'%';}, 'v-a')}
+    </tbody></table></div>
+
+    <div class="section-label" id="sec-satisfaction"><span class="section-emoji">😊</span> تجربة المريض والبلاغات</div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">جميع الخدمات</div><div class="kpi-val v-g">${LW.satisfaction.all}%</div></div>
+      <div class="kpi"><div class="kpi-label">الطوارئ</div><div class="kpi-val v-g">${LW.satisfaction.ed}%</div></div>
+      <div class="kpi"><div class="kpi-label">العيادات</div><div class="kpi-val v-g">${LW.satisfaction.clinics}%</div></div>
+      <div class="kpi"><div class="kpi-label">التنويم</div><div class="kpi-val v-g">${LW.satisfaction.inpatient}%</div></div>
+      <div class="kpi"><div class="kpi-label">بلاغات مغلقة</div><div class="kpi-val v-g">${LW.complaints.closed}</div></div>
+      <div class="kpi"><div class="kpi-label">بلاغات غير مغلقة</div><div class="kpi-val v-r">${LW.complaints.not_closed}</div></div>
+    </div>
+    <div class="chart-grid"><div class="chart-card"><div class="chart-card-title">📊 رضا المرضى (%)</div><div id="ch-sat"></div></div></div>
+    <div class="tbl-wrap"><table class="weeks-table"><thead><tr><th>المؤشر</th>${wkHdrs()}</tr></thead><tbody>
+      ${rowRaw('رضا جميع الخدمات %', function(w){return w.satisfaction.all+'%';}, 'v-g')}
+      ${rowRaw('رضا الطوارئ %', function(w){return w.satisfaction.ed+'%';}, 'v-g')}
+      ${rowRaw('رضا العيادات %', function(w){return w.satisfaction.clinics+'%';}, 'v-g')}
+      ${rowRaw('رضا التنويم %', function(w){return w.satisfaction.inpatient+'%';}, 'v-g')}
+      ${row('بلاغات مغلقة', function(w){return w.complaints.closed;}, 'v-g')}
+      ${row('بلاغات غير مغلقة', function(w){return w.complaints.not_closed;}, 'v-r')}
+    </tbody></table></div>
+
+    <div class="section-label" id="sec-capacity"><span class="section-emoji">📋</span> الطاقة الاستيعابية والإحالات</div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">المنومين</div><div class="kpi-val">${LW.capacity.inpatients}</div></div>
+      <div class="kpi"><div class="kpi-label">إشغال الأسرة</div><div class="kpi-val v-t">${LW.capacity.bed_occ}%</div></div>
+      <div class="kpi"><div class="kpi-label">إنقاذ حياة</div><div class="kpi-val v-r">${LW.capacity.lifesaving}</div></div>
+      <div class="kpi"><div class="kpi-label">إحالات طارئة</div><div class="kpi-val v-a">${LW.capacity.emergency_ref}</div></div>
+      <div class="kpi"><div class="kpi-label">إحالات روتينية</div><div class="kpi-val v-b">${LW.capacity.routine_ref}</div></div>
+    </div>
+    <div class="chart-grid"><div class="chart-card"><div class="chart-card-title">📊 الإحالات الطبية</div><div id="ch-ref"></div></div></div>
+    <div class="tbl-wrap"><table class="weeks-table"><thead><tr><th>المؤشر</th>${wkHdrs()}</tr></thead><tbody>
+      ${row('عدد المنومين', function(w){return w.capacity.inpatients;}, '')}
+      ${rowRaw('إشغال الأسرة %', function(w){return w.capacity.bed_occ+'%';}, 'v-t')}
+      ${row('إنقاذ حياة', function(w){return w.capacity.lifesaving;}, 'v-r')}
+      ${row('إحالات طارئة', function(w){return w.capacity.emergency_ref;}, 'v-a')}
+      ${row('إحالات روتينية', function(w){return w.capacity.routine_ref;}, 'v-b')}
+    </tbody></table></div>
+
+    <div class="section-label" id="sec-pharmacy"><span class="section-emoji">💊</span> الصيدلية</div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">تنويم</div><div class="kpi-val v-b">${LW.pharmacy.inpatient}</div></div>
+      <div class="kpi"><div class="kpi-label">عيادات</div><div class="kpi-val v-t">${LW.pharmacy.clinics}</div></div>
+      <div class="kpi"><div class="kpi-label">طوارئ</div><div class="kpi-val v-a">${LW.pharmacy.emergency}</div></div>
+    </div>
+    <div class="chart-grid"><div class="chart-card"><div class="chart-card-title">📊 الوصفات الطبية</div><div id="ch-pharm"></div></div></div>
+    <div class="tbl-wrap"><table class="weeks-table"><thead><tr><th>الصيدلية</th>${wkHdrs()}</tr></thead><tbody>
+      ${row('وصفات التنويم', function(w){return w.pharmacy.inpatient;}, 'v-b')}
+      ${row('وصفات العيادات', function(w){return w.pharmacy.clinics;}, 'v-t')}
+      ${row('وصفات الطوارئ', function(w){return w.pharmacy.emergency;}, 'v-a')}
+    </tbody></table></div>
+
+    <div class="section-label" id="sec-screening"><span class="section-emoji">🔬</span> الفحوصات الاستكشافية</div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">فحص الثدي</div><div class="kpi-val">${LW.screening.breast}</div></div>
+      <div class="kpi"><div class="kpi-label">إيجابي — ثدي</div><div class="kpi-val v-r">${LW.screening.breast_pos}</div></div>
+      <div class="kpi"><div class="kpi-label">فحص القولون</div><div class="kpi-val">${LW.screening.colon}</div></div>
+      <div class="kpi"><div class="kpi-label">إيجابي — قولون</div><div class="kpi-val v-r">${LW.screening.colon_pos}</div></div>
+    </div>
+    <div class="chart-grid"><div class="chart-card"><div class="chart-card-title">📊 فحوصات الثدي والقولون</div><div id="ch-screening"></div></div></div>
+    <div class="tbl-wrap"><table class="weeks-table"><thead><tr><th>الفحوصات</th>${wkHdrs()}</tr></thead><tbody>
+      ${row('فحوصات الثدي', function(w){return w.screening.breast;}, '')}
+      ${row('إيجابي — ثدي', function(w){return w.screening.breast_pos;}, 'v-r')}
+      ${row('فحوصات القولون', function(w){return w.screening.colon;}, '')}
+      ${row('إيجابي — قولون', function(w){return w.screening.colon_pos;}, 'v-r')}
+    </tbody></table></div>
+
+    <div class="section-label" id="sec-urgent"><span class="section-emoji">🫀</span> مسارات الرعاية العاجلة</div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">STEMI</div><div class="kpi-val v-r">${LW.screening.stemi}</div></div>
+      <div class="kpi"><div class="kpi-label">Stroke</div><div class="kpi-val v-r">${LW.screening.stroke}</div></div>
+    </div>
+    <div class="chart-grid"><div class="chart-card"><div class="chart-card-title">📊 مسارات الرعاية العاجلة</div><div id="ch-models"></div></div></div>
+    <div class="tbl-wrap"><table class="weeks-table"><thead><tr><th>المسار</th>${wkHdrs()}</tr></thead><tbody>
+      ${row('STEMI', function(w){ var v=w.screening.stemi; return (v==='-'||v==='—')?'—':v; }, 'v-r')}
+      ${row('Stroke', function(w){ var v=w.screening.stroke; return (v==='-'||v==='—')?'—':v; }, 'v-r')}
+    </tbody></table></div>
+
+    <div class="section-label" id="sec-home"><span class="section-emoji">🏠</span> الرعاية المنزلية — 🚭 عيادة التدخين</div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">زيارات منزلية</div><div class="kpi-val v-t">${LW.home_care.visits}</div></div>
+      <div class="kpi"><div class="kpi-label">تدخين حضوري</div><div class="kpi-val">${LW.smoking.inperson}</div></div>
+      <div class="kpi"><div class="kpi-label">تدخين افتراضي</div><div class="kpi-val">${LW.smoking.virtual}</div></div>
+    </div>
+    <div class="chart-grid"><div class="chart-card"><div class="chart-card-title">📊 الرعاية المنزلية وعيادة التدخين</div><div id="ch-home"></div></div></div>
+    <div class="tbl-wrap"><table class="weeks-table"><thead><tr><th>الخدمة</th>${wkHdrs()}</tr></thead><tbody>
+      ${row('زيارات منزلية', function(w){return w.home_care.visits;}, 'v-t')}
+      ${row('تدخين حضوري', function(w){return w.smoking.inperson;}, '')}
+      ${row('تدخين افتراضي', function(w){return w.smoking.virtual;}, '')}
+    </tbody></table></div>
+
+    <div class="section-label" id="sec-endo"><span class="section-emoji">🔭</span> عيادة أمراض جهاز الهضم والتنظير</div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">مواعيد الجهاز الهضمي</div><div class="kpi-val v-t">${LW.endoscopy.appoint}</div></div>
+      <div class="kpi"><div class="kpi-label">إجراءات منجزة</div><div class="kpi-val">${LW.endoscopy.procedures}</div></div>
+    </div>
+    <div class="chart-grid"><div class="chart-card"><div class="chart-card-title">📊 عيادة أمراض جهاز الهضم والتنظير</div><div id="ch-endoscopy"></div></div></div>
+    <div class="tbl-wrap"><table class="weeks-table"><thead><tr><th>الخدمة</th>${wkHdrs()}</tr></thead><tbody>
+      ${rowRaw('مواعيد جهاز الهضم', function(w){return w.endoscopy.appoint;}, 'v-t')}
+      ${rowRaw('إجراءات منجزة', function(w){return w.endoscopy.procedures;}, '')}
+    </tbody></table></div>
+  `;
+}
+
+function buildCharts() {
+  var lb = labels();
+  var col = getColors();
+  drawSVGBarChart('ch-quality', lb, [
+    {label:'SE/MRE', data:vals(function(w){return w.quality.se_mre;}), color:col.red},
+    {label:'Incident', data:vals(function(w){return w.quality.incident;}), color:col.amber},
+    {label:'Good Catch', data:vals(function(w){return w.quality.good_catch;}), color:col.green}
+  ]);
+  drawSVGBarChart('ch-ctas', lb, [
+    {label:'CTAS 1,2', data:vals(function(w){return w.emergency.ctas12;}), color:col.red},
+    {label:'CTAS 3', data:vals(function(w){return w.emergency.ctas3;}), color:col.amber},
+    {label:'CTAS 4,5', data:vals(function(w){return w.emergency.ctas45;}), color:col.green}
+  ]);
+  drawSVGBarChart('ch-surg', lb, [
+    {label:'طارئة', data:vals(function(w){return w.surgery.emergency;}), color:col.red},
+    {label:'روتينية', data:vals(function(w){return w.surgery.routine;}), color:col.blue},
+    {label:'انتظار', data:vals(function(w){return w.surgery.waiting;}), color:col.amber},
+    {label:'ملغاة', data:vals(function(w){return w.surgery.cancelled;}), color:col.purple}
+  ]);
+  drawSVGBarChart('ch-clinic', lb, [
+    {label:'إجمالي', data:vals(function(w){return w.clinics.total;}), color:col.teal},
+    {label:'افتراضية', data:vals(function(w){return w.clinics.virtual;}), color:col.purple}
+  ]);
+  drawSVGCombinedChart('ch-noshow', lb,
+    {label:'No Show', data:vals(function(w){return w.clinics.no_show;}), color:col.amber},
+    {label:'نسبة %', data:vals(function(w){return w.clinics.no_show_pct;}), color:col.red}
+  );
+  drawSVGSatisfactionChart('ch-sat', lb, [
+    {label:'جميع الخدمات', data:vals(function(w){return w.satisfaction.all;}), color:col.green},
+    {label:'الطوارئ', data:vals(function(w){return w.satisfaction.ed;}), color:col.red},
+    {label:'العيادات', data:vals(function(w){return w.satisfaction.clinics;}), color:col.blue},
+    {label:'التنويم', data:vals(function(w){return w.satisfaction.inpatient;}), color:col.purple}
+  ]);
+  drawSVGBarChart('ch-ref', lb, [
+    {label:'إنقاذ حياة', data:vals(function(w){return w.capacity.lifesaving;}), color:col.red},
+    {label:'طارئة', data:vals(function(w){return w.capacity.emergency_ref;}), color:col.amber},
+    {label:'روتينية', data:vals(function(w){return w.capacity.routine_ref;}), color:col.blue}
+  ]);
+  drawSVGBarChart('ch-pharm', lb, [
+    {label:'تنويم', data:vals(function(w){return w.pharmacy.inpatient;}), color:col.blue},
+    {label:'عيادات', data:vals(function(w){return w.pharmacy.clinics;}), color:col.purple},
+    {label:'طوارئ', data:vals(function(w){return w.pharmacy.emergency;}), color:col.amber}
+  ]);
+  drawSVGBarChart('ch-screening', lb, [
+    {label:'فحص الثدي', data:vals(function(w){return w.screening.breast;}), color:col.purple},
+    {label:'إيجابي ثدي', data:vals(function(w){return w.screening.breast_pos;}), color:col.red},
+    {label:'فحص القولون', data:vals(function(w){return w.screening.colon;}), color:col.teal},
+    {label:'إيجابي قولون', data:vals(function(w){return w.screening.colon_pos;}), color:col.amber}
+  ]);
+  drawSVGBarChart('ch-models', lb, [
+    {label:'STEMI', data:vals(function(w){ var v=w.screening.stemi; return (v==='-'||v==='—')?0:+v||0; }), color:col.purple},
+    {label:'Stroke', data:vals(function(w){ var v=w.screening.stroke; return (v==='-'||v==='—')?0:+v||0; }), color:col.red}
+  ]);
+  drawSVGBarChart('ch-home', lb, [
+    {label:'رعاية منزلية', data:vals(function(w){return w.home_care.visits;}), color:col.green},
+    {label:'تدخين حضوري', data:vals(function(w){return w.smoking.inperson;}), color:col.blue},
+    {label:'تدخين افتراضي', data:vals(function(w){return w.smoking.virtual;}), color:col.purple}
+  ]);
+  drawSVGBarChart('ch-endoscopy', lb, [
+    {label:'مواعيد جهاز الهضم', data:vals(function(w){ var v=w.endoscopy.appoint; return (v==='-'||v==='—')?0:+v||0; }), color:col.green},
+    {label:'إجراءات منجزة', data:vals(function(w){ var v=w.endoscopy.procedures; return (v==='-'||v==='—')?0:+v||0; }), color:col.blue}
+  ]);
+}
+
+function init() {
+  var main = document.getElementById('main-content');
+  main.innerHTML = buildFullHTML();
+  var vw = getVisibleWeeks();
+  var firstWk = vw[0].label, lastWk = vw[vw.length-1].label;
+  document.getElementById('topbar-sub').textContent =
+    'عرض: ' + vw.length + ' أسابيع (' + firstWk + ' → ' + lastWk + ') | رسوم بيانية SVG تفاعلية';
+  document.getElementById('footer-txt').textContent =
+    '🗓️ يشمل: ' + vw.map(function(w){return w.label;}).join(' · ') + ' — آخر تحديث: 10 مايو 2026';
+  buildCharts();
+}
+
+function toggleTheme() {
+  isLight = !isLight;
+  document.body.classList.toggle('light', isLight);
+  document.getElementById('themeBtn').textContent = isLight ? '🌙 داكن' : '☀️ فاتح';
+  init();
+}
+
+init();
+</script>
+</body>
+</html>
