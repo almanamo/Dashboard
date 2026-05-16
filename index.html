@@ -86,7 +86,7 @@ body {
   transform: translateZ(0);
   /* لا نضع overflow:hidden هنا لكي تظهر القائمة المنسدلة خارج حدود الشريط */
 }
-.topbar-info { min-width: 0; flex: 1; overflow: hidden; }
+.topbar-info { min-width: 0; flex: 1; overflow: visible; }
 .topbar-title {
   font-size: 13px;
   font-weight: 700;
@@ -302,7 +302,7 @@ body.light .week-dropdown { box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
 /* =========== CHART GRID =========== */
 .chart-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(560px, 1fr));
   gap: 12px;
   margin-bottom: 12px;
 }
@@ -342,7 +342,7 @@ body.light .week-dropdown { box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
 .chart-zoom::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 .chart-zoom:active { cursor: grabbing; }
 .chart-wrap {
-  min-width: 450px;
+  min-width: 720px;
   width: max-content;
   height: 290px;
   position: relative;
@@ -454,21 +454,22 @@ body.light .topbar { background: rgba(228,236,245,0.9); }
 <div class="topbar">
   <div class="topbar-info">
     <div class="topbar-title">📊 تقرير الأداء الأسبوعي — المستشفى </div>
-    <div class="topbar-sub" id="topbar-sub">مقارنة 6 أسابيع + رسوم بيانية تفاعلية</div>
+    <div class="topbar-sub" id="topbar-sub">مقارنة أسابيع</div>
   </div>
   <div class="topbar-actions">
     <!-- منتقي الأسابيع -->
     <div class="week-selector" id="weekSelector">
       <button class="week-btn" id="weekBtn" onclick="toggleWeekMenu(event)">
-        📅 <span id="weekBtnLabel">كل الأسابيع (6)</span>
+        📅 <span id="weekBtnLabel">كل الأسابيع (7)</span>
         <span class="caret">▾</span>
       </button>
       <div class="week-dropdown" id="weekDropdown">
-        <div class="wk-opt" data-n="2" onclick="setWeeks(2)">آخر أسبوعان <span class="wk-chk">✓</span></div>
+        <div class="wk-opt" data-n="2" onclick="setWeeks(2)">آخر أسبوعين <span class="wk-chk">✓</span></div>
         <div class="wk-opt" data-n="3" onclick="setWeeks(3)">آخر 3 أسابيع <span class="wk-chk">✓</span></div>
         <div class="wk-opt" data-n="4" onclick="setWeeks(4)">آخر 4 أسابيع <span class="wk-chk">✓</span></div>
         <div class="wk-opt" data-n="5" onclick="setWeeks(5)">آخر 5 أسابيع <span class="wk-chk">✓</span></div>
-        <div class="wk-opt sel" data-n="6" onclick="setWeeks(6)">كل الأسابيع (6) <span class="wk-chk">✓</span></div>
+        <div class="wk-opt" data-n="6" onclick="setWeeks(6)">آخر 6 أسابيع <span class="wk-chk">✓</span></div>
+        <div class="wk-opt sel" data-n="7" onclick="setWeeks(7)">كل الأسابيع (7) <span class="wk-chk">✓</span></div>
       </div>
     </div>
     <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">☀️ فاتح</button>
@@ -494,7 +495,7 @@ body.light .topbar { background: rgba(228,236,245,0.9); }
 
 <div class="footer">
   <div>🏥 المستشفى  — لوحة الأداء الأسبوعية</div>
-  <div id="footer-txt">🔄 آخر تحديث: 10 مايو 2026</div>
+  <div id="footer-txt">🔄 آخر تحديث: 17 مايو 2026</div>
 </div>
 
 <script>
@@ -505,11 +506,12 @@ var WEEKS = [
   { label:"W3", dateRange:"12-18 أبريل", quality:{se_mre:0,incident:20,good_catch:1}, emergency:{ctas12:14,ctas3:427,ctas45:3212}, surgery:{emergency:15,routine:49,waiting:46,cancelled:1,cancel_reason:"No Show"}, clinics:{total:3181,virtual:683,no_show:390,no_show_pct:12}, satisfaction:{all:86.44,ed:72.07,clinics:86.17,inpatient:85.15}, complaints:{closed:59,not_closed:0}, capacity:{inpatients:230,bed_occ:61,lifesaving:10,emergency_ref:9,routine_ref:55}, screening:{breast:52,breast_pos:2,colon:64,colon_pos:1,stemi:'-',stroke:'-'}, pharmacy:{inpatient:4539,clinics:1178,emergency:3456}, home_care:{visits:39}, smoking:{inperson:10,virtual:3}, endoscopy:{appoint:"-", procedures:"-"} },
   { label:"W4", dateRange:"19-25 أبريل", quality:{se_mre:1,incident:25,good_catch:3}, emergency:{ctas12:15,ctas3:437,ctas45:2866}, surgery:{emergency:12,routine:64,waiting:43,cancelled:2,cancel_reason:"Medical Indication - No Show"}, clinics:{total:3389,virtual:731,no_show:442,no_show_pct:13}, satisfaction:{all:86.75,ed:75.55,clinics:82.55,inpatient:85.15}, complaints:{closed:65,not_closed:0}, capacity:{inpatients:221,bed_occ:60,lifesaving:7,emergency_ref:11,routine_ref:50}, screening:{breast:67,breast_pos:0,colon:55,colon_pos:2,stemi:0,stroke:0}, pharmacy:{inpatient:4400,clinics:1314,emergency:3182}, home_care:{visits:37}, smoking:{inperson:4,virtual:4}, endoscopy:{appoint:"-", procedures:"-"} },
   { label:"W5", dateRange:"26 أبريل-3 مايو", quality:{se_mre:0,incident:34,good_catch:1}, emergency:{ctas12:18,ctas3:399,ctas45:3056}, surgery:{emergency:21,routine:54,waiting:48,cancelled:2,cancel_reason:"Medical Indication - No Show"}, clinics:{total:3453,virtual:717,no_show:525,no_show_pct:15}, satisfaction:{all:86.74,ed:75.21,clinics:86.58,inpatient:85.15}, complaints:{closed:82,not_closed:0}, capacity:{inpatients:224,bed_occ:64,lifesaving:10,emergency_ref:10,routine_ref:62}, screening:{breast:65,breast_pos:0,colon:50,colon_pos:2,stemi:1,stroke:3}, pharmacy:{inpatient:2982,clinics:1281,emergency:3272}, home_care:{visits:38}, smoking:{inperson:10,virtual:6}, endoscopy:{appoint:"_", procedures:"_"} },
-  { label:"W6", dateRange:"3-9 مايو", quality:{se_mre:0,incident:37,good_catch:2}, emergency:{ctas12:18,ctas3:446,ctas45:3216}, surgery:{emergency:14,routine:77,waiting:44,cancelled:1,cancel_reason:"No Show"}, clinics:{total:3249,virtual:649,no_show:340,no_show_pct:10.46}, satisfaction:{all:86.89,ed:74.92,clinics:87.10,inpatient:85.15}, complaints:{closed:69,not_closed:0}, capacity:{inpatients:267,bed_occ:68,lifesaving:14,emergency_ref:14,routine_ref:47}, screening:{breast:46,breast_pos:1,colon:57,colon_pos:0,stemi:0,stroke:2}, pharmacy:{inpatient:2548,clinics:1306,emergency:3246}, home_care:{visits:39}, smoking:{inperson:8,virtual:2}, endoscopy:{appoint:14, procedures:16} }
+  { label:"W6", dateRange:"3-9 مايو", quality:{se_mre:0,incident:37,good_catch:2}, emergency:{ctas12:18,ctas3:446,ctas45:3216}, surgery:{emergency:14,routine:77,waiting:44,cancelled:1,cancel_reason:"No Show"}, clinics:{total:3249,virtual:649,no_show:340,no_show_pct:10.46}, satisfaction:{all:86.89,ed:74.92,clinics:87.10,inpatient:85.15}, complaints:{closed:69,not_closed:0}, capacity:{inpatients:267,bed_occ:68,lifesaving:14,emergency_ref:14,routine_ref:47}, screening:{breast:46,breast_pos:1,colon:57,colon_pos:0,stemi:0,stroke:2}, pharmacy:{inpatient:2548,clinics:1306,emergency:3246}, home_care:{visits:39}, smoking:{inperson:8,virtual:2}, endoscopy:{appoint:14, procedures:16} },
+  { label:"W7", dateRange:"10-16 مايو", quality:{se_mre:0,incident:37,good_catch:2}, emergency:{ctas12:18,ctas3:446,ctas45:3216}, surgery:{emergency:14,routine:77,waiting:44,cancelled:1,cancel_reason:"No Show"}, clinics:{total:3383,virtual:661,no_show:376,no_show_pct:10}, satisfaction:{all:86.95,ed:74.92,clinics:87.47,inpatient:85.15}, complaints:{closed:70,not_closed:0}, capacity:{inpatients:267,bed_occ:68,lifesaving:14,emergency_ref:14,routine_ref:47}, screening:{breast:46,breast_pos:1,colon:57,colon_pos:0,stemi:0,stroke:2}, pharmacy:{inpatient:2548,clinics:1306,emergency:3246}, home_care:{visits:39}, smoking:{inperson:9,virtual:8}, endoscopy:{appoint:14, procedures:16} }
 ];
 var LW = WEEKS[WEEKS.length-1];
 var isLight = false;
-var visibleCount = 6;   // عدد الأسابيع المعروضة حالياً
+var visibleCount = 7;   // عدد الأسابيع المعروضة حالياً
 
 /* ──── دالة الحصول على الأسابيع المرئية ──── */
 function getVisibleWeeks() {
@@ -528,8 +530,8 @@ function toggleWeekMenu(e) {
 
 /* ──── تطبيق اختيار عدد الأسابيع ──── */
 var WK_LABELS = {
-  2:'آخر أسبوعان', 3:'آخر 3 أسابيع',
-  4:'آخر 4 أسابيع', 5:'آخر 5 أسابيع', 6:'كل الأسابيع (6)'
+  2:'آخر أسبوعين', 3:'آخر 3 أسابيع',
+  4:'آخر 4 أسابيع', 5:'آخر 5 أسابيع', 6:'آخر 6 أسابيع', 7:'كل الأسابيع (7)'
 };
 function setWeeks(n) {
   visibleCount = n;
@@ -621,11 +623,22 @@ function wrapWithZoom(containerId, svgElem) {
   cont.innerHTML = '';
   var zoomDiv = document.createElement('div');
   zoomDiv.className = 'chart-zoom';
+  
+  // === إضافة أنماط مباشرة لتوسيع العرض ===
+  zoomDiv.style.overflowX = 'auto';
+  zoomDiv.style.width = '100%';
+  
   var wrapDiv = document.createElement('div');
   wrapDiv.className = 'chart-wrap';
+  
+  // === تحديد عرض ثابت أكبر للحاوية الداخلية ===
+  wrapDiv.style.minWidth = '800px';  // يمكنك تغيير هذا الرقم
+  wrapDiv.style.width = 'max-content';
+  
   wrapDiv.appendChild(svgElem);
   zoomDiv.appendChild(wrapDiv);
   cont.appendChild(zoomDiv);
+  
   zoomDiv.addEventListener('mousedown', function(){ zoomDiv.style.cursor='grabbing'; });
   window.addEventListener('mouseup', function(){ zoomDiv.style.cursor='grab'; });
 }
@@ -705,13 +718,13 @@ function addLegend(svg, ns, datasets, width, y, colors) {
 function drawSVGBarChart(containerId, labels, datasets) {
   var container = document.getElementById(containerId);
   if (!container) return;
-  var W = Math.max(450, container.clientWidth || 500);
+  var W = Math.max(800, container.clientWidth || 500);
   var H = 290;
   var ns = "http://www.w3.org/2000/svg";
   var svg = document.createElementNS(ns, "svg");
   svg.setAttribute("viewBox", "0 0 " + W + " " + H);
   svg.style.width = "100%";
-  svg.style.height = "100%";
+  svg.style.height = "100%"; svg.style.overflow = "visible";
   svg.setAttribute("xmlns", ns);
   var colors = getColors();
   var n = labels.length;
@@ -798,11 +811,12 @@ function drawSVGBarChart(containerId, labels, datasets) {
 function drawSVGCombinedChart(containerId, labels, barData, lineData) {
   var container = document.getElementById(containerId);
   if (!container) return;
-  var W = Math.max(450, container.clientWidth || 500);
+  var W = Math.max(800, container.clientWidth || 500);
   var H = 290;
   var ns = "http://www.w3.org/2000/svg";
   var svg = document.createElementNS(ns, "svg");
   svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+  svg.style.height = "100%"; svg.style.overflow = "visible";
   svg.style.width = "100%"; svg.style.height = "100%";
   var colors = getColors();
   var n = labels.length;
@@ -925,12 +939,12 @@ function drawSVGSatisfactionChart(containerId, labels, datasets) {
   // Same as bar chart but with 60-100 scale
   var container = document.getElementById(containerId);
   if (!container) return;
-  var W = Math.max(450, container.clientWidth || 500);
+  var W = Math.max(800, container.clientWidth || 500);
   var H = 290;
   var ns = "http://www.w3.org/2000/svg";
   var svg = document.createElementNS(ns, "svg");
   svg.setAttribute("viewBox", "0 0 " + W + " " + H);
-  svg.style.width = "100%"; svg.style.height = "100%";
+  svg.style.width = "100%"; svg.style.height = "100%"; svg.style.overflow = "visible";
   var colors = getColors();
   var n = labels.length;
   var legendH = 30;
@@ -1246,7 +1260,7 @@ function init() {
   var vw = getVisibleWeeks();
   var firstWk = vw[0].label, lastWk = vw[vw.length-1].label;
   document.getElementById('topbar-sub').textContent =
-    'عرض: ' + vw.length + ' أسابيع (' + firstWk + ' → ' + lastWk + ') | رسوم بيانية SVG تفاعلية';
+    'عرض: ' + vw.length + ' أسابيع (' + firstWk + ' → ' + lastWk + ') | رسوم بيانية SVG ';
   document.getElementById('footer-txt').textContent =
     '🗓️ يشمل: ' + vw.map(function(w){return w.label;}).join(' · ') + ' — آخر تحديث: 10 مايو 2026';
   buildCharts();
