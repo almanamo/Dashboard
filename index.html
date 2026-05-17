@@ -531,7 +531,7 @@ var WEEKS = [
   { label:"W4", dateRange:"19-25 أبريل", quality:{se_mre:1,incident:25,good_catch:3}, emergency:{ctas12:15,ctas3:437,ctas45:2866}, surgery:{emergency:12,routine:64,waiting:43,cancelled:2,cancel_reason:"Medical Indication - No Show"}, clinics:{total:3389,virtual:731,no_show:442,no_show_pct:13}, satisfaction:{all:86.75,ed:75.55,clinics:82.55,inpatient:85.15}, complaints:{closed:65,not_closed:0}, capacity:{inpatients:221,bed_occ:60,lifesaving:7,emergency_ref:11,routine_ref:50}, screening:{breast:67,breast_pos:0,colon:55,colon_pos:2,stemi_total:'-',stemi_out:'-',stroke_total:'-',stroke_out:'-'}, pharmacy:{inpatient:4400,clinics:1314,emergency:3182}, home_care:{visits:37}, smoking:{inperson:4,virtual:4}, endoscopy:{appoint:"-", procedures:"-"} },
   { label:"W5", dateRange:"26 أبريل-3 مايو", quality:{se_mre:0,incident:34,good_catch:1}, emergency:{ctas12:18,ctas3:399,ctas45:3056}, surgery:{emergency:21,routine:54,waiting:48,cancelled:2,cancel_reason:"Medical Indication - No Show"}, clinics:{total:3453,virtual:717,no_show:525,no_show_pct:15}, satisfaction:{all:86.74,ed:75.21,clinics:86.58,inpatient:85.15}, complaints:{closed:82,not_closed:0}, capacity:{inpatients:224,bed_occ:64,lifesaving:10,emergency_ref:10,routine_ref:62}, screening:{breast:65,breast_pos:0,colon:50,colon_pos:2,stemi_total:1, stemi_out:0,stroke_total:3, stroke_out:0}, pharmacy:{inpatient:2982,clinics:1281,emergency:3272}, home_care:{visits:38}, smoking:{inperson:10,virtual:6}, endoscopy:{appoint:"_", procedures:"_"} },
   { label:"W6", dateRange:"3-9 مايو", quality:{se_mre:0,incident:37,good_catch:2}, emergency:{ctas12:18,ctas3:446,ctas45:3216}, surgery:{emergency:14,routine:77,waiting:44,cancelled:1,cancel_reason:"No Show"}, clinics:{total:3249,virtual:649,no_show:340,no_show_pct:10.46}, satisfaction:{all:86.89,ed:74.92,clinics:87.10,inpatient:85.15}, complaints:{closed:69,not_closed:0}, capacity:{inpatients:267,bed_occ:68,lifesaving:14,emergency_ref:14,routine_ref:47}, screening:{breast:46,breast_pos:1,colon:57,colon_pos:0,stemi_total:2, stemi_out:2,stroke_total:5, stroke_out:3}, pharmacy:{inpatient:2548,clinics:1306,emergency:3246}, home_care:{visits:39}, smoking:{inperson:8,virtual:2}, endoscopy:{appoint:14, procedures:16} },
-  { label:"W7", dateRange:"10-16 مايو", quality:{se_mre:1,incident:33,good_catch:1}, emergency:{ctas12:13,ctas3:429,ctas45:2744}, surgery:{emergency:0,routine:0,waiting:0,cancelled:0,cancel_reason:"_"}, clinics:{total:3383,virtual:661,no_show:376,no_show_pct:10}, satisfaction:{all:86.95,ed:74.92,clinics:87.47,inpatient:85.15}, complaints:{closed:70,not_closed:0}, capacity:{inpatients:269,bed_occ:65,lifesaving:9,emergency_ref:12,routine_ref:50}, screening:{breast:0,breast_pos:0,colon:48,colon_pos:2,stemi_total:1, stemi_out:1,stroke_total:7, stroke_out:3}, pharmacy:{inpatient:4068,clinics:1340,emergency:3422}, home_care:{visits:38}, smoking:{inperson:9,virtual:8}, endoscopy:{appoint:13, procedures:12} }
+  { label:"W7", dateRange:"10-16 مايو", quality:{se_mre:1,incident:33,good_catch:1}, emergency:{ctas12:13,ctas3:429,ctas45:2744}, surgery:{emergency:0,routine:0,waiting:0,cancelled:0,cancel_reason:"_"}, clinics:{total:3383,virtual:661,no_show:376,no_show_pct:10}, satisfaction:{all:86.95,ed:74.92,clinics:87.47,inpatient:85.15}, complaints:{closed:70,not_closed:0}, capacity:{inpatients:269,bed_occ:65,lifesaving:9,emergency_ref:12,routine_ref:50}, screening:{breast:45,breast_pos:0,colon:48,colon_pos:2,stemi_total:1, stemi_out:1,stroke_total:7, stroke_out:3}, pharmacy:{inpatient:4068,clinics:1340,emergency:3422}, home_care:{visits:38}, smoking:{inperson:9,virtual:8}, endoscopy:{appoint:13, procedures:12} }
 ];
 var LW = WEEKS[WEEKS.length-1];
 var isLight = false;
@@ -687,10 +687,10 @@ function drawGridLines(svg, ns, chartTop, chartBottom, chartLeft, chartRight, ma
 
 function addLegend(svg, ns, datasets, width, y, colors) {
   // رسم legend: مربع ملون + نص بجانبه مباشرة على نفس السطر
-  var squareSize = 10;
-  var squareTextGap = 40;   // مسافة بين المربع والنص
-  var itemGap = 2;        // مسافة بين كل legend والتالي
-  var charW = 5;           // تقدير عرض كل حرف بـ font-size 9
+  var squareSize    = 9;
+  var squareTextGap = 15;   // مسافة بين المربع والنص (كانت 40 — خطأ كتابي)
+  var itemGap       = 10;  // مسافة بين كل legend والتالي (كانت 2 — صغيرة جداً)
+  var charW         = 5;   // تقدير عرض كل حرف بـ font-size 9
 
   // حساب العرض الكلي لتوسيط الـ legends
   var items = datasets.map(function(ds){
@@ -698,25 +698,25 @@ function addLegend(svg, ns, datasets, width, y, colors) {
     return { label: ds.label, color: ds.color, totalW: squareSize + squareTextGap + textW };
   });
   var totalW = items.reduce(function(sum, it){ return sum + it.totalW; }, 0)
-               + itemGap * (items.length - 1);
-  var x = width - totalW - 20;
-  var midY = y + 6; // المحور الأفقي للـ legend
+               + itemGap * (items.length);
+  var x = width - totalW;
+  var midY = y; // المحور الأفقي للـ legend
 
   items.forEach(function(item){
     // المربع الملون — محاذاة رأسية للمنتصف
     var rect = document.createElementNS(ns, 'rect');
     rect.setAttribute('x', x);
-    rect.setAttribute('y', midY - squareSize / 2);
+    rect.setAttribute('y', midY - squareSize );
     rect.setAttribute('width', squareSize);
-    rect.setAttribute('height', squareSize);
+    rect.setAttribute('height', squareSize - 2);
     rect.setAttribute('fill', item.color);
     rect.setAttribute('rx', '2');
     svg.appendChild(rect);
 
-    // النص بجانب المربع مباشرة
+    // النص بجانب المربع — بدون إزاحة +5 الزائدة
     var txt = document.createElementNS(ns, 'text');
-    txt.setAttribute('x', x + squareSize + squareTextGap+ 5);
-    txt.setAttribute('y', midY + 4);   // +4 لمحاذاة baseline مع مركز المربع
+    txt.setAttribute('x', x + squareSize + squareTextGap - 25);
+    txt.setAttribute('y', midY);   // +4 لمحاذاة baseline مع مركز المربع
     txt.setAttribute('text-anchor', 'start');
     txt.setAttribute('font-size', '9');
     txt.setAttribute('fill', colors.text);
@@ -1259,7 +1259,7 @@ function buildCharts() {
   drawSVGBarChart('ch-models', lb, [
     {label:'STEMI-Total', data:vals(function(w){ var v=w.screening.stemi_total; return (v==='-'||v==='—')?0:+v||0; }), color:col.purple},
     {label:'STEMI-Out', data:vals(function(w){ var v=w.screening.stemi_out; return (v==='-'||v==='—')?0:+v||0; }), color:col.amber},
-    {label:'Stroke', data:vals(function(w){ var v=w.screening.stroke_total; return (v==='-'||v==='—')?0:+v||0; }), color:col.blue},
+    {label:'Stroke-Total', data:vals(function(w){ var v=w.screening.stroke_total; return (v==='-'||v==='—')?0:+v||0; }), color:col.blue},
     {label:'Stroke-Out', data:vals(function(w){ var v=w.screening.stroke_out; return (v==='-'||v==='—')?0:+v||0; }), color:col.red}
   ]);
   drawSVGBarChart('ch-home', lb, [
