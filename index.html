@@ -302,7 +302,7 @@ body.light .week-dropdown { box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
 /* =========== CHART GRID =========== */
 .chart-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(560px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
   gap: 12px;
   margin-bottom: 12px;
 }
@@ -342,7 +342,7 @@ body.light .week-dropdown { box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
 .chart-zoom::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 .chart-zoom:active { cursor: grabbing; }
 .chart-wrap {
-  min-width: 720px;
+  min-width: 540px;
   width: max-content;
   height: 290px;
   position: relative;
@@ -446,6 +446,30 @@ body.light .v-b { text-shadow: none; }
 body.light .v-t { text-shadow: none; }
 body.light .v-a { text-shadow: none; }
 body.light .topbar { background: rgba(228,236,245,0.9); }
+
+/* توسيع الرسوم البيانية خارج الحاوية */
+.chart-zoom {
+  overflow-x: visible !important;
+}
+
+.chart-wrap {
+  min-width: 100% !important;
+  width: auto !important;
+}
+
+.chart-wrap svg {
+  width: 100% !important;
+  min-width: 600px !important;  /* العرض الأدنى الجديد */
+}
+
+.chart-wrap {
+  min-width: 900px !important;
+  width: max-content !important;
+}
+
+.chart-zoom {
+  overflow-x: auto !important;
+}
 </style>
 </head>
 <body>
@@ -507,7 +531,7 @@ var WEEKS = [
   { label:"W4", dateRange:"19-25 أبريل", quality:{se_mre:1,incident:25,good_catch:3}, emergency:{ctas12:15,ctas3:437,ctas45:2866}, surgery:{emergency:12,routine:64,waiting:43,cancelled:2,cancel_reason:"Medical Indication - No Show"}, clinics:{total:3389,virtual:731,no_show:442,no_show_pct:13}, satisfaction:{all:86.75,ed:75.55,clinics:82.55,inpatient:85.15}, complaints:{closed:65,not_closed:0}, capacity:{inpatients:221,bed_occ:60,lifesaving:7,emergency_ref:11,routine_ref:50}, screening:{breast:67,breast_pos:0,colon:55,colon_pos:2,stemi:0,stroke:0}, pharmacy:{inpatient:4400,clinics:1314,emergency:3182}, home_care:{visits:37}, smoking:{inperson:4,virtual:4}, endoscopy:{appoint:"-", procedures:"-"} },
   { label:"W5", dateRange:"26 أبريل-3 مايو", quality:{se_mre:0,incident:34,good_catch:1}, emergency:{ctas12:18,ctas3:399,ctas45:3056}, surgery:{emergency:21,routine:54,waiting:48,cancelled:2,cancel_reason:"Medical Indication - No Show"}, clinics:{total:3453,virtual:717,no_show:525,no_show_pct:15}, satisfaction:{all:86.74,ed:75.21,clinics:86.58,inpatient:85.15}, complaints:{closed:82,not_closed:0}, capacity:{inpatients:224,bed_occ:64,lifesaving:10,emergency_ref:10,routine_ref:62}, screening:{breast:65,breast_pos:0,colon:50,colon_pos:2,stemi:1,stroke:3}, pharmacy:{inpatient:2982,clinics:1281,emergency:3272}, home_care:{visits:38}, smoking:{inperson:10,virtual:6}, endoscopy:{appoint:"_", procedures:"_"} },
   { label:"W6", dateRange:"3-9 مايو", quality:{se_mre:0,incident:37,good_catch:2}, emergency:{ctas12:18,ctas3:446,ctas45:3216}, surgery:{emergency:14,routine:77,waiting:44,cancelled:1,cancel_reason:"No Show"}, clinics:{total:3249,virtual:649,no_show:340,no_show_pct:10.46}, satisfaction:{all:86.89,ed:74.92,clinics:87.10,inpatient:85.15}, complaints:{closed:69,not_closed:0}, capacity:{inpatients:267,bed_occ:68,lifesaving:14,emergency_ref:14,routine_ref:47}, screening:{breast:46,breast_pos:1,colon:57,colon_pos:0,stemi:0,stroke:2}, pharmacy:{inpatient:2548,clinics:1306,emergency:3246}, home_care:{visits:39}, smoking:{inperson:8,virtual:2}, endoscopy:{appoint:14, procedures:16} },
-  { label:"W7", dateRange:"10-16 مايو", quality:{se_mre:0,incident:37,good_catch:2}, emergency:{ctas12:18,ctas3:446,ctas45:3216}, surgery:{emergency:14,routine:77,waiting:44,cancelled:1,cancel_reason:"No Show"}, clinics:{total:3383,virtual:661,no_show:376,no_show_pct:10}, satisfaction:{all:86.95,ed:74.92,clinics:87.47,inpatient:85.15}, complaints:{closed:70,not_closed:0}, capacity:{inpatients:267,bed_occ:68,lifesaving:14,emergency_ref:14,routine_ref:47}, screening:{breast:46,breast_pos:1,colon:57,colon_pos:0,stemi:0,stroke:2}, pharmacy:{inpatient:2548,clinics:1306,emergency:3246}, home_care:{visits:39}, smoking:{inperson:9,virtual:8}, endoscopy:{appoint:14, procedures:16} }
+  { label:"W7", dateRange:"10-16 مايو", quality:{se_mre:1,incident:33,good_catch:1}, emergency:{ctas12:13,ctas3:429,ctas45:2744}, surgery:{emergency:0,routine:0,waiting:0,cancelled:0,cancel_reason:"_"}, clinics:{total:3383,virtual:661,no_show:376,no_show_pct:10}, satisfaction:{all:86.95,ed:74.92,clinics:87.47,inpatient:85.15}, complaints:{closed:70,not_closed:0}, capacity:{inpatients:269,bed_occ:65,lifesaving:9,emergency_ref:12,routine_ref:50}, screening:{breast:0,breast_pos:0,colon:48,colon_pos:2,stemi:1,stroke:7}, pharmacy:{inpatient:4068,clinics:1340,emergency:3422}, home_care:{visits:39}, smoking:{inperson:9,virtual:8}, endoscopy:{appoint:13, procedures:12} }
 ];
 var LW = WEEKS[WEEKS.length-1];
 var isLight = false;
@@ -623,22 +647,11 @@ function wrapWithZoom(containerId, svgElem) {
   cont.innerHTML = '';
   var zoomDiv = document.createElement('div');
   zoomDiv.className = 'chart-zoom';
-  
-  // === إضافة أنماط مباشرة لتوسيع العرض ===
-  zoomDiv.style.overflowX = 'auto';
-  zoomDiv.style.width = '100%';
-  
   var wrapDiv = document.createElement('div');
   wrapDiv.className = 'chart-wrap';
-  
-  // === تحديد عرض ثابت أكبر للحاوية الداخلية ===
-  wrapDiv.style.minWidth = '800px';  // يمكنك تغيير هذا الرقم
-  wrapDiv.style.width = 'max-content';
-  
   wrapDiv.appendChild(svgElem);
   zoomDiv.appendChild(wrapDiv);
   cont.appendChild(zoomDiv);
-  
   zoomDiv.addEventListener('mousedown', function(){ zoomDiv.style.cursor='grabbing'; });
   window.addEventListener('mouseup', function(){ zoomDiv.style.cursor='grab'; });
 }
@@ -1262,7 +1275,7 @@ function init() {
   document.getElementById('topbar-sub').textContent =
     'عرض: ' + vw.length + ' أسابيع (' + firstWk + ' → ' + lastWk + ') | رسوم بيانية SVG ';
   document.getElementById('footer-txt').textContent =
-    '🗓️ يشمل: ' + vw.map(function(w){return w.label;}).join(' · ') + ' — آخر تحديث: 10 مايو 2026';
+    '🗓️ يشمل: ' + vw.map(function(w){return w.label;}).join(' · ') + ' — آخر تحديث: 17 مايو 2026';
   buildCharts();
 }
 
