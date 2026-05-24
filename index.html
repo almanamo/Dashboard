@@ -1115,7 +1115,7 @@ function buildFullHTML() {
         +kpi('إحالات طارئة',''+LW.capacity.emergency_ref,'v-a',LW.capacity.emergency_ref,P&&P.capacity.emergency_ref)
         +kpi('إحالات روتينية',''+LW.capacity.routine_ref,'v-b',LW.capacity.routine_ref,P&&P.capacity.routine_ref)
       +'</div>'
-      +'<div class="chart-grid"><div class="chart-card"><div class="chart-card-title">📊 الإحالات الطبية</div><div id="ch-ref"></div></div></div>'
+      +'<div class="chart-grid"><div class="chart-card"><div class="chart-card-title">📊 الإحالات الطبية والتنويم ونسبة الإشغال </div><div id="ch-ref"></div></div></div>'
       +tbl('المؤشر',row('المنومون',function(w){return w.capacity.inpatients;})+rowRaw('إشغال الأسرة %',function(w){return w.capacity.bed_occ+'%';},'v-t')+row('إنقاذ حياة',function(w){return w.capacity.lifesaving;},'v-r')+row('إحالات طارئة',function(w){return w.capacity.emergency_ref;},'v-a')+row('إحالات روتينية',function(w){return w.capacity.routine_ref;},'v-b'))
     )
     +section('sec-pharmacy','💊','الصيدلية',
