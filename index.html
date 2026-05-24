@@ -855,6 +855,201 @@ function drawSVGSatisfactionChart(id, lbls, datasets) {
   wrapWithZoom(id,svg);
 }
 
+function drawSVGCombinedChartDualAxis(id, lbls, barDatasets, lineDataset) {
+  var cont = document.getElementById(id); if (!cont) return;
+  var n = lbls.length;
+  var minW = Math.max(380, n * 82 + 80);
+  var W = Math.max(minW, cont.offsetWidth || minW);
+  var H = 380;
+  var ns = 'http://www.w3.org/2000/svg';
+  var svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('width', W);
+  svg.setAttribute('height', H);
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  
+  var col = getColors();
+  var legH = 26;
+  var ML = 48;  // زيادة الهامش الأيسر للمحور الأيمن
+  var MR = 48;  // هامش أيمن للمحور الأيمن
+  var MT = 12;
+  var MB = 24;
+  var cTop = MT;
+  var cBot = H - legH - MB;
+  var cLeft = ML;
+  var cRight = W - MR;
+  var cW = cRight - cLeft;
+  var cH = cBot - cTop;
+  
+  // حساب القيم القصوى للمحور الأيسر (الأعمدة)
+  var allBarVals = [];
+  barDatasets.forEach(function(ds) {
+    allBarVals = allBarVals.concat(ds.data);
+  });
+  var maxBar = Math.max.apply(null, allBarVals.map(function(v) { return isNaN(+v) ? 0 : +v; })) * 1.15 || 1;
+  
+  // حساب القيم القصوى للمحور الأيمن (الخط - نسب مئوية)
+  var maxLine = Math.max.apply(null, lineDataset.data.map(function(v) { return isNaN(+v) ? 0 : +v; })) * 1.15 || 100;
+  var minLine = Math.min.apply(null, lineDataset.data.map(function(v) { return isNaN(+v) ? 0 : +v; })) || 0;
+  
+  // رسم شبكة المحور الأيسر
+  for (var s = 0; s <= 4; s++) {
+    var y = cBot - (s / 4) * cH;
+    var line = document.createElementNS(ns, 'line');
+    line.setAttribute('x1', cLeft);
+    line.setAttribute('y1', y);
+    line.setAttribute('x2', cRight);
+    line.setAttribute('y2', y);
+    line.setAttribute('stroke', s === 0
+      ? (isLight ? 'rgba(80,120,160,.35)' : 'rgba(255,255,255,.14)')
+      : (isLight ? 'rgba(80,120,160,.1)' : 'rgba(255,255,255,.05)'));
+    line.setAttribute('stroke-width', '1');
+    svg.appendChild(line);
+    
+    var t = document.createElementNS(ns, 'text');
+    t.setAttribute('x', cLeft - 4);
+    t.setAttribute('y', y + 3.5);
+    t.setAttribute('text-anchor', 'end');
+    t.setAttribute('font-size', '8');
+    t.setAttribute('fill', col.muted);
+    t.setAttribute('opacity', '.72');
+    var lv = Math.round((s / 4) * maxBar);
+    t.textContent = lv > 999 ? (lv / 1000).toFixed(1) + 'k' : lv;
+    svg.appendChild(t);
+  }
+  
+  // رسم شبكة المحور الأيمن (النسب المئوية)
+  for (var s = 0; s <= 4; s++) {
+    var y = cBot - (s / 4) * cH;
+    var val = minLine + (s / 4) * (maxLine - minLine);
+    var t = document.createElementNS(ns, 'text');
+    t.setAttribute('x', cRight + 4);
+    t.setAttribute('y', y + 3.5);
+    t.setAttribute('text-anchor', 'start');
+    t.setAttribute('font-size', '8');
+    t.setAttribute('fill', lineDataset.color);
+    t.setAttribute('opacity', '.82');
+    t.textContent = Math.round(val) + '%';
+    svg.appendChild(t);
+  }
+  
+  // رسم الأعمدة (بار)
+  var nS = barDatasets.length;
+  var gap = 2;
+  var groupW = cW / n;
+  var barW = Math.max(4, ((groupW * 0.7) - gap * (nS - 1)) / nS);
+  var totalBarW = barW * nS + gap * (nS - 1);
+  
+  barDatasets.forEach(function(ds, idx) {
+    ds.data.forEach(function(val, i) {
+      var numV = isNaN(+val) ? 0 : +val;
+      var bh = (numV / maxBar) * cH;
+      var gx = cLeft + i * groupW + groupW / 2;
+      var bx = gx - totalBarW / 2 + idx * (barW + gap);
+      var by = cBot - bh;
+      var r = Math.min(3, barW / 2, bh);
+      var p = document.createElementNS(ns, 'path');
+      if (bh < 1) {
+        p.setAttribute('d', 'M' + bx + ',' + cBot + ' h' + barW);
+      } else {
+        p.setAttribute('d', 'M' + (bx + r) + ',' + by + ' Q' + bx + ',' + by + ' ' + bx + ',' + (by + r) + ' V' + cBot + ' H' + (bx + barW) + ' V' + (by + r) + ' Q' + (bx + barW) + ',' + by + ' ' + (bx + barW - r) + ',' + by + ' Z');
+      }
+      p.setAttribute('fill', ds.color);
+      p.setAttribute('opacity', '.88');
+      svg.appendChild(p);
+      
+      if (numV > 0 && bh > 12) {
+        var t = document.createElementNS(ns, 'text');
+        t.setAttribute('x', bx + barW / 2);
+        t.setAttribute('y', by - 3);
+        t.setAttribute('text-anchor', 'middle');
+        t.setAttribute('font-size', '7.5');
+        t.setAttribute('font-weight', '600');
+        t.setAttribute('fill', col.text);
+        t.setAttribute('opacity', '.82');
+        t.textContent = numV >= 1000 ? (numV / 1000).toFixed(1) + 'k' : String(numV);
+        svg.appendChild(t);
+      }
+    });
+  });
+  
+  // رسم الخط (نسبة الإشغال)
+  var pts = lineDataset.data.map(function(v, i) {
+    var numV = isNaN(+v) ? 0 : +v;
+    var y = cBot - ((numV - minLine) / (maxLine - minLine)) * cH;
+    return { x: cLeft + i * groupW + groupW / 2, y: y, v: numV };
+  });
+  
+  // مساحة تحت الخط
+  var af = document.createElementNS(ns, 'path');
+  var ap = 'M' + pts[0].x + ',' + cBot;
+  pts.forEach(function(p) { ap += ' L' + p.x + ',' + p.y; });
+  ap += ' L' + pts[pts.length - 1].x + ',' + cBot + ' Z';
+  af.setAttribute('d', ap);
+  af.setAttribute('fill', lineDataset.color);
+  af.setAttribute('opacity', '.07');
+  svg.appendChild(af);
+  
+  // خط البيانات
+  var pl = document.createElementNS(ns, 'polyline');
+  pl.setAttribute('points', pts.map(function(p) { return p.x + ',' + p.y; }).join(' '));
+  pl.setAttribute('stroke', lineDataset.color);
+  pl.setAttribute('stroke-width', '2.5');
+  pl.setAttribute('fill', 'none');
+  pl.setAttribute('stroke-linejoin', 'round');
+  svg.appendChild(pl);
+  
+  // النقاط والقيم
+  pts.forEach(function(p) {
+    var c = document.createElementNS(ns, 'circle');
+    c.setAttribute('cx', p.x);
+    c.setAttribute('cy', p.y);
+    c.setAttribute('r', '4.5');
+    c.setAttribute('fill', lineDataset.color);
+    c.setAttribute('stroke', isLight ? '#fff' : '#07101c');
+    c.setAttribute('stroke-width', '2');
+    svg.appendChild(c);
+    
+    var ts = Math.round(p.v) + '%';
+    var tw = ts.length * 5.5 + 10;
+    var bg = document.createElementNS(ns, 'rect');
+    bg.setAttribute('x', p.x - tw / 2);
+    bg.setAttribute('y', p.y - 20);
+    bg.setAttribute('width', tw);
+    bg.setAttribute('height', 14);
+    bg.setAttribute('rx', '4');
+    bg.setAttribute('fill', isLight ? 'rgba(224,236,245,.94)' : 'rgba(7,16,28,.9)');
+    svg.appendChild(bg);
+    
+    var lt = document.createElementNS(ns, 'text');
+    lt.setAttribute('x', p.x);
+    lt.setAttribute('y', p.y - 9);
+    lt.setAttribute('text-anchor', 'middle');
+    lt.setAttribute('font-size', '9');
+    lt.setAttribute('font-weight', '700');
+    lt.setAttribute('fill', lineDataset.color);
+    lt.textContent = ts;
+    svg.appendChild(lt);
+  });
+  
+  // تسميات المحور السيني
+  for (var i = 0; i < n; i++) {
+    var t = document.createElementNS(ns, 'text');
+    t.setAttribute('x', cLeft + i * groupW + groupW / 2);
+    t.setAttribute('y', cBot + 14);
+    t.setAttribute('text-anchor', 'middle');
+    t.setAttribute('font-size', '9');
+    t.setAttribute('fill', col.muted);
+    t.textContent = lbls[i];
+    svg.appendChild(t);
+  }
+  
+  // إضافة الـ Legend (دمج جميع المجموعات)
+  var allDatasets = barDatasets.concat([lineDataset]);
+  addLegend(svg, ns, allDatasets, W, H - legH + 2, col);
+  wrapWithZoom(id, svg);
+}
+
+
 /* ════════════════════════════════════════════
    بناء HTML الكامل
 ════════════════════════════════════════════ */
@@ -988,7 +1183,15 @@ function buildCharts() {
   drawSVGBarChart('ch-clinic',lb,[{label:'\u0625\u062c\u0645\u0627\u0644\u064a',data:vals(function(w){return w.clinics.total;}),color:col.teal},{label:'\u0627\u0641\u062a\u0631\u0627\u0636\u064a\u0629',data:vals(function(w){return w.clinics.virtual;}),color:col.purple}]);
   drawSVGCombinedChart('ch-noshow',lb,{label:'No Show',data:vals(function(w){return w.clinics.no_show;}),color:col.amber},{label:'\u0646\u0633\u0628\u0629 %',data:vals(function(w){return w.clinics.no_show_pct;}),color:col.red});
   drawSVGSatisfactionChart('ch-sat',lb,[{label:'\u062c\u0645\u064a\u0639 \u0627\u0644\u062e\u062f\u0645\u0627\u062a',data:vals(function(w){return w.satisfaction.all;}),color:col.green},{label:'\u0627\u0644\u0637\u0648\u0627\u0631\u0626',data:vals(function(w){return w.satisfaction.ed;}),color:col.red},{label:'\u0627\u0644\u0639\u064a\u0627\u062f\u0627\u062a',data:vals(function(w){return w.satisfaction.clinics;}),color:col.blue},{label:'\u0627\u0644\u062a\u0646\u0648\u064a\u0645',data:vals(function(w){return w.satisfaction.inpatient;}),color:col.purple}]);
-  drawSVGBarChart('ch-ref',lb,[{label:'\u0625\u0646\u0642\u0627\u0630 \u062d\u064a\u0627\u0629',data:vals(function(w){return w.capacity.lifesaving;}),color:col.red},{label:'\u0637\u0627\u0631\u0626\u0629',data:vals(function(w){return w.capacity.emergency_ref;}),color:col.amber},{label:'\u0631\u0648\u062a\u064a\u0646\u064a\u0629',data:vals(function(w){return w.capacity.routine_ref;}),color:col.blue}]);
+  drawSVGCombinedChartDualAxis('ch-ref', lb,
+  [
+    {label:'المنومون', data:vals(function(w){return w.capacity.inpatients;}), color:col.purple},
+    {label:'إنقاذ حياة', data:vals(function(w){return w.capacity.lifesaving;}), color:col.red},
+    {label:'إحالات طارئة', data:vals(function(w){return w.capacity.emergency_ref;}), color:col.amber},
+    {label:'إحالات روتينية', data:vals(function(w){return w.capacity.routine_ref;}), color:col.blue}
+  ],
+  {label:'نسبة إشغال الأسرة', data:vals(function(w){return w.capacity.bed_occ;}), color:col.green}
+);
   drawSVGBarChart('ch-pharm',lb,[{label:'\u062a\u0646\u0648\u064a\u0645',data:vals(function(w){return w.pharmacy.inpatient;}),color:col.blue},{label:'\u0639\u064a\u0627\u062f\u0627\u062a',data:vals(function(w){return w.pharmacy.clinics;}),color:col.purple},{label:'\u0637\u0648\u0627\u0631\u0626',data:vals(function(w){return w.pharmacy.emergency;}),color:col.amber}]);
   drawSVGBarChart('ch-screening',lb,[{label:'\u0641\u062d\u0635 \u0627\u0644\u062b\u062f\u064a',data:vals(function(w){return w.screening.breast;}),color:col.purple},{label:'\u0625\u064a\u062c\u0627\u0628\u064a \u062b\u062f\u064a',data:vals(function(w){return w.screening.breast_pos;}),color:col.red},{label:'\u0641\u062d\u0635 \u0627\u0644\u0642\u0648\u0644\u0648\u0646',data:vals(function(w){return w.screening.colon;}),color:col.teal},{label:'\u0625\u064a\u062c\u0627\u0628\u064a \u0642\u0648\u0644\u0648\u0646',data:vals(function(w){return w.screening.colon_pos;}),color:col.amber}]);
   drawSVGBarChart('ch-models',lb,[{label:'STEMI-Total',data:sv(function(w){return w.screening.stemi_total;}),color:col.purple},{label:'STEMI-Out',data:sv(function(w){return w.screening.stemi_out;}),color:col.amber},{label:'Stroke-Total',data:sv(function(w){return w.screening.stroke_total;}),color:col.blue},{label:'Stroke-Out',data:sv(function(w){return w.screening.stroke_out;}),color:col.red}]);
