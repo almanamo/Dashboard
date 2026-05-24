@@ -1099,7 +1099,10 @@ function buildFullHTML() {
 <div class="chart-card">
   <div class="chart-card-title">📊 No Show + النسبة</div>
   <div id="ch-noshow"></div>
-</div> 
+</div>
+
+<div> 
+</div>
     <div class="tbl-wrap"><table class="weeks-table"><thead><tr><th>العيادات</th>${wkHdrs()}</tr></thead><tbody>
       ${row('إجمالي المراجعين', function(w){return w.clinics.total;}, 'v-t')}
       ${row('مواعيد افتراضية', function(w){return w.clinics.virtual;}, 'v-b')}
