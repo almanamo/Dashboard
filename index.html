@@ -416,7 +416,7 @@ div:not(.chart-zoom):not(.tbl-wrap):not(.quick-nav) {
   <div class="topbar-actions">
     <div class="week-selector" id="weekSelector">
       <button class="week-btn" id="weekBtn" onclick="toggleWeekMenu(event)">
-        📅 <span id="weekBtnLabel">كل الأسابيع (11)</span>
+        📅 <span id="weekBtnLabel">كل الأسابيع (12)</span>
         <span class="caret">▾</span>
       </button>
       <div class="week-dropdown" id="weekDropdown">
@@ -429,7 +429,8 @@ div:not(.chart-zoom):not(.tbl-wrap):not(.quick-nav) {
         <div class="wk-opt" data-n="8"  onclick="setWeeks(8)">آخر 8 أسابيع <span class="wk-chk">✓</span></div>
         <div class="wk-opt" data-n="9"  onclick="setWeeks(9)">آخر 9 أسابيع <span class="wk-chk">✓</span></div>
         <div class="wk-opt" data-n="10"  onclick="setWeeks(10)">آخر 10 أسابيع <span class="wk-chk">✓</span></div>
-        <div class="wk-opt sel" data-n="11" onclick="setWeeks(11)">كل الأسابيع (11) <span class="wk-chk">✓</span></div>
+        <div class="wk-opt" data-n="11"  onclick="setWeeks(11)">آخر 11 أسبوع <span class="wk-chk">✓</span></div>
+        <div class="wk-opt sel" data-n="12" onclick="setWeeks(12)">كل الأسابيع (12) <span class="wk-chk">✓</span></div>
       </div>
     </div>
     <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">☀️ فاتح</button>
@@ -457,7 +458,7 @@ div:not(.chart-zoom):not(.tbl-wrap):not(.quick-nav) {
 
 <div class="footer">
   <div>🏥 المستشفى — لوحة الأداء الأسبوعية</div>
-  <div id="footer-txt">🔄 آخر تحديث: 14 يونيو 2026</div>
+  <div id="footer-txt">🔄 آخر تحديث: 21 يونيو 2026</div>
 </div>
 
 <script>
@@ -475,14 +476,14 @@ var WEEKS = [
   { label:"W8", dateRange:"17-23 May", quality:{se_mre:2,incident:23,good_catch:0}, emergency:{ctas12:16,ctas3:846,ctas45:2736}, surgery:{emergency:19,routine:53,waiting:23,cancelled:0,cancel_reason:"_"}, clinics:{total:3287,virtual:655,no_show:217,no_show_pct:6.6}, satisfaction:{all:87.07,ed:74.16,clinics:85.76,inpatient:85.15}, complaints:{closed:76,not_closed:0}, capacity:{inpatients:241,bed_occ:65,lifesaving:9,emergency_ref:13,routine_ref:38}, screening:{breast:27,breast_pos:0,colon:38,colon_pos:0,stemi_total:0,stemi_out:0,stroke_total:4,stroke_out:3}, pharmacy:{inpatient:1960,clinics:1250,emergency:3273}, home_care:{visits:36}, smoking:{inperson:12,virtual:3}, endoscopy:{appoint:18,procedures:9} },
   { label:"W9", dateRange:"24-30 May", quality:{se_mre:2,incident:19,good_catch:4}, emergency:{ctas12:13,ctas3:537,ctas45:2785}, surgery:{emergency:17,routine:36,waiting:30,cancelled:0,cancel_reason:"_"}, clinics:{total:1882,virtual:364,no_show:94,no_show_pct:11}, satisfaction:{all:86.97,ed:75.79,clinics:87.36,inpatient:85.15}, complaints:{closed:78,not_closed:0}, capacity:{inpatients:198,bed_occ:52,lifesaving:17,emergency_ref:15,routine_ref:19}, screening:{breast:8,breast_pos:0,colon:0,colon_pos:0,stemi_total:0,stemi_out:0,stroke_total:4,stroke_out:3}, pharmacy:{inpatient:1472,clinics:669,emergency:3209}, home_care:{visits:32}, smoking:{inperson:4,virtual:7}, endoscopy:{appoint:9,procedures:4} },
   { label:"W10", dateRange:"31May-6Jun", quality:{se_mre:0,incident:19,good_catch:1}, emergency:{ctas12:13,ctas3:431,ctas45:3316}, surgery:{emergency:9,routine:32,waiting:42,cancelled:1,cancel_reason:"Medical Indication"}, clinics:{total:2996,virtual:378,no_show:265,no_show_pct:15.7}, satisfaction:{all:"-",ed:79.62,clinics:87.08,inpatient:85.15}, complaints:{closed:89,not_closed:0}, capacity:{inpatients:235,bed_occ:61,lifesaving:5,emergency_ref:9,routine_ref:27}, screening:{breast:15,breast_pos:1,colon:23,colon_pos:0,stemi_total:0,stemi_out:0,stroke_total:1,stroke_out:0}, pharmacy:{inpatient:1867,clinics:1138,emergency:3701}, home_care:{visits:28}, smoking:{inperson:7,virtual:7}, endoscopy:{appoint:8,procedures:10} },
-  { label:"W11", dateRange:"Jun 7-13", quality:{se_mre:0,incident:31,good_catch:0}, emergency:{ctas12:16,ctas3:474,ctas45:2818}, surgery:{emergency:17,routine:59,waiting:40,cancelled:1,cancel_reason:"Anasthesia"}, clinics:{total:3359,virtual:619,no_show:216,no_show_pct:11}, satisfaction:{all:81.69,ed:76.34,clinics:85.88,inpatient:85.15}, complaints:{closed:86,not_closed:0}, capacity:{inpatients:280,bed_occ:70,lifesaving:13,emergency_ref:17,routine_ref:45}, screening:{breast:53,breast_pos:0,colon:54,colon_pos:0,stemi_total:0,stemi_out:0,stroke_total:1,stroke_out:1}, pharmacy:{inpatient:4489,clinics:1262,emergency:3105}, home_care:{visits:40}, smoking:{inperson:6,virtual:5}, endoscopy:{appoint:18,procedures:13} }
-  
+  { label:"W11", dateRange:"Jun 7-13", quality:{se_mre:0,incident:31,good_catch:0}, emergency:{ctas12:16,ctas3:474,ctas45:2818}, surgery:{emergency:17,routine:59,waiting:40,cancelled:1,cancel_reason:"Anasthesia"}, clinics:{total:3359,virtual:619,no_show:216,no_show_pct:11}, satisfaction:{all:81.69,ed:76.34,clinics:85.88,inpatient:85.15}, complaints:{closed:86,not_closed:0}, capacity:{inpatients:280,bed_occ:70,lifesaving:13,emergency_ref:17,routine_ref:45}, screening:{breast:53,breast_pos:0,colon:54,colon_pos:0,stemi_total:0,stemi_out:0,stroke_total:1,stroke_out:1}, pharmacy:{inpatient:4489,clinics:1262,emergency:3105}, home_care:{visits:40}, smoking:{inperson:6,virtual:5}, endoscopy:{appoint:18,procedures:13} },
+  { label:"W12", dateRange:"Jun 14-20", quality:{se_mre:0,incident:39,good_catch:3}, emergency:{ctas12:19,ctas3:449,ctas45:2528}, surgery:{emergency:10,routine:62,waiting:30,cancelled:5,cancel_reason:"No Show, 4 Medical Indications"}, clinics:{total:3486,virtual:670,no_show:104,no_show_pct:5}, satisfaction:{all:87.25,ed:78.17,clinics:88.01,inpatient:85.15}, complaints:{closed:90,not_closed:0}, capacity:{inpatients:245,bed_occ:62,lifesaving:11,emergency_ref:18,routine_ref:43}, screening:{breast:38,breast_pos:2,colon:83,colon_pos:3,stemi_total:1,stemi_out:0,stroke_total:2,stroke_out:0}, pharmacy:{inpatient:4113,clinics:1338,emergency:2747}, home_care:{visits:41}, smoking:{inperson:6,virtual:5}, endoscopy:{appoint:21,procedures:20} }  
 ];
 
 var LW           = WEEKS[WEEKS.length - 1];
 var PW           = WEEKS.length >= 2 ? WEEKS[WEEKS.length - 2] : null; /* الأسبوع السابق للمقارنة */
 var isLight      = false;
-var visibleCount = 11;
+var visibleCount = 12;
 
 /* ════ مساعدات ════ */
 function getVisibleWeeks() { return WEEKS.slice(Math.max(0, WEEKS.length - visibleCount)); }
