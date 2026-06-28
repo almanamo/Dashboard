@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
+<title>لوحة الأداء — المستشفى</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050e1a;--bg2:#081420;--card:#0c1e30;--card2:#0f2438;
+  --border:rgba(20,55,90,0.6);--border2:rgba(35,80,130,0.7);--border-hi:rgba(77,184,255,0.12);
+  --txt:#ddeeff;--txt-dim:#7aabcc;--muted:#3d6e90;
+  --red:#ff5f6b;--amber:#f9c74f;--green:#3dd68c;--teal:#2de0d4;--blue:#4db8ff;--purple:#b197fc;
+  --font:'IBM Plex Sans Arabic','Segoe UI',Tahoma,Arial,sans-serif;
+  --top-h:54px;--nav-h:52px;
+}
+body.light{
+  --bg:#f0f5fb;--bg2:#e4eef7;--card:#ffffff;--card2:#f7fafd;
+  --border:rgba(160,195,230,0.7);--border2:rgba(110,160,210,0.75);--border-hi:rgba(77,184,255,0.2);
+  --txt:#0a1825;--txt-dim:#1e3d58;--muted:#2f5a7a;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{overflow-y:auto!important;height:auto;min-height:100vh;}
+body{font-family:var(--font);background:var(--bg);color:var(--txt);direction:rtl;transition:background .3s,color .3s;padding-top:calc(var(--top-h) + var(--nav-h));-webkit-overflow-scrolling:touch;}
+::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+*{scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
+
+.topbar{position:fixed;top:0;left:0;right:0;z-index:1001;height:var(--top-h);background:rgba(5,14,26,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border-hi);padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+body.light .topbar{background:rgba(220,232,245,.96);}
+.topbar-info{min-width:0;flex:1;overflow:hidden;}
+.topbar-title{font-size:13px;font-weight:700;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:7px;}
+.topbar-dot{width:7px;height:7px;border-radius:50%;background:var(--blue);flex-shrink:0;box-shadow:0 0 8px var(--blue);animation:pulse 2.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+.topbar-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+.topbar-actions{display:flex;gap:7px;align-items:center;flex-shrink:0;}
+.icon-btn{background:var(--card);border:1px solid var(--border2);color:var(--muted);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:all .2s;flex-shrink:0;}
+.icon-btn:hover{border-color:var(--blue);color:var(--blue);background:rgba(77,184,255,.08);}
+.week-selector{position:relative;}
+.week-btn{display:flex;align-items:center;gap:5px;background:rgba(77,184,255,.08);border:1px solid rgba(77,184,255,.28);color:var(--blue);padding:6px 13px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .2s;white-space:nowrap;}
+.week-btn:hover{background:rgba(77,184,255,.14);}
+.caret{font-size:8px;opacity:.6;transition:transform .2s;}.week-btn.open .caret{transform:rotate(180deg);}
+.week-dropdown{position:absolute;top:calc(100% + 7px);left:0;min-width:180px;background:var(--card2);border:1px solid var(--border2);border-radius:10px;overflow:hidden;z-index:2000;box-shadow:0 16px 40px rgba(0,0,0,.6);opacity:0;transform:translateY(-6px) scale(.97);pointer-events:none;transition:opacity .16s,transform .16s;}
+.week-dropdown.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+.wk-opt{padding:10px 15px;font-size:12px;cursor:pointer;color:var(--txt-dim);display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid var(--border);transition:background .13s;}
+.wk-opt:last-child{border-bottom:none;}.wk-opt:hover{background:rgba(77,184,255,.07);color:var(--txt);}
+.wk-opt.sel{color:var(--blue);background:rgba(77,184,255,.09);font-weight:600;}
+.wk-opt .wk-chk{opacity:0;transition:opacity .13s;font-size:10px;}.wk-opt.sel .wk-chk{opacity:1;}
+
+.quick-nav{position:fixed;top:var(--top-h);left:0;right:0;z-index:999;height:var(--nav-h);background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:3px;overflow-x:auto;padding:0 12px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.quick-nav::-webkit-scrollbar{display:none;}
+.nav-item{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;cursor:pointer;white-space:nowrap;font-size:11px;font-weight:600;color:var(--muted);border:1px solid transparent;transition:all .2s;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
+.nav-item:hover{background:rgba(77,184,255,.07);color:var(--blue);}
+.nav-item.active{background:rgba(77,184,255,.12);color:var(--blue);border-color:rgba(77,184,255,.22);}
+
+.content{padding:14px 14px 30px;width:100%;max-width:1600px;margin:0 auto;}
+
+/* ── Panel Grid ── */
+.panel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:0;}
+.panel-grid .panel-wide{grid-column:span 2;}
+.panel-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:0;}
+.panel-grid-1{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:0;}
+
+/* ── Panel ── */
+.panel{background:var(--card);border:1px solid var(--border-hi);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .2s;scroll-margin-top:calc(var(--top-h) + var(--nav-h) + 8px);}
+.panel:hover{box-shadow:0 8px 30px rgba(0,0,0,.25);}
+.panel-hdr{display:flex;align-items:center;gap:9px;padding:13px 16px 11px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;}
+.panel-hdr:hover{background:rgba(77,184,255,.03);}
+.panel-emoji{font-size:15px;flex-shrink:0;}
+.panel-title{flex:1;font-size:12px;font-weight:700;color:var(--txt-dim);letter-spacing:.4px;}
+.panel-arrow{font-size:10px;color:var(--muted);opacity:.5;transition:transform .25s;flex-shrink:0;}
+.panel-hdr.collapsed .panel-arrow{transform:rotate(-90deg);}
+.panel-body{flex:1;padding:12px 14px 10px;overflow:hidden;transition:max-height .35s ease,opacity .28s ease,padding .3s ease;}
+.panel-body.collapsed{max-height:0!important;opacity:0;padding-top:0;padding-bottom:0;}
+
+/* ── KPI ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-bottom:10px;}
+.kpi{background:var(--card2);border:1px solid var(--border-hi);border-radius:9px;padding:11px 12px 9px;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s;}
+.kpi::before{content:'';position:absolute;top:0;right:0;left:0;height:2px;border-radius:9px 9px 0 0;background:var(--kpi-accent,transparent);}
+.kpi:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.28);}
+.kpi-label{color:var(--txt-dim);font-size:9.5px;font-weight:500;opacity:.8;line-height:1.4;}
+.kpi-row{display:flex;align-items:baseline;gap:6px;margin-top:5px;}
+.kpi-val{font-size:21px;font-weight:800;line-height:1;letter-spacing:-.5px;}
+.kpi-trend{font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;}
+.trend-up{color:var(--blue);background:rgba(77,184,255,.1);}.trend-dn{color:var(--muted);background:rgba(77,184,255,.06);}
+.v-r{color:var(--red);}.v-g{color:var(--green);}.v-a{color:var(--amber);}.v-t{color:var(--teal);}.v-b{color:var(--blue);}.v-p{color:var(--purple);}
+.kpi:has(.v-r){--kpi-accent:var(--red);}.kpi:has(.v-g){--kpi-accent:var(--green);}.kpi:has(.v-b){--kpi-accent:var(--blue);}.kpi:has(.v-t){--kpi-accent:var(--teal);}.kpi:has(.v-a){--kpi-accent:var(--amber);}.kpi:has(.v-p){--kpi-accent:var(--purple);}
+
+/* ── Detail Buttons ── */
+.detail-toggles{display:flex;gap:6px;flex-wrap:wrap;}
+.detail-btn{display:flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--border2);color:var(--muted);padding:5px 11px;border-radius:6px;font-size:10px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .2s;}
+.detail-btn:hover{border-color:var(--blue);color:var(--blue);background:rgba(77,184,255,.06);}
+.detail-btn.active{border-color:var(--blue);color:var(--blue);background:rgba(77,184,255,.1);}
+
+/*
+  ── Detail panels ──
+  على الجوال: تظهر مباشرة داخل البطاقة (inline-panel)
+  على سطح المكتب: تظهر كصف كامل أسفل الشبكة (detail-panel-row)
+*/
+.detail-panel-row{
+  grid-column:1/-1;
+  overflow:hidden;max-height:0;opacity:0;
+  transition:max-height .38s ease,opacity .28s ease;
+  background:var(--card);border:1px solid var(--border-hi);border-radius:12px;
+  margin-bottom:0;
+}
+.detail-panel-row.open{max-height:600px;opacity:1;margin-bottom:12px;}
+.detail-inner{padding:14px 16px;}
+.chart-title-sm{font-size:11px;font-weight:600;margin-bottom:12px;color:var(--txt-dim);display:flex;align-items:center;gap:6px;}
+
+/* ── الجوال: لوح التفاصيل يظهر داخل البطاقة مباشرة ── */
+.inline-panel{
+  display:none; /* مخفي على سطح المكتب */
+  overflow:hidden;max-height:0;opacity:0;
+  transition:max-height .38s ease,opacity .28s ease;
+  border-top:1px solid var(--border);
+  margin-top:10px;
+}
+.inline-panel.open{max-height:500px;opacity:1;}
+.inline-inner{padding:12px 14px;}
+
+@media(max-width:700px){
+  /* على الجوال: ألغِ شبكة الأعمدة، كل بطاقة في سطر كامل */
+  .panel-grid,.panel-grid-2{display:flex;flex-direction:column;gap:12px;}
+  .panel-grid .panel-wide{grid-column:unset;}
+  /* أخفِ الصفوف الخارجية (detail-panel-row) على الجوال */
+  .detail-panel-row{display:none!important;}
+  /* أظهر الألواح الداخلية (inline-panel) على الجوال */
+  .inline-panel{display:block;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .kpi-val{font-size:18px;}
+  .content{padding:10px 10px 24px;}
+  :root{--nav-h:48px;--top-h:50px;}
+}
+
+/* ── Chart ── */
+.chart-scroll{overflow-x:auto;overflow-y:hidden;touch-action:pan-x;-webkit-overflow-scrolling:touch;cursor:grab;width:100%;border-radius:6px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
+.chart-scroll::-webkit-scrollbar{height:3px;}.chart-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.chart-scroll:active{cursor:grabbing;}
+
+/* ── Table ── */
+.tbl-wrap{overflow-x:auto;border-radius:9px;border:1px solid var(--border);background:var(--card);-webkit-overflow-scrolling:touch;}
+table{width:100%;border-collapse:collapse;font-size:11.5px;}
+th{background:var(--bg2);color:var(--muted);font-weight:600;padding:8px 7px;border-bottom:1px solid var(--border2);text-align:center;font-size:10px;white-space:nowrap;}
+td{padding:7px 7px;border-bottom:1px solid var(--border);text-align:center;transition:background .12s;}
+tr:last-child td{border-bottom:none;}tbody tr:hover td{background:rgba(77,184,255,.04);}
+td:first-child,th:first-child{text-align:right;position:sticky;right:0;background:var(--card);font-weight:600;width:115px;min-width:95px;box-shadow:-2px 0 10px -2px rgba(0,0,0,.35);border-left:1px solid var(--border2);}
+th:first-child{background:var(--bg2);z-index:4;}td:first-child{z-index:2;}
+body.light td:first-child{background:#fff;}body.light th:first-child{background:var(--bg2);}
+.w-last{font-weight:700;color:var(--blue);}
+
+/* ── KPI Stats row ── */
+.kpi-stats{display:flex;gap:0;margin-top:6px;border-top:1px solid var(--border);padding-top:5px;}
+.kpi-stat{flex:1;text-align:center;}
+.kpi-stat-lbl{font-size:7.5px;color:var(--muted);opacity:.8;display:block;line-height:1.2;font-weight:600;letter-spacing:.3px;}
+.kpi-stat-val{font-size:9.5px;font-weight:700;color:var(--txt-dim);display:block;line-height:1.3;}
+.kpi-stat+.kpi-stat{border-right:1px solid var(--border);}
+/* Avg column — highlighted */
+.kpi-stat-avg{background:rgba(77,184,255,.06);border-radius:4px;}
+.kpi-stat-avg-val{color:var(--blue)!important;}
+
+/* ── Satisfaction dual-chart tabs ── */
+.sat-tab{
+  background:transparent;border:1px solid var(--border2);
+  color:var(--muted);padding:4px 11px;border-radius:6px;
+  font-size:10px;font-weight:600;cursor:pointer;font-family:var(--font);
+  transition:all .18s;margin-left:5px;
+}
+.sat-tab:hover{border-color:var(--blue);color:var(--blue);}
+.sat-tab.active{background:rgba(77,184,255,.12);border-color:var(--blue);color:var(--blue);}
+
+/* ── HTML Legend (outside SVG) ── */
+.chart-legend{
+  display:flex;flex-wrap:wrap;justify-content:flex-end;
+  gap:6px 16px;
+  padding:8px 2px 2px;
+  direction:ltr;  /* ltr so flex-end = visual right */
+}
+.leg-item{
+  display:flex;align-items:center;gap:5px;
+  font-size:11px;font-weight:500;color:var(--txt-dim);
+  white-space:nowrap;
+  direction:rtl;
+}
+.leg-icon{display:inline-block;flex-shrink:0;}
+.leg-ci{width:9px;height:9px;border-radius:50%;}
+.leg-sq{width:10px;height:10px;border-radius:2px;}
+.leg-lbl{line-height:1;}
+.zoom-modal{
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:rgba(2,8,16,.88);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  align-items:center;justify-content:center;
+  padding:16px;
+}
+.zoom-modal.open{display:flex;}
+.zoom-box{
+  background:var(--card);
+  border:1px solid var(--border2);
+  border-radius:16px;
+  width:min(96vw,1100px);
+  max-height:90vh;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  box-shadow:0 24px 80px rgba(0,0,0,.7);
+  animation:zoomIn .2s ease;
+}
+@keyframes zoomIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.zoom-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px 12px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.zoom-title{font-size:13px;font-weight:700;color:var(--txt-dim);}
+.zoom-close{
+  background:var(--card2);border:1px solid var(--border2);color:var(--muted);
+  width:30px;height:30px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;line-height:1;transition:all .18s;
+  flex-shrink:0;
+}
+.zoom-close:hover{border-color:var(--red);color:var(--red);background:rgba(255,95,107,.08);}
+.zoom-body{
+  flex:1;overflow:auto;padding:18px 20px 16px;
+  -webkit-overflow-scrolling:touch;
+}
+.zoom-chart-scroll{overflow-x:auto;width:100%;}
+
+/* zoom trigger button */
+.zoom-btn{
+  background:transparent;border:1px solid var(--border2);color:var(--muted);
+  padding:4px 9px;border-radius:6px;font-size:10px;cursor:pointer;
+  font-family:var(--font);transition:all .18s;
+  display:flex;align-items:center;gap:4px;
+}
+.zoom-btn:hover{border-color:var(--blue);color:var(--blue);background:rgba(77,184,255,.07);}
+.chart-title-sm{font-size:11px;font-weight:600;margin-bottom:12px;color:var(--txt-dim);display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.chart-title-sm-left{display:flex;align-items:center;gap:6px;}
+
+.footer{border-top:1px solid var(--border);padding:10px 16px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:5px;font-size:10px;color:var(--muted);background:var(--bg2);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.panel{animation:fadeUp .3s ease both;}
+
+/* grid-row wrapper for desktop detail panels */
+.grid-row-wrap{margin-bottom:12px;}
+.grid-row-wrap .panel-grid,.grid-row-wrap .panel-grid-2{margin-bottom:0;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-info">
+    <div class="topbar-title"><span class="topbar-dot"></span>تقرير الأداء الأسبوعي — المستشفى</div>
+    <div class="topbar-sub" id="topbar-sub">مقارنة أسابيع</div>
+  </div>
+  <div class="topbar-actions">
+    <div class="week-selector" id="weekSelector">
+      <button class="week-btn" id="weekBtn" onclick="toggleWeekMenu(event)">📅 <span id="weekBtnLabel">كل الأسابيع (12)</span><span class="caret">▾</span></button>
+      <div class="week-dropdown" id="weekDropdown">
+        <div class="wk-opt" data-n="2" onclick="setWeeks(2)">آخر أسبوعين <span class="wk-chk">✓</span></div>
+        <div class="wk-opt" data-n="3" onclick="setWeeks(3)">آخر 3 أسابيع <span class="wk-chk">✓</span></div>
+        <div class="wk-opt" data-n="4" onclick="setWeeks(4)">آخر 4 أسابيع <span class="wk-chk">✓</span></div>
+        <div class="wk-opt" data-n="5" onclick="setWeeks(5)">آخر 5 أسابيع <span class="wk-chk">✓</span></div>
+        <div class="wk-opt" data-n="6" onclick="setWeeks(6)">آخر 6 أسابيع <span class="wk-chk">✓</span></div>
+        <div class="wk-opt" data-n="7" onclick="setWeeks(7)">آخر 7 أسابيع <span class="wk-chk">✓</span></div>
+        <div class="wk-opt" data-n="8" onclick="setWeeks(8)">آخر 8 أسابيع <span class="wk-chk">✓</span></div>
+        <div class="wk-opt" data-n="9" onclick="setWeeks(9)">آخر 9 أسابيع <span class="wk-chk">✓</span></div>
+        <div class="wk-opt" data-n="10" onclick="setWeeks(10)">آخر 10 أسابيع <span class="wk-chk">✓</span></div>
+        <div class="wk-opt" data-n="11" onclick="setWeeks(11)">آخر 11 أسبوع <span class="wk-chk">✓</span></div>
+        <div class="wk-opt" data-n="12" onclick="setWeeks(12)">آخر 12 أسبوع <span class="wk-chk">✓</span></div>
+        <div class="wk-opt sel" data-n="13" onclick="setWeeks(13)">كل الأسابيع (13) <span class="wk-chk">✓</span></div>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="تبديل المظهر">🌙</button>
+  </div>
+</div>
+
+<div class="quick-nav">
+  <div class="nav-item active" onclick="navTo('sec-quality',this)">🛡️ الجودة</div>
+  <div class="nav-item" onclick="navTo('sec-emergency',this)">🚨 الطوارئ</div>
+  <div class="nav-item" onclick="navTo('sec-surgery',this)">✂️ الجراحة</div>
+  <div class="nav-item" onclick="navTo('sec-clinics',this)">🏥 العيادات</div>
+  <div class="nav-item" onclick="navTo('sec-satisfaction',this)">😊 الرضا</div>
+  <div class="nav-item" onclick="navTo('sec-capacity',this)">📋 الطاقة</div>
+  <div class="nav-item" onclick="navTo('sec-pharmacy',this)">💊 الصيدلية</div>
+  <div class="nav-item" onclick="navTo('sec-screening',this)">🔬 الفحوصات</div>
+  <div class="nav-item" onclick="navTo('sec-urgent',this)">🫀 العاجلة</div>
+  <div class="nav-item" onclick="navTo('sec-home',this)">🏠 المنزلية</div>
+  <div class="nav-item" onclick="navTo('sec-endo',this)">🔭 التنظير</div>
+</div>
+
+<div class="content" id="main-content"></div>
+<div class="footer">
+  <div>🏥 المستشفى — لوحة الأداء الأسبوعية</div>
+  <div>🔄 آخر تحديث: 28 يونيو 2026</div>
+</div>
+
+<script>
+var WEEKS=[
+  {label:"W1",dateRange:"4Mar-29Apr",quality:{se_mre:1,incident:22,good_catch:2},emergency:{ctas12:49,ctas3:496,ctas45:3256},surgery:{emergency:23,routine:41,waiting:34,cancelled:1,cancel_reason:"Medical Indication"},clinics:{total:2820,virtual:572,no_show:463,no_show_pct:16},satisfaction:{all:87.99,ed:81,clinics:88.83,inpatient:77.04},complaints:{closed:85,not_closed:0},capacity:{inpatients:221,bed_occ:63,lifesaving:13,emergency_ref:19,routine_ref:44},screening:{breast:43,breast_pos:0,colon:42,colon_pos:4,stemi_total:'-',stemi_out:'-',stroke_total:'-',stroke_out:'-'},pharmacy:{inpatient:2796,clinics:1207,emergency:3536},home_care:{visits:35},smoking:{inperson:6,virtual:2},endoscopy:{appoint:"-",procedures:"-"}},
+  {label:"W2",dateRange:"5-11Apr",quality:{se_mre:1,incident:31,good_catch:1},emergency:{ctas12:16,ctas3:549,ctas45:3147},surgery:{emergency:18,routine:56,waiting:39,cancelled:2,cancel_reason:"Medical Indication - No Show"},clinics:{total:2967,virtual:628,no_show:466,no_show_pct:15},satisfaction:{all:87.32,ed:73.08,clinics:82.74,inpatient:85.15},complaints:{closed:67,not_closed:0},capacity:{inpatients:227,bed_occ:61,lifesaving:13,emergency_ref:16,routine_ref:51},screening:{breast:42,breast_pos:0,colon:87,colon_pos:1,stemi_total:'-',stemi_out:'-',stroke_total:'-',stroke_out:'-'},pharmacy:{inpatient:4400,clinics:1145,emergency:3438},home_care:{visits:37},smoking:{inperson:5,virtual:4},endoscopy:{appoint:"-",procedures:"-"}},
+  {label:"W3",dateRange:"12-18Apr",quality:{se_mre:0,incident:20,good_catch:1},emergency:{ctas12:14,ctas3:427,ctas45:3212},surgery:{emergency:15,routine:49,waiting:46,cancelled:1,cancel_reason:"No Show"},clinics:{total:3181,virtual:683,no_show:390,no_show_pct:12},satisfaction:{all:86.44,ed:72.07,clinics:86.17,inpatient:85.15},complaints:{closed:59,not_closed:0},capacity:{inpatients:230,bed_occ:61,lifesaving:10,emergency_ref:9,routine_ref:55},screening:{breast:52,breast_pos:2,colon:64,colon_pos:1,stemi_total:'-',stemi_out:'-',stroke_total:'-',stroke_out:'-'},pharmacy:{inpatient:4539,clinics:1178,emergency:3456},home_care:{visits:39},smoking:{inperson:10,virtual:3},endoscopy:{appoint:"-",procedures:"-"}},
+  {label:"W4",dateRange:"19-25Apr",quality:{se_mre:1,incident:25,good_catch:3},emergency:{ctas12:15,ctas3:437,ctas45:2866},surgery:{emergency:12,routine:64,waiting:43,cancelled:2,cancel_reason:"Medical Indication - No Show"},clinics:{total:3389,virtual:731,no_show:442,no_show_pct:13},satisfaction:{all:86.75,ed:75.55,clinics:82.55,inpatient:85.15},complaints:{closed:65,not_closed:0},capacity:{inpatients:221,bed_occ:60,lifesaving:7,emergency_ref:11,routine_ref:50},screening:{breast:67,breast_pos:0,colon:55,colon_pos:2,stemi_total:'-',stemi_out:'-',stroke_total:'-',stroke_out:'-'},pharmacy:{inpatient:4400,clinics:1314,emergency:3182},home_care:{visits:37},smoking:{inperson:4,virtual:4},endoscopy:{appoint:"-",procedures:"-"}},
+  {label:"W5",dateRange:"26Apr-3May",quality:{se_mre:0,incident:34,good_catch:1},emergency:{ctas12:18,ctas3:399,ctas45:3056},surgery:{emergency:21,routine:54,waiting:48,cancelled:2,cancel_reason:"Medical Indication - No Show"},clinics:{total:3453,virtual:717,no_show:525,no_show_pct:15},satisfaction:{all:86.74,ed:75.21,clinics:86.58,inpatient:85.15},complaints:{closed:82,not_closed:0},capacity:{inpatients:224,bed_occ:64,lifesaving:10,emergency_ref:10,routine_ref:62},screening:{breast:65,breast_pos:0,colon:50,colon_pos:2,stemi_total:1,stemi_out:0,stroke_total:3,stroke_out:0},pharmacy:{inpatient:2982,clinics:1281,emergency:3272},home_care:{visits:38},smoking:{inperson:10,virtual:6},endoscopy:{appoint:0,procedures:0}},
+  {label:"W6",dateRange:"3-9May",quality:{se_mre:0,incident:37,good_catch:2},emergency:{ctas12:18,ctas3:446,ctas45:3216},surgery:{emergency:14,routine:77,waiting:44,cancelled:1,cancel_reason:"No Show"},clinics:{total:3249,virtual:649,no_show:340,no_show_pct:10.46},satisfaction:{all:86.89,ed:74.92,clinics:87.10,inpatient:85.15},complaints:{closed:69,not_closed:0},capacity:{inpatients:267,bed_occ:68,lifesaving:14,emergency_ref:14,routine_ref:47},screening:{breast:46,breast_pos:1,colon:57,colon_pos:0,stemi_total:2,stemi_out:2,stroke_total:5,stroke_out:3},pharmacy:{inpatient:2548,clinics:1306,emergency:3246},home_care:{visits:39},smoking:{inperson:8,virtual:2},endoscopy:{appoint:14,procedures:16}},
+  {label:"W7",dateRange:"10-16May",quality:{se_mre:1,incident:33,good_catch:1},emergency:{ctas12:13,ctas3:429,ctas45:2744},surgery:{emergency:13,routine:59,waiting:52,cancelled:1,cancel_reason:"No Show"},clinics:{total:3383,virtual:661,no_show:376,no_show_pct:10},satisfaction:{all:86.95,ed:74.92,clinics:87.47,inpatient:85.15},complaints:{closed:70,not_closed:0},capacity:{inpatients:269,bed_occ:65,lifesaving:9,emergency_ref:12,routine_ref:50},screening:{breast:45,breast_pos:0,colon:48,colon_pos:2,stemi_total:1,stemi_out:1,stroke_total:7,stroke_out:3},pharmacy:{inpatient:4068,clinics:1340,emergency:3422},home_care:{visits:38},smoking:{inperson:9,virtual:8},endoscopy:{appoint:13,procedures:12}},
+  {label:"W8",dateRange:"17-23May",quality:{se_mre:2,incident:23,good_catch:0},emergency:{ctas12:16,ctas3:846,ctas45:2736},surgery:{emergency:19,routine:53,waiting:23,cancelled:0,cancel_reason:"—"},clinics:{total:3287,virtual:655,no_show:217,no_show_pct:6.6},satisfaction:{all:87.07,ed:74.16,clinics:85.76,inpatient:85.15},complaints:{closed:76,not_closed:0},capacity:{inpatients:241,bed_occ:65,lifesaving:9,emergency_ref:13,routine_ref:38},screening:{breast:27,breast_pos:0,colon:38,colon_pos:0,stemi_total:0,stemi_out:0,stroke_total:4,stroke_out:3},pharmacy:{inpatient:1960,clinics:1250,emergency:3273},home_care:{visits:36},smoking:{inperson:12,virtual:3},endoscopy:{appoint:18,procedures:9}},
+  {label:"W9",dateRange:"24-30May",quality:{se_mre:2,incident:19,good_catch:4},emergency:{ctas12:13,ctas3:537,ctas45:2785},surgery:{emergency:17,routine:36,waiting:30,cancelled:0,cancel_reason:"—"},clinics:{total:1882,virtual:364,no_show:94,no_show_pct:11},satisfaction:{all:86.97,ed:75.79,clinics:87.36,inpatient:85.15},complaints:{closed:78,not_closed:0},capacity:{inpatients:198,bed_occ:52,lifesaving:17,emergency_ref:15,routine_ref:19},screening:{breast:8,breast_pos:0,colon:0,colon_pos:0,stemi_total:0,stemi_out:0,stroke_total:4,stroke_out:3},pharmacy:{inpatient:1472,clinics:669,emergency:3209},home_care:{visits:32},smoking:{inperson:4,virtual:7},endoscopy:{appoint:9,procedures:4}},
+  {label:"W10",dateRange:"31May-6Jun",quality:{se_mre:0,incident:19,good_catch:1},emergency:{ctas12:13,ctas3:431,ctas45:3316},surgery:{emergency:9,routine:32,waiting:42,cancelled:1,cancel_reason:"Medical Indication"},clinics:{total:2996,virtual:378,no_show:265,no_show_pct:15.7},satisfaction:{all:null,ed:79.62,clinics:87.08,inpatient:85.15},complaints:{closed:89,not_closed:0},capacity:{inpatients:235,bed_occ:61,lifesaving:5,emergency_ref:9,routine_ref:27},screening:{breast:15,breast_pos:1,colon:23,colon_pos:0,stemi_total:0,stemi_out:0,stroke_total:1,stroke_out:0},pharmacy:{inpatient:1867,clinics:1138,emergency:3701},home_care:{visits:28},smoking:{inperson:7,virtual:7},endoscopy:{appoint:8,procedures:10}},
+  {label:"W11",dateRange:"Jun7-13",quality:{se_mre:0,incident:31,good_catch:0},emergency:{ctas12:16,ctas3:474,ctas45:2818},surgery:{emergency:17,routine:59,waiting:40,cancelled:1,cancel_reason:"Anasthesia"},clinics:{total:3359,virtual:619,no_show:216,no_show_pct:11},satisfaction:{all:81.69,ed:76.34,clinics:85.88,inpatient:85.15},complaints:{closed:86,not_closed:0},capacity:{inpatients:280,bed_occ:70,lifesaving:13,emergency_ref:17,routine_ref:45},screening:{breast:53,breast_pos:0,colon:54,colon_pos:0,stemi_total:0,stemi_out:0,stroke_total:1,stroke_out:1},pharmacy:{inpatient:4489,clinics:1262,emergency:3105},home_care:{visits:40},smoking:{inperson:6,virtual:5},endoscopy:{appoint:18,procedures:13}},
+  {label:"W12",dateRange:"Jun14-20",quality:{se_mre:0,incident:39,good_catch:3},emergency:{ctas12:19,ctas3:449,ctas45:2528},surgery:{emergency:10,routine:62,waiting:30,cancelled:5,cancel_reason:"No Show+4 Med.Ind."},clinics:{total:3486,virtual:670,no_show:104,no_show_pct:5},satisfaction:{all:87.25,ed:78.17,clinics:88.01,inpatient:85.15},complaints:{closed:90,not_closed:0},capacity:{inpatients:245,bed_occ:62,lifesaving:11,emergency_ref:18,routine_ref:43},screening:{breast:38,breast_pos:2,colon:83,colon_pos:3,stemi_total:1,stemi_out:0,stroke_total:2,stroke_out:0},pharmacy:{inpatient:4113,clinics:1338,emergency:2747},home_care:{visits:41},smoking:{inperson:6,virtual:5},endoscopy:{appoint:21,procedures:20}},
+  { label:"W13", dateRange:"Jun 21-27", quality:{se_mre:2,incident:19,good_catch:7}, emergency:{ctas12:18,ctas3:453,ctas45:2584}, surgery:{emergency:18,routine:44,waiting:35,cancelled:0,cancel_reason:"_"}, clinics:{total:3264,virtual:676,no_show:181,no_show_pct:9}, satisfaction:{all:87.36,ed:78.42,clinics:87.86,inpatient:85.15}, complaints:{closed:105,not_closed:0}, capacity:{inpatients:240,bed_occ:68,lifesaving:11,emergency_ref:22,routine_ref:67}, screening:{breast:29,breast_pos:0,colon:58,colon_pos:2,stemi_total:1,stemi_out:0,stroke_total:1,stroke_out:0}, pharmacy:{inpatient:4141,clinics:1301,emergency:2879}, home_care:{visits:39}, smoking:{inperson:6,virtual:0}, endoscopy:{appoint:20,procedures:21} }
+];
+var LW=WEEKS[WEEKS.length-1],PW=WEEKS.length>=2?WEEKS[WEEKS.length-2]:null;
+var isLight=false,visibleCount=12;
+
+function getVW(){return WEEKS.slice(Math.max(0,WEEKS.length-visibleCount));}
+function labels(){return getVW().map(function(w){return w.label;});}
+function vals(fn){return getVW().map(fn);}
+function sv(fn){return vals(function(w){var v=fn(w);return(v==='-'||v==='—'||v===null||v==='_')?0:+v||0;});}
+
+var WK_LABELS = {2:'آخر أسبوعين',3:'آخر 3 أسابيع',4:'آخر 4 أسابيع',5:'آخر 5 أسابيع',6:'آخر 6 أسابيع',7:'آخر 7 أسابيع',8:'آخر 8 أسابيع',9:'آخر 9 أسابيع',10:'آخر 10 أسابيع',11:'آخر 11 أسبوع',10:'آخر 12 أسبوع',13:'كل الأسابيع (13)'};
+function toggleWeekMenu(e){e.stopPropagation();var dd=document.getElementById('weekDropdown'),btn=document.getElementById('weekBtn');dd.classList.toggle('open',!dd.classList.contains('open'));btn.classList.toggle('open',!btn.classList.contains('open'));}
+function setWeeks(n){visibleCount=n;document.querySelectorAll('.wk-opt').forEach(function(o){o.classList.toggle('sel',parseInt(o.getAttribute('data-n'))===n);});document.getElementById('weekBtnLabel').textContent=WK_LABELS[n]||n+' أسابيع';document.getElementById('weekDropdown').classList.remove('open');document.getElementById('weekBtn').classList.remove('open');init();}
+document.addEventListener('click',function(e){var s=document.getElementById('weekSelector');if(s&&!s.contains(e.target)){document.getElementById('weekDropdown').classList.remove('open');document.getElementById('weekBtn').classList.remove('open');}});
+
+function togglePanel(hdr){var c=hdr.classList.toggle('collapsed');var b=hdr.nextElementSibling;if(b&&b.classList.contains('panel-body'))b.classList.toggle('collapsed',c);}
+
+/* Toggle detail — desktop: detail-panel-row, mobile: inline-panel */
+function toggleDetail(btnEl,desktopId,mobileId){
+  var isMobile=window.innerWidth<=700;
+  var targetId=isMobile?(mobileId||desktopId):desktopId;
+  var panel=document.getElementById(targetId);
+  if(!panel)return;
+  var isOpen=panel.classList.contains('open');
+
+  /* close siblings */
+  if(isMobile){
+    /* close all inline panels in the same panel-body */
+    var pb=btnEl.closest('.panel-body');
+    if(pb)pb.querySelectorAll('.inline-panel').forEach(function(p){p.classList.remove('open');});
+    var pg=btnEl.closest('.panel-grid,.panel-grid-2,.panel-grid-1');
+    if(pg)pg.querySelectorAll('.detail-btn').forEach(function(b){b.classList.remove('active');});
+  } else {
+    var gridRow=btnEl.closest('.panel-grid,.panel-grid-2,.panel-grid-1');
+    if(gridRow){
+      var sib=gridRow.parentNode.querySelectorAll('.detail-panel-row');
+      sib.forEach(function(p){p.classList.remove('open');});
+      gridRow.querySelectorAll('.detail-btn').forEach(function(b){b.classList.remove('active');});
+    }
+  }
+
+  if(!isOpen){
+    panel.classList.add('open');
+    btnEl.classList.add('active');
+    var chartDiv=panel.querySelector('[data-chart]');
+    if(chartDiv&&!chartDiv.dataset.built){chartDiv.dataset.built='1';buildChartById(chartDiv.id,chartDiv.dataset.chart);}
+  }
+}
+
+function navTo(id,el){
+  setTimeout(function(){
+    var e=document.getElementById(id);if(!e)return;
+    /* scroll the element into view respecting fixed header */
+    var th=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--top-h'))||54;
+    var nh=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'))||52;
+    var off=e.getBoundingClientRect().top+window.pageYOffset-(th+nh+8);
+    window.scrollTo({top:off,behavior:'smooth'});
+  },30);
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});if(el)el.classList.add('active');
+}
+function toggleTheme(){isLight=!isLight;document.body.classList.toggle('light',isLight);document.getElementById('themeBtn').textContent=isLight?'🌙':'☀️';init();}
+function getColors(){var s=getComputedStyle(document.body);function v(n,f){return s.getPropertyValue(n).trim()||f;}return{muted:v('--muted','#3d6e90'),red:v('--red','#ff5f6b'),amber:v('--amber','#f9c74f'),green:v('--green','#3dd68c'),teal:v('--teal','#2de0d4'),blue:v('--blue','#4db8ff'),purple:v('--purple','#b197fc')};}
+
+/* compute stats for a numeric data-extractor over visible weeks, optionally starting from a week label */
+function stat(fn, fromLabel){
+  var vw=getVW();
+  if(fromLabel){
+    var idx=0;
+    for(var i=0;i<vw.length;i++){if(vw[i].label===fromLabel){idx=i;break;}}
+    vw=vw.slice(idx);
+  }
+  var nums=vw.map(fn).filter(function(v){return v!==null&&v!==undefined&&!isNaN(+v)&&v!=='-'&&v!=='—'&&v!=='_';}).map(Number);
+  if(!nums.length)return{avg:'-',mn:'-',mx:'-'};
+  var sum=nums.reduce(function(a,b){return a+b;},0);
+  var avg=sum/nums.length;
+  var mn=Math.min.apply(null,nums),mx=Math.max.apply(null,nums);
+  function fmt(v){return v===Math.round(v)?String(Math.round(v)):(Math.round(v*10)/10).toFixed(1);}
+  return{avg:fmt(avg),mn:fmt(mn),mx:fmt(mx)};
+}
+
+function kpiStats(fn, fromLabel){
+  var s=stat(fn, fromLabel);
+  return '<div class="kpi-stats">'
+    +'<div class="kpi-stat"><span class="kpi-stat-lbl">Min</span><span class="kpi-stat-val">'+s.mn+'</span></div>'
+    +'<div class="kpi-stat kpi-stat-avg"><span class="kpi-stat-lbl">Avg</span><span class="kpi-stat-val kpi-stat-avg-val">'+s.avg+'</span></div>'
+    +'<div class="kpi-stat"><span class="kpi-stat-lbl">Max</span><span class="kpi-stat-val">'+s.mx+'</span></div>'
+    +'</div>';
+}
+
+function kpi(label,val,cls,curr,prev,statFn,statFrom){
+  var trend='';
+  if(curr!==undefined&&prev!==undefined&&typeof curr==='number'&&typeof prev==='number'){var d=Math.round((curr-prev)*10)/10;if(d!==0){var sym=d>0?'▲':'▼';trend='<span class="kpi-trend '+(d>0?'trend-up':'trend-dn')+'">'+sym+Math.abs(d)+'</span>';}}
+  var stats=statFn?kpiStats(statFn,statFrom):'';
+  return '<div class="kpi"><div class="kpi-label">'+label+'</div><div class="kpi-row"><span class="kpi-val '+(cls||'')+'">'+val+'</span>'+trend+'</div>'+stats+'</div>';
+}
+function tblMinW(){return(115+getVW().length*72)+'px';}
+function wkHdrs(){return getVW().slice().reverse().map(function(w,i){var c=i===0?'w-last':'';return'<th class="'+c+'">'+w.label+'<br><span style="font-size:8px;font-weight:400;opacity:.6">'+w.dateRange+'</span></th>';}).join('');}
+function row(lbl,fn,cls){cls=cls||'';var cells=getVW().slice().reverse().map(function(w,i){var v=fn(w),wc=i===0?'w-last':'';return'<td class="'+cls+' '+wc+'">'+(typeof v==='number'?String(v):v)+'</td>';}).join('');return'<tr><td style="text-align:right">'+lbl+'</td>'+cells+'</tr>';}
+function rowRaw(lbl,fn,cls){cls=cls||'';var cells=getVW().slice().reverse().map(function(w,i){return'<td class="'+cls+' '+(i===0?'w-last':'')+'">'+fn(w)+'</td>';}).join('');return'<tr><td style="text-align:right">'+lbl+'</td>'+cells+'</tr>';}
+function tbl(header,rows){return'<div class="tbl-wrap"><table style="min-width:'+tblMinW()+'"><thead><tr><th>'+header+'</th>'+wkHdrs()+'</tr></thead><tbody>'+rows+'</tbody></table></div>';}
+
+/* ═══════════════════════════════════════════════════
+   COMBO SVG CHART ENGINE
+   Supports: line, bar, dashed-line, dual Y axis
+═══════════════════════════════════════════════════ */
+var CHART_DEFS={};
+function registerChart(type,fn){CHART_DEFS[type]=fn;}
+function buildChartById(id,type){
+  var def=CHART_DEFS[type];if(!def)return;
+  var lb=labels(),col=getColors();
+  var result=def(col);
+  var datasets=result.datasets||result;
+  var opts=result.opts||datasets.__opts||{};
+  mountChart(id,makeComboSVG(lb,datasets,opts),type);
+}
+function buildHtmlLegend(datasets){
+  var html='<div class="chart-legend">';
+  datasets.forEach(function(ds){
+    var isBar=ds.type==='bar';
+    var icon=isBar
+      ? '<span class="leg-icon leg-sq" style="background:'+ds.color+'"></span>'
+      : '<span class="leg-icon leg-ci" style="background:'+ds.color+'"></span>';
+    html+='<span class="leg-item">'+icon+'<span class="leg-lbl">'+ds.label+'</span></span>';
+  });
+  html+='</div>';
+  return html;
+}
+
+function mountChart(id,svg,chartType){
+  var c=document.getElementById(id);if(!c)return;
+  c.innerHTML='';
+  var s=document.createElement('div');s.className='chart-scroll';s.appendChild(svg);c.appendChild(s);
+  /* HTML legend below chart */
+  var datasets=svg._datasets||[];
+  if(datasets.length){
+    var legDiv=document.createElement('div');
+    legDiv.innerHTML=buildHtmlLegend(datasets);
+    c.appendChild(legDiv.firstChild);
+  }
+  s.addEventListener('mousedown',function(){s.style.cursor='grabbing';});
+  document.addEventListener('mouseup',function(){s.style.cursor='grab';});
+  c.dataset.chartType=chartType||'';
+}
+
+/* ── Zoom functions ── */
+function openZoom(chartType,title){
+  var def=CHART_DEFS[chartType];if(!def)return;
+  var lb=labels(),col=getColors();
+  var result=def(col);
+  var datasets=result.datasets||result;
+  var opts=Object.assign({},result.opts||datasets.__opts||{});
+  /* render taller & wider for modal */
+  opts.H=420;
+  var svg=makeComboSVG(lb,datasets,opts);
+  /* force viewBox width to fill modal */
+  var vbW=parseInt(svg.getAttribute('width'))||700;
+  var zoomed=Math.max(vbW,Math.min(window.innerWidth*0.88,1060));
+  /* scale SVG to fill available width while keeping proportions */
+  var scl=zoomed/vbW;
+  svg.setAttribute('width',Math.round(vbW*scl));
+  svg.setAttribute('height',Math.round(opts.H*scl));
+  svg.setAttribute('viewBox','0 0 '+vbW+' '+opts.H);
+
+  var cont=document.getElementById('zoomChartContainer');
+  cont.innerHTML='';
+  cont.appendChild(svg);
+  /* HTML legend in zoom modal too */
+  if(datasets.length){
+    var zLegDiv=document.createElement('div');
+    zLegDiv.innerHTML=buildHtmlLegend(datasets);
+    cont.appendChild(zLegDiv.firstChild);
+  }
+  document.getElementById('zoomTitle').textContent='📈 '+title;
+  var modal=document.getElementById('zoomModal');
+  modal.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeZoom(e){
+  if(e&&e.target&&e.target!==document.getElementById('zoomModal'))return;
+  document.getElementById('zoomModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+/* close on Escape */
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeZoom({});});
+
+function makeComboSVG(lbls,datasets,opts){
+  opts=opts||{};
+  var ns='http://www.w3.org/2000/svg',n=lbls.length;
+  var col=getColors();
+  var H=opts.H||270;
+  var legH=0;  /* legend is HTML, not SVG */
+  /* margins: right = Y-axis labels, left = secondary Y (if any) */
+  var hasDualY=datasets.some(function(d){return d.yAxis==='right';});
+  var MR=hasDualY?46:40; /* right margin — primary Y labels here */
+  var ML=hasDualY?46:10; /* left margin — secondary Y labels if dual */
+  var MT=16,MB=18;
+  var minW=Math.max(360,n*72+ML+MR+20);
+  var W=minW;
+  var cTop=MT,cBot=H-legH-MB;
+  var cLeft=ML,cRight=W-MR,cW=cRight-cLeft,cH=cBot-cTop;
+
+  /* compute Y scales */
+  function yRange(axis){
+    var vs=[];
+    datasets.forEach(function(d){if((d.yAxis||'primary')===axis){vs=vs.concat(d.data.map(function(v){return isNaN(+v)?0:+v;}));}});
+    if(!vs.length)return{min:0,max:1};
+    var mx=Math.max.apply(null,vs),mn=opts.minV!==undefined&&axis==='primary'?opts.minV:0;
+    if(opts.isPercent&&axis==='primary'){mn=opts.minV||60;mx=opts.maxV||100;}
+    if(axis==='right'){mn=0;mx=opts.rightMaxV||Math.max(mx*1.2,1);}
+    else{mx=opts.maxV||(mx*1.15)||1;}
+    return{min:mn,max:mx};
+  }
+  var scP=yRange('primary'),scR=yRange('right');
+
+  function toY(v,axis){
+    var sc=(axis||'primary')==='primary'?scP:scR;
+    var num=isNaN(+v)?0:+v;
+    var ratio=sc.max>sc.min?(num-sc.min)/(sc.max-sc.min):0;
+    return cBot-ratio*cH;
+  }
+
+  var svg=document.createElementNS(ns,'svg');
+  svg.setAttribute('width',W);svg.setAttribute('height',H);
+  svg.setAttribute('viewBox','0 0 '+W+' '+H);
+
+  /* Grid + PRIMARY Y labels (right side) */
+  var steps=5;
+  for(var s=0;s<=steps;s++){
+    var gy=cBot-(s/steps)*cH;
+    var gl=document.createElementNS(ns,'line');
+    gl.setAttribute('x1',cLeft);gl.setAttribute('y1',gy);gl.setAttribute('x2',cRight);gl.setAttribute('y2',gy);
+    gl.setAttribute('stroke',s===0?(isLight?'rgba(60,100,140,.3)':'rgba(255,255,255,.12)'):(isLight?'rgba(60,100,140,.07)':'rgba(255,255,255,.04)'));
+    gl.setAttribute('stroke-width','1');svg.appendChild(gl);
+    /* primary Y — on the RIGHT */
+    var lv=scP.min+(s/steps)*(scP.max-scP.min);
+    var lt=document.createElementNS(ns,'text');
+    lt.setAttribute('x',cRight+4);lt.setAttribute('y',gy+3.5);
+    lt.setAttribute('text-anchor','start');lt.setAttribute('font-size','8');
+    lt.setAttribute('fill',col.muted);lt.setAttribute('opacity','.75');
+    lt.textContent=opts.isPercent?Math.round(lv)+'%':(lv>=1000?(lv/1000).toFixed(1)+'k':Math.round(lv));
+    svg.appendChild(lt);
+    /* secondary Y — on the LEFT */
+    if(hasDualY){
+      var lv2=scR.min+(s/steps)*(scR.max-scR.min);
+      var lt2=document.createElementNS(ns,'text');
+      lt2.setAttribute('x',cLeft-4);lt2.setAttribute('y',gy+3.5);
+      lt2.setAttribute('text-anchor','end');lt2.setAttribute('font-size','8');
+      lt2.setAttribute('fill',col.teal);lt2.setAttribute('opacity','.75');
+      lt2.textContent=Math.round(lv2)+'%';
+      svg.appendChild(lt2);
+    }
+  }
+
+  /* bar group helper */
+  var barDatasets=datasets.filter(function(d){return d.type==='bar';});
+  var barCount=barDatasets.length;
+  var totalBarW=Math.min(cW/(n||1)*0.38,26*barCount);  /* narrower bars */
+  var singleBarW=barCount>0?Math.max(8,totalBarW/barCount):0;
+
+  function barX(dsIndex,i){
+    var groupCenter=cLeft+(n===1?cW/2:i*(cW/(n-1)));
+    var offset=(dsIndex-(barCount-1)/2)*singleBarW;
+    return groupCenter+offset-singleBarW/2;
+  }
+
+  function smoothPath(pts){
+    if(pts.length<2)return'M'+pts[0].x+','+pts[0].y;
+    var d='M'+pts[0].x+','+pts[0].y;
+    for(var i=1;i<pts.length;i++){
+      var cp1x=pts[i-1].x+(pts[i].x-pts[i-1].x)*0.42,cp1y=pts[i-1].y;
+      var cp2x=pts[i].x-(pts[i].x-pts[i-1].x)*0.42,cp2y=pts[i].y;
+      d+=' C'+cp1x+','+cp1y+' '+cp2x+','+cp2y+' '+pts[i].x+','+pts[i].y;
+    }
+    return d;
+  }
+
+  var barIdx=0;
+  /* Collect ALL label positions for anti-collision across bars AND lines */
+  var allLabelBoxes = []; /* {x,y,w,h} for collision detection */
+
+  function noCollide(cx, cy, tw, th, prefer) {
+    /* Generate candidates — always try upward positions first.
+       After choosing, clamp so label never exits chart area. */
+    var step = 12;
+    var candidates;
+    if(prefer === 'above')
+      candidates = [cy-11, cy-23, cy-35, cy+14, cy+26];
+    else
+      candidates = [cy+14, cy-11, cy+26, cy-23];
+
+    for(var ci=0; ci<candidates.length; ci++){
+      /* clamp: never below cBot-2, never above cTop+2 */
+      var ly = candidates[ci];
+      ly = Math.min(ly, cBot-3);
+      ly = Math.max(ly, cTop+10);
+      var box={x:cx-tw/2-1,y:ly-9,w:tw+2,h:12};
+      var ok=true;
+      for(var bi=0;bi<allLabelBoxes.length;bi++){
+        var b=allLabelBoxes[bi];
+        if(box.x<b.x+b.w&&box.x+box.w>b.x&&box.y<b.y+b.h&&box.y+b.h>b.y){ok=false;break;}
+      }
+      if(ok){allLabelBoxes.push(box);return ly;}
+    }
+    /* fallback: force above the bar, clamped */
+    var ly0=Math.max(cTop+10, Math.min(cy-11, cBot-3));
+    allLabelBoxes.push({x:cx-tw/2-1,y:ly0-9,w:tw+2,h:12});
+    return ly0;
+  }
+
+  /* draw bars first (behind lines) */
+  datasets.forEach(function(ds){
+    if(ds.type!=='bar')return;
+    var bx=barIdx++;
+    /* labelPos: 'above', 'inside-bottom' (default), or per-ds override */
+    var labelPos = ds.labelPos || opts.barLabelPos || 'inside-bottom';
+    ds.data.forEach(function(v,i){
+      var numV=isNaN(+v)?0:+v;
+      var y=toY(numV,ds.yAxis||'primary');
+      var x=barX(bx,i);
+      var bh=Math.max(0,cBot-y);
+      var rect=document.createElementNS(ns,'rect');
+      rect.setAttribute('x',x);rect.setAttribute('y',y);
+      rect.setAttribute('width',singleBarW-2);rect.setAttribute('height',bh);
+      rect.setAttribute('rx','3');rect.setAttribute('fill',ds.color);rect.setAttribute('opacity','0.72');
+      svg.appendChild(rect);
+
+      /* bar label format — never add % for primary axis; for right axis show % unless showRawOnRight */
+      var fmt = numV>=1000 ? (numV/1000).toFixed(1)+'k' : String(numV);
+      if(ds.yAxis==='right' && !ds.showRawOnRight){
+        fmt = (ds.integerLabel ? Math.round(numV) : numV)+'%';
+      }
+      var bw2=fmt.length*5+8;
+      var lx2=x+singleBarW/2-1;
+      var ly;
+
+      if(labelPos==='above'){
+        /* Zero value: pin label just above x-axis baseline instead of floating high */
+        if(numV===0){
+          ly = cBot - 3;
+          allLabelBoxes.push({x:lx2-bw2/2-1,y:ly-9,w:bw2+2,h:12});
+        } else {
+          ly = noCollide(lx2, y, bw2, 11, 'above');
+        }
+      } else if(labelPos==='inside-center'){
+        /* centred vertically inside the bar */
+        if(bh > 14){
+          ly = y + bh/2 + 4;
+          ly = Math.min(ly, cBot-3); ly = Math.max(ly, cTop+10);
+          allLabelBoxes.push({x:lx2-bw2/2-1,y:ly-9,w:bw2+2,h:12});
+        } else {
+          ly = noCollide(lx2, y, bw2, 11, 'above');
+        }
+      } else {
+        /* inside-bottom: only if bar tall enough, else above */
+        if(bh > 16){
+          ly = cBot-6;
+          allLabelBoxes.push({x:lx2-bw2/2-1,y:ly-9,w:bw2+2,h:12});
+        } else {
+          ly = noCollide(lx2, y, bw2, 11, 'above');
+        }
+      }
+
+      /* pill background — more transparent for small values */
+      var bgOpacity = (numV===0) ? 0.45 : 0.82;
+      var pbg=document.createElementNS(ns,'rect');
+      pbg.setAttribute('x',lx2-bw2/2);pbg.setAttribute('y',ly-9);
+      pbg.setAttribute('width',bw2);pbg.setAttribute('height',11);pbg.setAttribute('rx','5');
+      pbg.setAttribute('fill',ds.color);pbg.setAttribute('opacity',String(bgOpacity));
+      svg.appendChild(pbg);
+      var lbl=document.createElementNS(ns,'text');
+      lbl.setAttribute('x',lx2);lbl.setAttribute('y',ly+0.5);
+      lbl.setAttribute('text-anchor','middle');
+      lbl.setAttribute('font-size','7');lbl.setAttribute('font-weight','800');
+      lbl.setAttribute('fill',isLight?'#0a1825':'#050e1a');
+      lbl.textContent=fmt;svg.appendChild(lbl);
+    });
+  });
+
+  /* draw lines */
+  datasets.forEach(function(ds){
+    if(ds.type==='bar')return;
+    var axis=ds.yAxis||'primary';
+    var isDashed=ds.dashed;
+    var gapIndex=ds.gapIndex; /* index where line breaks — draw dashed segment around it */
+
+    /* collect points, marking null/gap */
+    var rawData=ds.data;
+    /* split into segments around gap */
+    var allPts=rawData.map(function(v,i){
+      var numV=(v===null||v===undefined)?null:isNaN(+v)?null:+v;
+      return{x:cLeft+(n===1?cW/2:i*(cW/(n-1))),y:numV!==null?toY(numV,axis):null,v:numV,i:i};
+    });
+
+    /* area fill (only for non-dashed, continuous segments) */
+    var solidPts=allPts.filter(function(p){return p.v!==null&&(gapIndex===undefined||p.i!==gapIndex);});
+    if(!isDashed&&solidPts.length>=2){
+      var area=document.createElementNS(ns,'path');
+      area.setAttribute('d',smoothPath(solidPts)+' L'+solidPts[solidPts.length-1].x+','+cBot+' L'+solidPts[0].x+','+cBot+' Z');
+      area.setAttribute('fill',ds.color);area.setAttribute('opacity','.06');svg.appendChild(area);
+    }
+
+    /* draw line segments */
+    if(gapIndex!==undefined){
+      /* segment before gap */
+      var before=allPts.filter(function(p){return p.i<gapIndex&&p.v!==null;});
+      /* segment after gap */
+      var after=allPts.filter(function(p){return p.i>gapIndex&&p.v!==null;});
+      /* gap bridging point */
+      var gapPt=allPts[gapIndex];
+      var beforeLast=before.length?before[before.length-1]:null;
+      var afterFirst=after.length?after[0]:null;
+
+      function drawSeg(pts,dsh){
+        if(pts.length<1)return;
+        var lp=document.createElementNS(ns,'path');
+        lp.setAttribute('d',pts.length===1?'M'+pts[0].x+','+pts[0].y:smoothPath(pts));
+        lp.setAttribute('stroke',ds.color);lp.setAttribute('stroke-width','2');lp.setAttribute('fill','none');
+        lp.setAttribute('stroke-linejoin','round');lp.setAttribute('stroke-linecap','round');
+        if(dsh)lp.setAttribute('stroke-dasharray','5,4');
+        svg.appendChild(lp);
+      }
+      drawSeg(before,false);
+      /* dashed bridge: from last before-point to gap-point to first after-point */
+      if(beforeLast&&afterFirst){
+        var bridge=[];
+        if(beforeLast)bridge.push(beforeLast);
+        /* gap point: interpolate Y */
+        if(gapPt&&gapPt.v===null){
+          var midY=(beforeLast.y+afterFirst.y)/2;
+          bridge.push({x:gapPt.x,y:midY});
+        }
+        if(afterFirst)bridge.push(afterFirst);
+        drawSeg(bridge,true);
+      }
+      drawSeg(after,false);
+    } else {
+      var validPts=allPts.filter(function(p){return p.v!==null;});
+      if(validPts.length<1)return;
+      var lp=document.createElementNS(ns,'path');
+      lp.setAttribute('d',validPts.length===1?'M'+validPts[0].x+','+validPts[0].y:smoothPath(validPts));
+      lp.setAttribute('stroke',ds.color);lp.setAttribute('stroke-width','2');lp.setAttribute('fill','none');
+      lp.setAttribute('stroke-linejoin','round');lp.setAttribute('stroke-linecap','round');
+      if(isDashed)lp.setAttribute('stroke-dasharray','6,4');
+      svg.appendChild(lp);
+    }
+
+    /* dots + labels */
+    allPts.forEach(function(p){
+      if(p.v===null)return;
+      var isDashedPt=(gapIndex!==undefined&&p.i===gapIndex);
+      if(isDashedPt)return;
+      var dot=document.createElementNS(ns,'circle');
+      dot.setAttribute('cx',p.x);dot.setAttribute('cy',p.y);dot.setAttribute('r','3.5');
+      dot.setAttribute('fill',ds.color);
+      dot.setAttribute('stroke',isLight?'rgba(240,245,251,.9)':'rgba(5,14,26,.9)');
+      dot.setAttribute('stroke-width','1.6');svg.appendChild(dot);
+
+      if(ds.showVals!==false){
+        var fmt=opts.isPercent?Math.round(p.v)+'%':(p.v>=1000?(p.v/1000).toFixed(1)+'k':String(p.v));
+        if(axis==='right')fmt=p.v+'%';
+        var tw=fmt.length*5+8;
+        /* anti-collision: prefer above if there's room, else below */
+        var prefer = p.y > cTop+22 ? 'above' : 'below';
+        var ly = noCollide(p.x, p.y, tw, 11, prefer);
+        var bg=document.createElementNS(ns,'rect');
+        bg.setAttribute('x',p.x-tw/2);bg.setAttribute('y',ly-9);bg.setAttribute('width',tw);bg.setAttribute('height',11);bg.setAttribute('rx','3');
+        bg.setAttribute('fill',isLight?'rgba(240,245,251,.68)':'rgba(5,14,26,.62)');svg.appendChild(bg);
+        var vt=document.createElementNS(ns,'text');
+        vt.setAttribute('x',p.x);vt.setAttribute('y',ly+0.5);vt.setAttribute('text-anchor','middle');vt.setAttribute('font-size','8');vt.setAttribute('font-weight','700');vt.setAttribute('fill',ds.color);
+        vt.textContent=fmt;svg.appendChild(vt);
+      }
+    });
+  });
+
+  /* x labels */
+  for(var i=0;i<n;i++){
+    var xt=document.createElementNS(ns,'text');
+    xt.setAttribute('x',cLeft+(n===1?cW/2:i*(cW/(n-1))));xt.setAttribute('y',cBot+12);
+    xt.setAttribute('text-anchor','middle');xt.setAttribute('font-size','8.5');xt.setAttribute('fill',col.muted);
+    xt.textContent=lbls[i];svg.appendChild(xt);
+  }
+
+  /* legend is rendered as HTML outside SVG — see buildHtmlLegend() */
+  svg._datasets = datasets; /* attach for legend builder */
+  return svg;
+}
+
+/* ── switch clinics chart ── */
+function switchClinicChart(chartType, title, clickedTab) {
+  document.querySelectorAll('#c-tab-all,#c-tab-ns,#m-c-tab-all,#m-c-tab-ns').forEach(function(t){t.classList.remove('active');});
+  if(chartType==='clinics'){
+    document.querySelectorAll('#c-tab-all,#m-c-tab-all').forEach(function(t){t.classList.add('active');});
+  } else {
+    document.querySelectorAll('#c-tab-ns,#m-c-tab-ns').forEach(function(t){t.classList.add('active');});
+  }
+  document.querySelectorAll('#c-zoom-btn,#m-c-zoom-btn').forEach(function(b){
+    b.setAttribute('onclick',"openZoom('"+chartType+"','"+title+"')");
+  });
+  var chEl=document.getElementById('ch-clinics');
+  if(chEl){chEl.dataset.chart=chartType;chEl.dataset.built='1';buildChartById('ch-clinics',chartType);}
+  var mchEl=document.getElementById('m-ch-clinics');
+  if(mchEl){mchEl.dataset.chart=chartType;mchEl.dataset.built='1';buildChartById('m-ch-clinics',chartType);}
+}
+
+/* ── switch capacity chart ── */
+function switchCapChart(chartType, title, clickedTab) {
+  document.querySelectorAll('#cap-tab-occ,#cap-tab-ref,#m-cap-tab-occ,#m-cap-tab-ref').forEach(function(t){ t.classList.remove('active'); });
+  if (chartType === 'capacity') {
+    document.querySelectorAll('#cap-tab-occ,#m-cap-tab-occ').forEach(function(t){ t.classList.add('active'); });
+  } else {
+    document.querySelectorAll('#cap-tab-ref,#m-cap-tab-ref').forEach(function(t){ t.classList.add('active'); });
+  }
+  document.querySelectorAll('#cap-zoom-btn,#m-cap-zoom-btn').forEach(function(b){
+    b.setAttribute('onclick',"openZoom('"+chartType+"','"+title+"')");
+  });
+  var chEl=document.getElementById('ch-capacity');
+  if(chEl){chEl.dataset.chart=chartType;chEl.dataset.built='1';buildChartById('ch-capacity',chartType);}
+  var mchEl=document.getElementById('m-ch-capacity');
+  if(mchEl){mchEl.dataset.chart=chartType;mchEl.dataset.built='1';buildChartById('m-ch-capacity',chartType);}
+}
+
+/* ── switch between satisfaction / complaints chart ── */
+function switchSatChart(chartType, title, clickedTab) {
+  /* update all sat-tab buttons (both desktop and mobile) */
+  document.querySelectorAll('.sat-tab').forEach(function(t){ t.classList.remove('active'); });
+  if (clickedTab) {
+    /* activate the clicked tab AND its mirror (desktop↔mobile share same IDs prefix) */
+    var isDesktop = clickedTab.id.indexOf('m-') !== 0;
+    document.querySelectorAll('.sat-tab').forEach(function(t){
+      if (chartType === 'satisfaction' && (t.id === 'sat-tab-sat' || t.id === 'm-sat-tab-sat')) t.classList.add('active');
+      if (chartType === 'satisfaction-complaints' && (t.id === 'sat-tab-cmp' || t.id === 'm-sat-tab-cmp')) t.classList.add('active');
+    });
+  }
+  /* update zoom button target */
+  document.querySelectorAll('#sat-zoom-btn,#m-sat-zoom-btn').forEach(function(b){
+    b.setAttribute('onclick', "openZoom('"+chartType+"','"+title+"')");
+  });
+  /* rebuild chart in desktop panel */
+  var chEl = document.getElementById('ch-satisfaction');
+  if (chEl) { chEl.dataset.chart = chartType; chEl.dataset.built = '1'; buildChartById('ch-satisfaction', chartType); }
+  /* rebuild chart in mobile panel */
+  var mchEl = document.getElementById('m-ch-satisfaction');
+  if (mchEl) { mchEl.dataset.chart = chartType; mchEl.dataset.built = '1'; buildChartById('m-ch-satisfaction', chartType); }
+}
+function w10idx(){var vw=getVW();for(var i=0;i<vw.length;i++){if(vw[i].label==='W10')return i;}return-1;}
+
+/* ═══ Chart registrations ═══ */
+function reg(){
+  var col=getColors();
+
+  /* 1. QUALITY — bars labelPos above so they don't conflict with Incident line */
+  registerChart('quality',function(col){return{datasets:[
+    {label:'SE/MRE',type:'bar',data:vals(function(w){return w.quality.se_mre;}),color:col.red,labelPos:'above'},
+    {label:'Good Catch',type:'bar',data:vals(function(w){return w.quality.good_catch;}),color:col.green,labelPos:'above'},
+    {label:'Incident',type:'line',data:vals(function(w){return w.quality.incident;}),color:col.amber}
+  ],opts:{H:270}};});
+
+  /* 2. CTAS — all lines */
+  registerChart('ctas',function(col){return{datasets:[
+    {label:'CTAS 1,2',type:'line',data:vals(function(w){return w.emergency.ctas12;}),color:col.red},
+    {label:'CTAS 3',type:'line',data:vals(function(w){return w.emergency.ctas3;}),color:col.amber},
+    {label:'CTAS 4,5',type:'line',data:vals(function(w){return w.emergency.ctas45;}),color:col.green}
+  ],opts:{H:270}};});
+
+  /* 3. SURGERY — all lines */
+  registerChart('surgery',function(col){return{datasets:[
+    {label:'طارئة',type:'line',data:vals(function(w){return w.surgery.emergency;}),color:col.red},
+    {label:'روتينية',type:'line',data:vals(function(w){return w.surgery.routine;}),color:col.blue},
+    {label:'انتظار',type:'line',data:vals(function(w){return w.surgery.waiting;}),color:col.amber},
+    {label:'ملغاة',type:'line',data:vals(function(w){return w.surgery.cancelled;}),color:col.purple}
+  ],opts:{H:270}};});
+
+  /* 4a. CLINICS — chart 1: total, virtual, no_show counts (3 lines) */
+  registerChart('clinics',function(col){return{datasets:[
+    {label:'إجمالي',type:'line',data:vals(function(w){return w.clinics.total;}),color:col.teal},
+    {label:'افتراضية',type:'line',data:vals(function(w){return w.clinics.virtual;}),color:col.purple},
+    {label:'No Show (عدد)',type:'line',data:vals(function(w){return w.clinics.no_show;}),color:col.amber}
+  ],opts:{H:270}};});
+
+  /* 4b. CLINICS-NOSHOW — chart 2: no_show count (line) + no_show% bar inside-bottom, integer */
+  registerChart('clinics-noshow',function(col){return{datasets:[
+    {label:'No Show (عدد)',type:'line',data:vals(function(w){return w.clinics.no_show;}),color:col.amber},
+    {label:'No Show %',type:'bar',data:vals(function(w){return +w.clinics.no_show_pct||0;}),color:col.red,yAxis:'right',labelPos:'inside-bottom',integerLabel:true}
+  ],opts:{H:270}};});
+
+  /* 5b. satisfaction-complaints (standalone fallback) */
+  registerChart('satisfaction-complaints',function(col){return{datasets:[
+    {label:'بلاغات مغلقة',type:'bar',data:vals(function(w){return w.complaints.closed;}),color:col.green,labelPos:'above'}
+  ],opts:{H:270}};});
+
+  /* 5. SATISFACTION — 4 lines (renamed) + closed-complaints bar centred inside */
+  registerChart('satisfaction',function(col){
+    var gIdx=w10idx();
+    var allData=vals(function(w){return w.satisfaction.all===null?null:+w.satisfaction.all||null;});
+    return{datasets:[
+      {label:'رضى جميع الخدمات',type:'line',data:allData,color:col.green,gapIndex:gIdx>=0?gIdx:undefined},
+      {label:'رضى الطوارئ',type:'line',data:vals(function(w){return +w.satisfaction.ed||0;}),color:col.red},
+      {label:'رضى العيادات',type:'line',data:vals(function(w){return +w.satisfaction.clinics||0;}),color:col.blue},
+      {label:'رضى التنويم',type:'line',data:vals(function(w){return +w.satisfaction.inpatient||0;}),color:col.purple},
+      {label:'بلاغات مغلقة',type:'bar',data:vals(function(w){return w.complaints.closed;}),color:col.amber,yAxis:'right',labelPos:'inside-center',showRawOnRight:true}
+    ],opts:{H:290,isPercent:true,minV:60,maxV:100,rightMaxV:200}};
+  });
+
+  /* 6a. CAPACITY — inpatients (line) + bed_occ% (bar centred inside) */
+  registerChart('capacity',function(col){return{datasets:[
+    {label:'المنومون',type:'line',data:vals(function(w){return w.capacity.inpatients;}),color:col.purple},
+    {label:'إشغال الأسرة %',type:'bar',data:vals(function(w){return +w.capacity.bed_occ||0;}),color:col.teal,yAxis:'right',labelPos:'inside-center'}
+  ],opts:{H:270}};});
+
+  /* 6b. CAPACITY-REFERRALS — lifesaving + referral lines */
+  registerChart('capacity-referrals',function(col){return{datasets:[
+    {label:'إنقاذ حياة',type:'line',data:vals(function(w){return w.capacity.lifesaving;}),color:col.red},
+    {label:'إحالات طارئة',type:'line',data:vals(function(w){return w.capacity.emergency_ref;}),color:col.amber},
+    {label:'إحالات روتينية',type:'line',data:vals(function(w){return w.capacity.routine_ref;}),color:col.blue}
+  ],opts:{H:270}};});
+
+  /* 7. PHARMACY — all lines */
+  registerChart('pharmacy',function(col){return{datasets:[
+    {label:'تنويم',type:'line',data:vals(function(w){return w.pharmacy.inpatient;}),color:col.blue},
+    {label:'عيادات',type:'line',data:vals(function(w){return w.pharmacy.clinics;}),color:col.purple},
+    {label:'طوارئ',type:'line',data:vals(function(w){return w.pharmacy.emergency;}),color:col.amber}
+  ],opts:{H:270}};});
+
+  /* 8. SCREENING — lines for totals, bars above for positives (small values need above) */
+  registerChart('screening',function(col){return{datasets:[
+    {label:'فحص الثدي',type:'line',data:vals(function(w){return w.screening.breast;}),color:col.purple},
+    {label:'فحص القولون',type:'line',data:vals(function(w){return w.screening.colon;}),color:col.teal},
+    {label:'إيجابي ثدي',type:'bar',data:vals(function(w){return w.screening.breast_pos;}),color:col.red,labelPos:'above'},
+    {label:'إيجابي قولون',type:'bar',data:vals(function(w){return w.screening.colon_pos;}),color:col.amber,labelPos:'above'}
+  ],opts:{H:270}};});
+
+  /* 9. URGENT — lines for totals, bars above for out-values, zero labels more transparent */
+  registerChart('urgent',function(col){return{datasets:[
+    {label:'STEMI-Total',type:'line',data:sv(function(w){return w.screening.stemi_total;}),color:col.purple},
+    {label:'Stroke-Total',type:'line',data:sv(function(w){return w.screening.stroke_total;}),color:col.blue},
+    {label:'STEMI-Out',type:'bar',data:sv(function(w){return w.screening.stemi_out;}),color:col.amber,labelPos:'above'},
+    {label:'Stroke-Out',type:'bar',data:sv(function(w){return w.screening.stroke_out;}),color:col.red,labelPos:'above'}
+  ],opts:{H:270}};});
+
+  /* 10. HOME — line for visits, bars for smoking */
+  registerChart('home',function(col){return{datasets:[
+    {label:'زيارات منزلية',type:'line',data:vals(function(w){return w.home_care.visits;}),color:col.green},
+    {label:'تدخين حضوري',type:'bar',data:vals(function(w){return w.smoking.inperson;}),color:col.blue},
+    {label:'تدخين افتراضي',type:'bar',data:vals(function(w){return w.smoking.virtual;}),color:col.purple}
+  ],opts:{H:270}};});
+
+  /* 11. ENDOSCOPY — lines */
+  registerChart('endoscopy',function(col){return{datasets:[
+    {label:'مواعيد',type:'line',data:sv(function(w){return w.endoscopy.appoint;}),color:col.green},
+    {label:'إجراءات',type:'line',data:sv(function(w){return w.endoscopy.procedures;}),color:col.blue}
+  ],opts:{H:270}};});
+}
+
+/* ═══ Panel & Grid builder ═══ */
+function buildHTML(){
+  var P=PW;
+  /*
+    Each panel returns {panelHtml, desktopChartPanel, desktopTblPanel}
+    desktopChartPanel / desktopTblPanel are placed AFTER the grid (desktop only via CSS)
+    Inside panel-body there are also inline-panel elements for mobile
+  */
+  function p(id,emoji,title,kpisHtml,chartType,chartTitle,tblHtml){
+    var dcId='dpnl-'+chartType+'-chart'; /* desktop chart panel id */
+    var dtId='dpnl-'+chartType+'-tbl';  /* desktop table panel id */
+    var mcId='mpnl-'+chartType+'-chart';/* mobile chart panel id */
+    var mtId='mpnl-'+chartType+'-tbl'; /* mobile table panel id */
+    var chId='ch-'+chartType;
+
+    var panelHtml=
+      '<div class="panel" id="'+id+'">'
+      +'<div class="panel-hdr" onclick="togglePanel(this)">'
+      +'<span class="panel-emoji">'+emoji+'</span>'
+      +'<span class="panel-title">'+title+'</span>'
+      +'<span class="panel-arrow">▾</span>'
+      +'</div>'
+      +'<div class="panel-body">'
+      +'<div class="kpi-grid">'+kpisHtml+'</div>'
+      +'<div class="detail-toggles">'
+      +'<button class="detail-btn" onclick="toggleDetail(this,\''+dcId+'\',\''+mcId+'\')">📈 الرسم البياني</button>'
+      +'<button class="detail-btn" onclick="toggleDetail(this,\''+dtId+'\',\''+mtId+'\')">📋 جدول الأرقام</button>'
+      +'</div>'
+      /* MOBILE inline panels */
+      +'<div class="inline-panel" id="'+mcId+'">'
+      +'<div class="inline-inner">'
+      +'<div class="chart-title-sm">'
+      +'<span class="chart-title-sm-left">📈 '+chartTitle+'</span>'
+      +'<button class="zoom-btn" onclick="openZoom(\''+chartType+'\',\''+chartTitle+'\')">⛶ تكبير</button>'
+      +'</div>'
+      +'<div id="m-'+chId+'" data-chart="'+chartType+'"></div>'
+      +'</div>'
+      +'</div>'
+      +'<div class="inline-panel" id="'+mtId+'">'
+      +'<div class="inline-inner">'+tblHtml+'</div>'
+      +'</div>'
+      +'</div>'/* panel-body */
+      +'</div>';/* panel */
+
+    var desktopChartPanel=
+      '<div class="detail-panel-row" id="'+dcId+'">'
+      +'<div class="detail-inner">'
+      +'<div class="chart-title-sm">'
+      +'<span class="chart-title-sm-left">📈 '+chartTitle+'</span>'
+      +'<button class="zoom-btn" onclick="openZoom(\''+chartType+'\',\''+chartTitle+'\')">⛶ تكبير</button>'
+      +'</div>'
+      +'<div id="'+chId+'" data-chart="'+chartType+'"></div>'
+      +'</div></div>';
+
+    var desktopTblPanel=
+      '<div class="detail-panel-row" id="'+dtId+'">'
+      +'<div class="detail-inner">'+tblHtml+'</div></div>';
+
+    return{panelHtml:panelHtml,desktopChartPanel:desktopChartPanel,desktopTblPanel:desktopTblPanel};
+  }
+
+  var pQ=p('sec-quality','🛡️','الجودة وسلامة المرضى',
+    kpi('SE / MRE',''+LW.quality.se_mre,'v-r',LW.quality.se_mre,P&&P.quality.se_mre,function(w){return w.quality.se_mre;})
+    +kpi('Incident',''+LW.quality.incident,'v-a',LW.quality.incident,P&&P.quality.incident,function(w){return w.quality.incident;})
+    +kpi('Good Catch',''+LW.quality.good_catch,'v-g',LW.quality.good_catch,P&&P.quality.good_catch,function(w){return w.quality.good_catch;}),
+    'quality','رسوم مؤشرات الجودة وسلامة المرضى',
+    tbl('الجودة',row('SE/MRE',function(w){return w.quality.se_mre;},'v-r')+row('Incident',function(w){return w.quality.incident;},'v-a')+row('Good Catch',function(w){return w.quality.good_catch;},'v-g')));
+
+  var pE=p('sec-emergency','🚨','الطوارئ — CTAS',
+    kpi('CTAS 1,2',''+LW.emergency.ctas12,'v-r',LW.emergency.ctas12,P&&P.emergency.ctas12,function(w){return w.emergency.ctas12;})
+    +kpi('CTAS 3',''+LW.emergency.ctas3,'v-a',LW.emergency.ctas3,P&&P.emergency.ctas3,function(w){return w.emergency.ctas3;})
+    +kpi('CTAS 4,5',''+LW.emergency.ctas45,'v-g',LW.emergency.ctas45,P&&P.emergency.ctas45,function(w){return w.emergency.ctas45;}),
+    'ctas','رسوم مراجعات الطوارئ — تصنيف CTAS',
+    tbl('CTAS',row('CTAS 1,2',function(w){return w.emergency.ctas12;},'v-r')+row('CTAS 3',function(w){return w.emergency.ctas3;},'v-a')+row('CTAS 4,5',function(w){return w.emergency.ctas45;},'v-g')));
+
+  var pS=p('sec-surgery','✂️','العمليات الجراحية',
+    kpi('طارئة',''+LW.surgery.emergency,'v-r',LW.surgery.emergency,P&&P.surgery.emergency,function(w){return w.surgery.emergency;})
+    +kpi('روتينية',''+LW.surgery.routine,'v-g',LW.surgery.routine,P&&P.surgery.routine,function(w){return w.surgery.routine;})
+    +kpi('بالانتظار',''+LW.surgery.waiting,'v-a',LW.surgery.waiting,P&&P.surgery.waiting,function(w){return w.surgery.waiting;})
+    +kpi('ملغاة',''+LW.surgery.cancelled,'v-r',LW.surgery.cancelled,P&&P.surgery.cancelled,function(w){return w.surgery.cancelled;}),
+    'surgery','رسوم العمليات الجراحية',
+    tbl('العمليات',row('طارئة',function(w){return w.surgery.emergency;},'v-r')+row('روتينية',function(w){return w.surgery.routine;},'v-g')+row('انتظار',function(w){return w.surgery.waiting;},'v-a')+row('ملغاة',function(w){return w.surgery.cancelled;},'v-r')+rowRaw('سبب الإلغاء',function(w){return w.surgery.cancel_reason;})));
+
+  /* ── pC: dual-tab clinics panel ── */
+  var cTblHtml = tbl('العيادات',
+    row('إجمالي',function(w){return w.clinics.total;},'v-t')
+    +row('افتراضية',function(w){return w.clinics.virtual;},'v-b')
+    +row('No Show',function(w){return w.clinics.no_show;},'v-r')
+    +rowRaw('نسبة No Show %',function(w){return w.clinics.no_show_pct+'%';},'v-a'));
+
+  var cKpis =
+    kpi('إجمالي',''+LW.clinics.total,'v-t',LW.clinics.total,P&&P.clinics.total,function(w){return w.clinics.total;})
+    +kpi('افتراضية',''+LW.clinics.virtual,'v-b',LW.clinics.virtual,P&&P.clinics.virtual,function(w){return w.clinics.virtual;})
+    +kpi('No Show',''+LW.clinics.no_show,'v-r',LW.clinics.no_show,P&&P.clinics.no_show,function(w){return w.clinics.no_show;})
+    +kpi('نسبة No Show',LW.clinics.no_show_pct+'%','v-a',+LW.clinics.no_show_pct,P&&+P.clinics.no_show_pct,function(w){return +w.clinics.no_show_pct||0;});
+
+  var cDeskChart =
+    '<div class="detail-panel-row" id="dpnl-clinics-chart">'
+    +'<div class="detail-inner">'
+    +'<div class="chart-title-sm">'
+    +'<span class="chart-title-sm-left">'
+    +'<button class="sat-tab active" id="c-tab-all" onclick="switchClinicChart(\'clinics\',\'مراجعو العيادات\',this)">🏥 المراجعون</button>'
+    +'<button class="sat-tab" id="c-tab-ns" onclick="switchClinicChart(\'clinics-noshow\',\'عدم الحضور\',this)">📉 No Show</button>'
+    +'</span>'
+    +'<button class="zoom-btn" id="c-zoom-btn" onclick="openZoom(\'clinics\',\'مراجعو العيادات\')">⛶ تكبير</button>'
+    +'</div>'
+    +'<div id="ch-clinics" data-chart="clinics"></div>'
+    +'</div></div>';
+
+  var cDeskTbl =
+    '<div class="detail-panel-row" id="dpnl-clinics-tbl">'
+    +'<div class="detail-inner">'+cTblHtml+'</div></div>';
+
+  var cMobileChart =
+    '<div class="inline-panel" id="mpnl-clinics-chart">'
+    +'<div class="inline-inner">'
+    +'<div class="chart-title-sm">'
+    +'<span class="chart-title-sm-left">'
+    +'<button class="sat-tab active" id="m-c-tab-all" onclick="switchClinicChart(\'clinics\',\'مراجعو العيادات\',this)">🏥 المراجعون</button>'
+    +'<button class="sat-tab" id="m-c-tab-ns" onclick="switchClinicChart(\'clinics-noshow\',\'عدم الحضور\',this)">📉 No Show</button>'
+    +'</span>'
+    +'<button class="zoom-btn" id="m-c-zoom-btn" onclick="openZoom(\'clinics\',\'مراجعو العيادات\')">⛶ تكبير</button>'
+    +'</div>'
+    +'<div id="m-ch-clinics" data-chart="clinics"></div>'
+    +'</div></div>';
+
+  var cMobileTbl =
+    '<div class="inline-panel" id="mpnl-clinics-tbl">'
+    +'<div class="inline-inner">'+cTblHtml+'</div></div>';
+
+  var pC = {
+    panelHtml:
+      '<div class="panel" id="sec-clinics">'
+      +'<div class="panel-hdr" onclick="togglePanel(this)">'
+      +'<span class="panel-emoji">🏥</span>'
+      +'<span class="panel-title">العيادات الخارجية</span>'
+      +'<span class="panel-arrow">▾</span>'
+      +'</div>'
+      +'<div class="panel-body">'
+      +'<div class="kpi-grid">'+cKpis+'</div>'
+      +'<div class="detail-toggles">'
+      +'<button class="detail-btn" onclick="toggleDetail(this,\'dpnl-clinics-chart\',\'mpnl-clinics-chart\')">📈 الرسم البياني</button>'
+      +'<button class="detail-btn" onclick="toggleDetail(this,\'dpnl-clinics-tbl\',\'mpnl-clinics-tbl\')">📋 جدول الأرقام</button>'
+      +'</div>'
+      +cMobileChart+cMobileTbl
+      +'</div></div>',
+    desktopChartPanel: cDeskChart,
+    desktopTblPanel:   cDeskTbl
+  };
+
+  /* ── pSat: بطاقة مخصصة بزرّي تبديل للرسمين ── */
+  var satTblHtml = tbl('الرضا',
+    rowRaw('جميع الخدمات %',function(w){return w.satisfaction.all===null?'—':w.satisfaction.all+'%';},'v-g')
+    +rowRaw('الطوارئ %',function(w){return w.satisfaction.ed+'%';},'v-g')
+    +rowRaw('العيادات %',function(w){return w.satisfaction.clinics+'%';},'v-g')
+    +rowRaw('التنويم %',function(w){return w.satisfaction.inpatient+'%';},'v-g')
+    +row('بلاغات مغلقة',function(w){return w.complaints.closed;},'v-g')
+    +row('غير مغلقة',function(w){return w.complaints.not_closed;},'v-a'));
+
+  var satKpis =
+    kpi('جميع الخدمات',(LW.satisfaction.all||'-')+'%','v-g',+LW.satisfaction.all||0,P&&+P.satisfaction.all||0,function(w){return w.satisfaction.all===null?null:+w.satisfaction.all;})
+    +kpi('الطوارئ',LW.satisfaction.ed+'%','v-g',+LW.satisfaction.ed,P&&+P.satisfaction.ed,function(w){return +w.satisfaction.ed||0;})
+    +kpi('العيادات',LW.satisfaction.clinics+'%','v-g',+LW.satisfaction.clinics,P&&+P.satisfaction.clinics,function(w){return +w.satisfaction.clinics||0;})
+    +kpi('التنويم',LW.satisfaction.inpatient+'%','v-g',+LW.satisfaction.inpatient,P&&+P.satisfaction.inpatient,function(w){return +w.satisfaction.inpatient||0;})
+    +kpi('بلاغات مغلقة',''+LW.complaints.closed,'v-g',+LW.complaints.closed,P&&+P.complaints.closed,function(w){return w.complaints.closed;})
+    +kpi('غير مغلقة',''+LW.complaints.not_closed,'v-a',+LW.complaints.not_closed,P&&+P.complaints.not_closed,function(w){return w.complaints.not_closed;});
+
+  /* desktop detail panels */
+  var satDeskChart =
+    '<div class="detail-panel-row" id="dpnl-satisfaction-chart">'
+    +'<div class="detail-inner">'
+    +'<div class="chart-title-sm">'
+    +'<span class="chart-title-sm-left">😊 رضا المرضى + البلاغات</span>'
+    +'<button class="zoom-btn" id="sat-zoom-btn" onclick="openZoom(\'satisfaction\',\'رضا المرضى والبلاغات\')">⛶ تكبير</button>'
+    +'</div>'
+    +'<div id="ch-satisfaction" data-chart="satisfaction"></div>'
+    +'</div></div>';
+
+  var satDeskTbl =
+    '<div class="detail-panel-row" id="dpnl-satisfaction-tbl">'
+    +'<div class="detail-inner">'+satTblHtml+'</div></div>';
+
+  /* mobile inline panels */
+  var satMobileChart =
+    '<div class="inline-panel" id="mpnl-satisfaction-chart">'
+    +'<div class="inline-inner">'
+    +'<div class="chart-title-sm">'
+    +'<span class="chart-title-sm-left">😊 رضا المرضى + البلاغات</span>'
+    +'<button class="zoom-btn" id="m-sat-zoom-btn" onclick="openZoom(\'satisfaction\',\'رضا المرضى والبلاغات\')">⛶ تكبير</button>'
+    +'</div>'
+    +'<div id="m-ch-satisfaction" data-chart="satisfaction"></div>'
+    +'</div></div>';
+
+  var satMobileTbl =
+    '<div class="inline-panel" id="mpnl-satisfaction-tbl">'
+    +'<div class="inline-inner">'+satTblHtml+'</div></div>';
+
+  var pSat = {
+    panelHtml:
+      '<div class="panel" id="sec-satisfaction">'
+      +'<div class="panel-hdr" onclick="togglePanel(this)">'
+      +'<span class="panel-emoji">😊</span>'
+      +'<span class="panel-title">تجربة المريض والبلاغات</span>'
+      +'<span class="panel-arrow">▾</span>'
+      +'</div>'
+      +'<div class="panel-body">'
+      +'<div class="kpi-grid">'+satKpis+'</div>'
+      +'<div class="detail-toggles">'
+      +'<button class="detail-btn" onclick="toggleDetail(this,\'dpnl-satisfaction-chart\',\'mpnl-satisfaction-chart\')">📈 الرسم البياني</button>'
+      +'<button class="detail-btn" onclick="toggleDetail(this,\'dpnl-satisfaction-tbl\',\'mpnl-satisfaction-tbl\')">📋 جدول الأرقام</button>'
+      +'</div>'
+      +satMobileChart
+      +satMobileTbl
+      +'</div></div>',
+    desktopChartPanel: satDeskChart,
+    desktopTblPanel:   satDeskTbl
+  };
+
+  /* ── pCap: dual-tab capacity panel ── */
+  var capTblHtml = tbl('الطاقة',
+    row('المنومون',function(w){return w.capacity.inpatients;},'v-p')
+    +rowRaw('إشغال %',function(w){return w.capacity.bed_occ+'%';},'v-t')
+    +row('إنقاذ حياة',function(w){return w.capacity.lifesaving;},'v-r')
+    +row('إحالات طارئة',function(w){return w.capacity.emergency_ref;},'v-a')
+    +row('إحالات روتينية',function(w){return w.capacity.routine_ref;},'v-b'));
+
+  var capKpis =
+    kpi('المنومون',''+LW.capacity.inpatients,'v-p',LW.capacity.inpatients,P&&P.capacity.inpatients,function(w){return w.capacity.inpatients;})
+    +kpi('إشغال الأسرة',LW.capacity.bed_occ+'%','v-t',+LW.capacity.bed_occ,P&&+P.capacity.bed_occ,function(w){return +w.capacity.bed_occ||0;})
+    +kpi('إنقاذ حياة',''+LW.capacity.lifesaving,'v-r',LW.capacity.lifesaving,P&&P.capacity.lifesaving,function(w){return w.capacity.lifesaving;})
+    +kpi('إحالات طارئة',''+LW.capacity.emergency_ref,'v-a',LW.capacity.emergency_ref,P&&P.capacity.emergency_ref,function(w){return w.capacity.emergency_ref;})
+    +kpi('إحالات روتينية',''+LW.capacity.routine_ref,'v-b',LW.capacity.routine_ref,P&&P.capacity.routine_ref,function(w){return w.capacity.routine_ref;});
+
+  var capDeskChart =
+    '<div class="detail-panel-row" id="dpnl-capacity-chart">'
+    +'<div class="detail-inner">'
+    +'<div class="chart-title-sm">'
+    +'<span class="chart-title-sm-left">'
+    +'<button class="sat-tab active" id="cap-tab-occ" onclick="switchCapChart(\'capacity\',\'المنومون وإشغال الأسرة\',this)">🛏️ الإشغال</button>'
+    +'<button class="sat-tab" id="cap-tab-ref" onclick="switchCapChart(\'capacity-referrals\',\'الإحالات وإنقاذ الحياة\',this)">↗️ الإحالات</button>'
+    +'</span>'
+    +'<button class="zoom-btn" id="cap-zoom-btn" onclick="openZoom(\'capacity\',\'المنومون وإشغال الأسرة\')">⛶ تكبير</button>'
+    +'</div>'
+    +'<div id="ch-capacity" data-chart="capacity"></div>'
+    +'</div></div>';
+
+  var capDeskTbl =
+    '<div class="detail-panel-row" id="dpnl-capacity-tbl">'
+    +'<div class="detail-inner">'+capTblHtml+'</div></div>';
+
+  var capMobileChart =
+    '<div class="inline-panel" id="mpnl-capacity-chart">'
+    +'<div class="inline-inner">'
+    +'<div class="chart-title-sm">'
+    +'<span class="chart-title-sm-left">'
+    +'<button class="sat-tab active" id="m-cap-tab-occ" onclick="switchCapChart(\'capacity\',\'المنومون وإشغال الأسرة\',this)">🛏️ الإشغال</button>'
+    +'<button class="sat-tab" id="m-cap-tab-ref" onclick="switchCapChart(\'capacity-referrals\',\'الإحالات\',this)">↗️ الإحالات</button>'
+    +'</span>'
+    +'<button class="zoom-btn" id="m-cap-zoom-btn" onclick="openZoom(\'capacity\',\'المنومون وإشغال الأسرة\')">⛶ تكبير</button>'
+    +'</div>'
+    +'<div id="m-ch-capacity" data-chart="capacity"></div>'
+    +'</div></div>';
+
+  var capMobileTbl =
+    '<div class="inline-panel" id="mpnl-capacity-tbl">'
+    +'<div class="inline-inner">'+capTblHtml+'</div></div>';
+
+  var pCap = {
+    panelHtml:
+      '<div class="panel" id="sec-capacity">'
+      +'<div class="panel-hdr" onclick="togglePanel(this)">'
+      +'<span class="panel-emoji">📋</span>'
+      +'<span class="panel-title">الطاقة الاستيعابية</span>'
+      +'<span class="panel-arrow">▾</span>'
+      +'</div>'
+      +'<div class="panel-body">'
+      +'<div class="kpi-grid">'+capKpis+'</div>'
+      +'<div class="detail-toggles">'
+      +'<button class="detail-btn" onclick="toggleDetail(this,\'dpnl-capacity-chart\',\'mpnl-capacity-chart\')">📈 الرسم البياني</button>'
+      +'<button class="detail-btn" onclick="toggleDetail(this,\'dpnl-capacity-tbl\',\'mpnl-capacity-tbl\')">📋 جدول الأرقام</button>'
+      +'</div>'
+      +capMobileChart+capMobileTbl
+      +'</div></div>',
+    desktopChartPanel: capDeskChart,
+    desktopTblPanel:   capDeskTbl
+  };
+
+  var pPh=p('sec-pharmacy','💊','الصيدلية',
+    kpi('تنويم',''+LW.pharmacy.inpatient,'v-b',LW.pharmacy.inpatient,P&&P.pharmacy.inpatient,function(w){return w.pharmacy.inpatient;})
+    +kpi('عيادات',''+LW.pharmacy.clinics,'v-t',LW.pharmacy.clinics,P&&P.pharmacy.clinics,function(w){return w.pharmacy.clinics;})
+    +kpi('طوارئ',''+LW.pharmacy.emergency,'v-a',LW.pharmacy.emergency,P&&P.pharmacy.emergency,function(w){return w.pharmacy.emergency;}),
+    'pharmacy','رسوم وصفات الصيدلية',
+    tbl('الصيدلية',row('وصفات التنويم',function(w){return w.pharmacy.inpatient;},'v-b')+row('وصفات العيادات',function(w){return w.pharmacy.clinics;},'v-t')+row('وصفات الطوارئ',function(w){return w.pharmacy.emergency;},'v-a')));
+
+  var pScr=p('sec-screening','🔬','الفحوصات الاستكشافية',
+    kpi('فحص الثدي',''+LW.screening.breast,'v-p',LW.screening.breast,P&&P.screening.breast,function(w){return w.screening.breast;})
+    +kpi('إيجابي ثدي',''+LW.screening.breast_pos,'v-r',LW.screening.breast_pos,P&&P.screening.breast_pos,function(w){return w.screening.breast_pos;})
+    +kpi('فحص القولون',''+LW.screening.colon,'v-t',LW.screening.colon,P&&P.screening.colon,function(w){return w.screening.colon;})
+    +kpi('إيجابي قولون',''+LW.screening.colon_pos,'v-r',LW.screening.colon_pos,P&&P.screening.colon_pos,function(w){return w.screening.colon_pos;}),
+    'screening','رسوم الفحوصات الاستكشافية',
+    tbl('الفحوصات',row('فحوصات الثدي',function(w){return w.screening.breast;},'v-p')+row('إيجابي ثدي',function(w){return w.screening.breast_pos;},'v-r')+row('فحوصات القولون',function(w){return w.screening.colon;},'v-t')+row('إيجابي قولون',function(w){return w.screening.colon_pos;},'v-r')));
+
+  var pU=p('sec-urgent','🫀','مسارات الرعاية العاجلة',
+    kpi('STEMI-Total',''+LW.screening.stemi_total,'v-p',+LW.screening.stemi_total||0,P&&+P.screening.stemi_total||0,function(w){return isNaN(+w.screening.stemi_total)?0:+w.screening.stemi_total;},'W6')
+    +kpi('STEMI-Out',''+LW.screening.stemi_out,'v-r',+LW.screening.stemi_out||0,P&&+P.screening.stemi_out||0,function(w){return isNaN(+w.screening.stemi_out)?0:+w.screening.stemi_out;},'W6')
+    +kpi('Stroke-Total',''+LW.screening.stroke_total,'v-b',+LW.screening.stroke_total||0,P&&+P.screening.stroke_total||0,function(w){return isNaN(+w.screening.stroke_total)?0:+w.screening.stroke_total;},'W6')
+    +kpi('Stroke-Out',''+LW.screening.stroke_out,'v-r',+LW.screening.stroke_out||0,P&&+P.screening.stroke_out||0,function(w){return isNaN(+w.screening.stroke_out)?0:+w.screening.stroke_out;},'W6'),
+    'urgent','رسوم مسارات الرعاية العاجلة',
+    tbl('العاجلة',row('STEMI-Total',function(w){var v=w.screening.stemi_total;return(v==='-')?'—':v;},'v-p')+row('STEMI-Out',function(w){var v=w.screening.stemi_out;return(v==='-')?'—':v;},'v-r')+row('Stroke-Total',function(w){var v=w.screening.stroke_total;return(v==='-')?'—':v;},'v-b')+row('Stroke-Out',function(w){var v=w.screening.stroke_out;return(v==='-')?'—':v;},'v-r')));
+
+  var pH=p('sec-home','🏠','الرعاية المنزلية — التدخين',
+    kpi('زيارات منزلية',''+LW.home_care.visits,'v-t',LW.home_care.visits,P&&P.home_care.visits,function(w){return w.home_care.visits;})
+    +kpi('تدخين حضوري',''+LW.smoking.inperson,'v-b',LW.smoking.inperson,P&&P.smoking.inperson,function(w){return w.smoking.inperson;})
+    +kpi('تدخين افتراضي',''+LW.smoking.virtual,'v-p',LW.smoking.virtual,P&&P.smoking.virtual,function(w){return w.smoking.virtual;}),
+    'home','رسوم الرعاية المنزلية وعيادة التدخين',
+    tbl('الخدمة',row('زيارات منزلية',function(w){return w.home_care.visits;},'v-t')+row('تدخين حضوري',function(w){return w.smoking.inperson;},'v-b')+row('تدخين افتراضي',function(w){return w.smoking.virtual;},'v-p')));
+
+  var pEn=p('sec-endo','🔭','التنظير وأمراض الهضم',
+    kpi('مواعيد التنظير',''+LW.endoscopy.appoint,'v-t',parseFloat(LW.endoscopy.appoint)||0,P&&(parseFloat(P.endoscopy.appoint)||0),function(w){return parseFloat(w.endoscopy.appoint)||0;},'W6')
+    +kpi('إجراءات منجزة',''+LW.endoscopy.procedures,'v-b',parseFloat(LW.endoscopy.procedures)||0,P&&(parseFloat(P.endoscopy.procedures)||0),function(w){return parseFloat(w.endoscopy.procedures)||0;},'W6'),
+    'endoscopy','رسوم عيادة التنظير وأمراض الهضم',
+    tbl('التنظير',rowRaw('مواعيد التنظير',function(w){return w.endoscopy.appoint;},'v-t')+rowRaw('إجراءات منجزة',function(w){return w.endoscopy.procedures;},'v-b')));
+
+  function gr(id,panels){
+    var cols=panels.length===2?'panel-grid-2':'panel-grid';
+    var html='<div class="'+cols+'" id="'+id+'">';
+    panels.forEach(function(p){html+=p.panelHtml;});
+    html+='</div>';
+    panels.forEach(function(p){html+=p.desktopChartPanel+p.desktopTblPanel;});
+    return html;
+  }
+
+  return(
+    gr('row-1',[pQ,pE,pS])
+    +'<div class="panel-grid" id="row-2">'
+    +'<div class="panel-wide">'+pC.panelHtml+'</div>'
+    +pSat.panelHtml
+    +'</div>'
+    +pC.desktopChartPanel+pC.desktopTblPanel
+    +pSat.desktopChartPanel+pSat.desktopTblPanel
+    +gr('row-3',[pCap,pPh,pScr])
+    +gr('row-4',[pU,pH,pEn])
+  );
+}
+
+function init(){
+  try{
+    reg();
+    document.getElementById('main-content').innerHTML=buildHTML();
+    var vw=getVW();
+    document.getElementById('topbar-sub').textContent='عرض: '+vw.length+' أسابيع ('+vw[0].label+' → '+vw[vw.length-1].label+')';
+  }catch(e){
+    document.getElementById('main-content').innerHTML='<div style="padding:20px;color:#ff5f6b;font-family:monospace;direction:ltr;font-size:12px">Error: '+String(e)+'<br>'+e.stack+'</div>';
+  }
+}
+init();
+</script>
+<!-- ══ ZOOM MODAL ══ -->
+<div class="zoom-modal" id="zoomModal" onclick="closeZoom(event)">
+  <div class="zoom-box" onclick="event.stopPropagation()">
+    <div class="zoom-hdr">
+      <div class="zoom-title" id="zoomTitle">رسم بياني</div>
+      <button class="zoom-close" onclick="closeZoom()" title="إغلاق">✕</button>
+    </div>
+    <div class="zoom-body">
+      <div class="zoom-chart-scroll" id="zoomChartContainer"></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
