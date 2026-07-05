@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
-<title>تقرير الأداء الأسبوعي — المستشفى</title>
+<title>تقرير الأداء</title>
 <!-- Google Fonts عبر link — آمن على iOS/Safari -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -69,20 +69,20 @@ body {
   background:rgba(11,25,42,.92);
   backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
   border-bottom:1px solid var(--border-hi);
-  padding:0 14px;
-  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:0 10px;
+  display:flex; align-items:center; justify-content:space-between; gap:4px;
 }
 body.light .topbar { background:rgba(224,236,245,.93); }
 .topbar-info { min-width:0; flex:1; overflow:hidden; }
 .topbar-title {
-  font-size:13px; font-weight:700; color:var(--txt);
+  font-size:12px; font-weight:700; color:var(--txt);
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
-.topbar-sub { font-size:10px; color:var(--muted); margin-top:2px; white-space:nowrap; }
-.topbar-actions { display:flex; gap:8px; align-items:center; flex-shrink:0; }
+.topbar-sub { font-size:9px; color:var(--muted); margin-top:1px; white-space:nowrap; }
+.topbar-actions { display:flex; gap:4px; align-items:center; flex-shrink:0; }
 .theme-btn {
   background:var(--card); border:1px solid var(--border2); color:var(--muted);
-  padding:5px 13px; border-radius:20px; font-size:11px; cursor:pointer;
+  padding:4px 9px; border-radius:20px; font-size:10px; cursor:pointer;
   font-family:var(--font); transition:all .2s;
 }
 .theme-btn:hover { border-color:var(--blue); color:var(--blue); }
@@ -90,10 +90,10 @@ body.light .topbar { background:rgba(224,236,245,.93); }
 /* ═══════════════ Week Selector ═══════════════ */
 .week-selector { position:relative; }
 .week-btn {
-  display:flex; align-items:center; gap:5px;
+  display:flex; align-items:center; gap:3px;
   background:rgba(77,184,255,.1); border:1px solid rgba(77,184,255,.35);
-  color:var(--blue); padding:5px 13px; border-radius:20px;
-  font-size:11px; font-weight:600; cursor:pointer; font-family:var(--font);
+  color:var(--blue); padding:4px 9px; border-radius:20px;
+  font-size:10px; font-weight:600; cursor:pointer; font-family:var(--font);
   transition:all .2s; white-space:nowrap;
 }
 .week-btn:hover { background:rgba(77,184,255,.18); }
@@ -307,10 +307,23 @@ td:first-child  { z-index:2; }
   .kpi-val { font-size:22px; }
   td:first-child, th:first-child { width:96px; min-width:80px; font-size:10px; }
   .content { padding:10px 10px; }
-  :root { --nav-h:50px; --top-h:50px; }
-  body { padding-top:100px; padding-top:calc(var(--top-h) + var(--nav-h)); }
+  :root { --nav-h:50px; --top-h:46px; }
+  body { padding-top:96px; padding-top:calc(var(--top-h) + var(--nav-h)); }
   .nav-item { padding:6px 9px; font-size:10px; }
-  .topbar-title { font-size:12px; }
+  .topbar-title { font-size:11px; }
+  .topbar-sub { display:none; }
+  .topbar { padding:0 8px; gap:3px; }
+  .topbar-actions { gap:3px; }
+  .week-btn { padding:3px 7px; font-size:9px; gap:2px; }
+  .theme-btn { padding:3px 7px; font-size:9px; }
+}
+
+@media (max-width:480px) {
+  .topbar-title { font-size:10px; }
+  .week-btn { padding:2px 5px; font-size:8px; gap:1px; }
+  .theme-btn { padding:2px 5px; font-size:8px; }
+  .topbar { padding:0 6px; gap:2px; }
+  .topbar-actions { gap:2px; }
 }
 @media (max-width:380px) {
   td:first-child, th:first-child { width:82px; font-size:9px; }
@@ -410,7 +423,7 @@ div:not(.chart-zoom):not(.tbl-wrap):not(.quick-nav) {
 <!-- ══ TOPBAR ══ -->
 <div class="topbar">
   <div class="topbar-info">
-    <div class="topbar-title">📊 تقرير الأداء الأسبوعي — المستشفى</div>
+    <div class="topbar-title">📊 تقرير الأداء</div>
     <div class="topbar-sub" id="topbar-sub">مقارنة أسابيع</div>
   </div>
   <div class="topbar-actions">
@@ -438,10 +451,12 @@ div:not(.chart-zoom):not(.tbl-wrap):not(.quick-nav) {
       </div>
     </div>
 
+    <div>
     <!-- الرابط إلى الصفحة الأخرى (جديد) -->
   <a href="indexMaxMinMeanWithZoomFixedLegendsVer10.html" class="theme-btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:4px;">
     📄 نسخة أخرى
   </a>
+  </div>
 
     <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">☀️ فاتح</button>
   </div>
