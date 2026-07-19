@@ -36,8 +36,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--txt);direction:rtl
 /* ─── Subtle BG noise ─── */
 body::before{content:'';position:fixed;inset:0;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px;pointer-events:none;z-index:0;}
 body.light::before{opacity:.018;}
-::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
-*{scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
+html::-webkit-scrollbar{width:0;height:0}html{scrollbar-width:none}
+.chart-scroll::-webkit-scrollbar{width:0;height:3px}.chart-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.chart-scroll{scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.tbl-wrap::-webkit-scrollbar{height:3px}.tbl-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.tbl-wrap{scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
 
 .topbar{position:fixed;top:0;left:0;right:0;z-index:1001;height:var(--top-h);background:var(--glass-bg);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);border-bottom:1px solid var(--glass-border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
 body.light .topbar{background:var(--glass-bg);}
@@ -319,7 +322,7 @@ td.outlier-cell::after{content:'';position:absolute;inset:2px;border-radius:3px;
   flex:1;overflow:auto;padding:18px 20px 16px;
   -webkit-overflow-scrolling:touch;
 }
-.zoom-chart-scroll{overflow:auto;width:100%;}
+.zoom-chart-scroll{overflow:visible;width:100%;}
 .zoom-chart-scroll svg text:not([fill]){fill:var(--txt);}
 
 .zoom-btn{
@@ -388,7 +391,7 @@ td.outlier-cell::after{content:'';position:absolute;inset:2px;border-radius:3px;
 
 <div class="footer">
   <div>🏥 المستشفى — لوحة الأداء</div>
-  <div id="footerTimestamp">🔄 آخر تحديث: 12 يوليو 2026</div>
+  <div id="footerTimestamp">🔄 آخر تحديث: 19 يوليو 2026</div>
 </div>
 
 <script>
@@ -407,7 +410,8 @@ var WEEKS=[
   {label:"W12", month:"Jun", dateRange:"Jun14-20",    quality:{se_mre:0,incident:39,good_catch:3},emergency:{ctas12:19,ctas3:449,ctas45:2528},surgery:{emergency:10,routine:62,waiting:30,cancelled:5,cancel_reason:"No Show+4 Med.Ind."},clinics:{total:3486,virtual:670,no_show:104,no_show_pct:5},satisfaction:{all:87.25,ed:78.17,clinics:88.01,inpatient:85.15},complaints:{closed:90,not_closed:0},capacity:{inpatients:245,bed_occ:62,lifesaving:11,emergency_ref:18,routine_ref:43},screening:{breast:38,breast_pos:2,colon:83,colon_pos:3,stemi_total:1,stemi_out:0,stroke_total:2,stroke_out:0},pharmacy:{inpatient:4113,clinics:1338,emergency:2747},home_care:{visits:41},smoking:{inperson:6,virtual:5},endoscopy:{appoint:21,procedures:20}},
   {label:"W13", month:"Jun", dateRange:"Jun 21-27",   quality:{se_mre:2,incident:19,good_catch:7},emergency:{ctas12:18,ctas3:453,ctas45:2584},surgery:{emergency:18,routine:44,waiting:35,cancelled:0,cancel_reason:"_"}, clinics:{total:3264,virtual:676,no_show:181,no_show_pct:9}, satisfaction:{all:87.36,ed:78.42,clinics:87.86,inpatient:85.15}, complaints:{closed:105,not_closed:0}, capacity:{inpatients:240,bed_occ:68,lifesaving:11,emergency_ref:22,routine_ref:67}, screening:{breast:29,breast_pos:0,colon:58,colon_pos:2,stemi_total:1,stemi_out:0,stroke_total:1,stroke_out:0}, pharmacy:{inpatient:4141,clinics:1301,emergency:2879}, home_care:{visits:39}, smoking:{inperson:6,virtual:0}, endoscopy:{appoint:20,procedures:21} },
   {label:"W14", month:"Jul", dateRange:"Jun 28-Jul4", quality:{se_mre:0,incident:14,good_catch:14},emergency:{ctas12:19,ctas3:351,ctas45:2675},surgery:{emergency:13,routine:43,waiting:32,cancelled:1,cancel_reason:"Med.Ind."}, clinics:{total:3166,virtual:750,no_show:249,no_show_pct:13}, satisfaction:{all:87.37,ed:79.01,clinics:88.08,inpatient:85.15}, complaints:{closed:71,not_closed:0}, capacity:{inpatients:247,bed_occ:61,lifesaving:10,emergency_ref:11,routine_ref:57}, screening:{breast:34,breast_pos:0,colon:64,colon_pos:0,stemi_total:1,stemi_out:0,stroke_total:1,stroke_out:0}, pharmacy:{inpatient:4102,clinics:1215,emergency:2702}, home_care:{visits:35}, smoking:{inperson:7,virtual:0}, endoscopy:{appoint:0,procedures:0} },
-  {label:"W15", month:"Jul", dateRange:"Jul 5-11",    quality:{se_mre:2,incident:0,good_catch:20}, emergency:{ctas12:19,ctas3:35,ctas45:2467},surgery:{emergency:15,routine:41,waiting:35,cancelled:1,cancel_reason:"No Show"}, clinics:{total:3413,virtual:747,no_show:200,no_show_pct:11},  satisfaction:{all:85.96,ed:85.96,clinics:96.79,inpatient:85.15}, complaints:{closed:69,not_closed:0}, capacity:{inpatients:212,bed_occ:53,lifesaving:11,emergency_ref:13,routine_ref:64}, screening:{breast:22,breast_pos:0,colon:74,colon_pos:3,stemi_total:0,stemi_out:0,stroke_total:1,stroke_out:0}, pharmacy:{inpatient:3157,clinics:1127,emergency:2906}, home_care:{visits:38}, smoking:{inperson:6,virtual:0}, endoscopy:{appoint:0,procedures:1} } 
+  {label:"W15", month:"Jul", dateRange:"Jul 5-11",    quality:{se_mre:2,incident:0,good_catch:20}, emergency:{ctas12:19,ctas3:358,ctas45:2467},surgery:{emergency:15,routine:41,waiting:35,cancelled:1,cancel_reason:"No Show"}, clinics:{total:3413,virtual:747,no_show:200,no_show_pct:11},  satisfaction:{all:85.96,ed:85.96,clinics:96.79,inpatient:85.15}, complaints:{closed:69,not_closed:0}, capacity:{inpatients:212,bed_occ:53,lifesaving:11,emergency_ref:13,routine_ref:64}, screening:{breast:22,breast_pos:0,colon:74,colon_pos:3,stemi_total:0,stemi_out:0,stroke_total:1,stroke_out:0}, pharmacy:{inpatient:3157,clinics:1127,emergency:2906}, home_care:{visits:38}, smoking:{inperson:6,virtual:0}, endoscopy:{appoint:0,procedures:1} },
+  {label:"W16", month:"Jul", dateRange:"Jul 12-18",   quality:{se_mre:1,incident:0,good_catch:19}, emergency:{ctas12:18,ctas3:421,ctas45:2467},surgery:{emergency:17,routine:41,waiting:29,cancelled:0,cancel_reason:"-"}, clinics:{total:3644,virtual:752,no_show:257,no_show_pct:13},  satisfaction:{all:88.37,ed:86.97,clinics:92.16,inpatient:85.15}, complaints:{closed:84,not_closed:0}, capacity:{inpatients:210,bed_occ:53,lifesaving:13,emergency_ref:16,routine_ref:44}, screening:{breast:28,breast_pos:0,colon:50,colon_pos:2,stemi_total:6,stemi_out:3,stroke_total:0,stroke_out:0}, pharmacy:{inpatient:3421,clinics:1130,emergency:3038}, home_care:{visits:38}, smoking:{inperson:6,virtual:0}, endoscopy:{appoint:0,procedures:15} } 
 ];
 var LW=WEEKS[WEEKS.length-1],PW=WEEKS.length>=2?WEEKS[WEEKS.length-2]:null;
 var isLight=false,visibleCount=1;
@@ -625,7 +629,7 @@ function getOverviewMonthData(){
   return md[md.length-1];
 }
 
-var WK_LABELS = {1:'آخر أسبوع',2:'آخر أسبوعين',3:'آخر 3 أسابيع',4:'آخر 4 أسابيع',5:'آخر 5 أسابيع',6:'آخر 6 أسابيع',7:'آخر 7 أسابيع',8:'آخر 8 أسابيع',9:'آخر 9 أسابيع',10:'آخر 10 أسابيع',11:'آخر 11 أسبوع',12:'آخر 12 أسبوع',13:'آخر 13 أسبوع',14:'آخر 14 أسبوع',15:'كل الأسابيع (15)'};
+var WK_LABELS = {1:'آخر أسبوع',2:'آخر أسبوعين',3:'آخر 3 أسابيع',4:'آخر 4 أسابيع',5:'آخر 5 أسابيع',6:'آخر 6 أسابيع',7:'آخر 7 أسابيع',8:'آخر 8 أسابيع',9:'آخر 9 أسابيع',10:'آخر 10 أسابيع',11:'آخر 11 أسبوع',12:'آخر 12 أسبوع',13:'آخر 13 أسبوع',14:'آخر 14 أسبوع',15:'آخر 15 أسبوع',16:'كل الأسابيع (16)'};
 function toggleWeekMenu(e){ e.stopPropagation(); var dd=document.getElementById('weekDropdown'), btn=document.getElementById('weekBtn'); dd.classList.toggle('open', !dd.classList.contains('open')); btn.classList.toggle('open', !btn.classList.contains('open')); }
 function setWeeks(n){ visibleCount=n; document.querySelectorAll('.wk-opt').forEach(function(o){ o.classList.toggle('sel', parseInt(o.getAttribute('data-n'))===n); }); document.getElementById('weekBtnLabel').textContent=WK_LABELS[n]||n+' أسابيع'; document.getElementById('weekDropdown').classList.remove('open'); document.getElementById('weekBtn').classList.remove('open'); init(); }
 
@@ -1435,9 +1439,10 @@ function buildQuickOverview(controlsHtml){
   var clinInPerson = Math.max(0, (+lw.clinics.total||0) - (+lw.clinics.virtual||0) - (+lw.clinics.no_show||0));
   var clinDon = makeDonut([
     {label:'حضوري',   value:clinInPerson,              color:col.teal},
-    {label:'افتراضي', value:+lw.clinics.virtual||0,   color:col.blue},
-    {label:'No Show', value:+lw.clinics.no_show||0,   color:col.red}
+    {label:'افتراضي', value:+lw.clinics.virtual||0,   color:col.blue}
   ], 140);
+  var clinNoShowPct = +lw.clinics.no_show_pct||0;
+  var clinNoShowHtml = '<div style="font-size:10px;color:var(--red);text-align:center;margin-top:4px;font-weight:700;">No Show: '+clinNoShowPct+'%</div>';
 
   var refDon = makeDonut([
     {label:'إنقاذ حياة', value:+lw.capacity.lifesaving||0, color:col.red},
@@ -1589,7 +1594,7 @@ function buildQuickOverview(controlsHtml){
     + donutCardWithKPI('العمليات', surDon, [{label:'طارئة',value:+lw.surgery.emergency||0,color:col.red},{label:'روتينية',value:+lw.surgery.routine||0,color:col.green},{label:'انتظار',value:+lw.surgery.waiting||0,color:col.amber,side:-1},{label:'ملغاة',value:+lw.surgery.cancelled||0,color:col.purple,side:-1}],['surgery.emergency','surgery.routine','surgery.waiting','surgery.cancelled'],'donut','surgery')
     + donutCardWithKPI('الصيدلية', phDon, [{label:'تنويم',value:+lw.pharmacy.inpatient||0,color:col.blue},{label:'عيادات',value:+lw.pharmacy.clinics||0,color:col.purple},{label:'طوارئ',value:+lw.pharmacy.emergency||0,color:col.amber}],['pharmacy.inpatient','pharmacy.clinics','pharmacy.emergency'],'donut','pharmacy')
     + donutCardWithKPI('الجودة', qualDon, [{label:'Incident',value:+lw.quality.incident||0,color:col.amber},{label:'Good Catch',value:+lw.quality.good_catch||0,color:col.green},{label:'SE/MRE',value:+lw.quality.se_mre||0,color:col.red}],['quality.incident','quality.good_catch','quality.se_mre'],'donut','quality')
-    + donutCardWithKPI('العيادات', clinDon, [{label:'حضوري',value:clinInPerson,color:col.teal},{label:'افتراضي',value:+lw.clinics.virtual||0,color:col.blue},{label:'No Show',value:+lw.clinics.no_show||0,color:col.red}],[null,'clinics.virtual','clinics.no_show'],'donut','clinics')
+    + qCardZoomKPI('العيادات', clinDon.outerHTML + clinNoShowHtml, [{label:'حضوري',value:clinInPerson,color:col.teal},{label:'افتراضي',value:+lw.clinics.virtual||0,color:col.blue},{label:'No Show',value:clinNoShowPct,color:col.red}],[null,'clinics.virtual','clinics.no_show_pct'],[{type:'generic'}],'clinics')
     + donutCardWithKPI('الإحالات', refDon, [{label:'إنقاذ حياة',value:+lw.capacity.lifesaving||0,color:col.red},{label:'طارئة',value:+lw.capacity.emergency_ref||0,color:col.amber},{label:'روتينية',value:+lw.capacity.routine_ref||0,color:col.blue}],['capacity.lifesaving','capacity.emergency_ref','capacity.routine_ref'],'donut','capacity')
     + qCardZoomKPI('الطاقة الاستيعابية', '<div style="display:flex;justify-content:center;width:100%;">'+bedGauge.outerHTML+'</div>',
       [{label:'المنومون',value:+lw.capacity.inpatients||0,color:col.purple},{label:'إشغال الأسرة',value:+lw.capacity.bed_occ||0,color:col.teal}],
@@ -1610,7 +1615,7 @@ function buildQuickOverview(controlsHtml){
     + qCardZoomKPI('التدخين', smokingBarHtml,
       [{label:'حضوري',value:+lw.smoking.inperson||0,color:col.blue},{label:'افتراضي',value:+lw.smoking.virtual||0,color:col.purple}],
       ['smoking.inperson','smoking.virtual'],
-      smokingBarItems,'home')
+      smokingBarItems,'smoking')
     + qCardZoomKPI('التنظير', endoHtml,
       [{label:'مواعيد',value:+lw.endoscopy.appoint||0,color:col.teal},{label:'إجراءات',value:+lw.endoscopy.procedures||0,color:col.blue}],
       ['endoscopy.appoint','endoscopy.procedures'],
@@ -2218,7 +2223,10 @@ function reg(){
   ], opts:{H:270}}; });
 
   registerChart('home', function(col){ return {datasets:[
-    {label:'زيارات منزلية', type:'line', data:vals(function(w){ return w.home_care.visits; }), color:col.green},
+    {label:'زيارات منزلية', type:'line', data:vals(function(w){ return w.home_care.visits; }), color:col.green}
+  ], opts:{H:270}}; });
+
+  registerChart('smoking', function(col){ return {datasets:[
     {label:'تدخين حضوري', type:'bar', data:vals(function(w){ return w.smoking.inperson; }), color:col.blue},
     {label:'تدخين افتراضي', type:'bar', data:vals(function(w){ return w.smoking.virtual; }), color:col.purple}
   ], opts:{H:270}}; });
@@ -2582,12 +2590,16 @@ function buildHTML(){
     'urgent', 'مسارات الرعاية العاجلة',
     tbl('العاجلة', row('STEMI-Total', function(w){ var v=w.screening.stemi_total; return (v==='-') ? '—' : v; }, 'v-p') + row('STEMI-Out', function(w){ var v=w.screening.stemi_out; return (v==='-') ? '—' : v; }, 'v-r') + row('Stroke-Total', function(w){ var v=w.screening.stroke_total; return (v==='-') ? '—' : v; }, 'v-b') + row('Stroke-Out', function(w){ var v=w.screening.stroke_out; return (v==='-') ? '—' : v; }, 'v-r')));
 
-  var pH = p('sec-home', '🏠', 'الرعاية المنزلية — التدخين',
-    kpi('زيارات منزلية', ''+LW.home_care.visits, 'v-t', LW.home_care.visits, P&&P.home_care.visits, function(w){ return w.home_care.visits; })
-    + kpi('تدخين حضوري', ''+LW.smoking.inperson, 'v-b', LW.smoking.inperson, P&&P.smoking.inperson, function(w){ return w.smoking.inperson; })
+  var pH = p('sec-home', '🏠', 'الرعاية المنزلية',
+    kpi('زيارات منزلية', ''+LW.home_care.visits, 'v-t', LW.home_care.visits, P&&P.home_care.visits, function(w){ return w.home_care.visits; }),
+    'home', 'الرعاية المنزلية',
+    tbl('الخدمة', row('زيارات منزلية', function(w){ return w.home_care.visits; }, 'v-t')));
+
+  var pSm = p('sec-smoking', '🚬', 'عيادة التدخين',
+    kpi('تدخين حضوري', ''+LW.smoking.inperson, 'v-b', LW.smoking.inperson, P&&P.smoking.inperson, function(w){ return w.smoking.inperson; })
     + kpi('تدخين افتراضي', ''+LW.smoking.virtual, 'v-p', LW.smoking.virtual, P&&P.smoking.virtual, function(w){ return w.smoking.virtual; }),
-    'home', 'الرعاية المنزلية وعيادة التدخين',
-    tbl('الخدمة', row('زيارات منزلية', function(w){ return w.home_care.visits; }, 'v-t') + row('تدخين حضوري', function(w){ return w.smoking.inperson; }, 'v-b') + row('تدخين افتراضي', function(w){ return w.smoking.virtual; }, 'v-p')));
+    'smoking', 'عيادة التدخين',
+    tbl('التدخين', row('حضوري', function(w){ return w.smoking.inperson; }, 'v-b') + row('افتراضي', function(w){ return w.smoking.virtual; }, 'v-p')));
 
   var pEn = p('sec-endo', '🔭', 'التنظير وأمراض الهضم',
     kpi('مواعيد التنظير', ''+LW.endoscopy.appoint, 'v-t', parseFloat(LW.endoscopy.appoint)||0, P&&(parseFloat(P.endoscopy.appoint)||0), function(w){ return parseFloat(w.endoscopy.appoint)||0; }, 'W6')
@@ -2647,6 +2659,7 @@ function buildHTML(){
     + secWrap('sec-screening', pScr.mobileChartPanel, pScr.mobileTblPanel, pScr.desktopChartPanel, pScr.desktopTblPanel)
     + secWrap('sec-urgent', pU.mobileChartPanel, pU.mobileTblPanel, pU.desktopChartPanel, pU.desktopTblPanel)
     + secWrap('sec-home', pH.mobileChartPanel, pH.mobileTblPanel, pH.desktopChartPanel, pH.desktopTblPanel)
+    + secWrap('sec-smoking', pSm.mobileChartPanel, pSm.mobileTblPanel, pSm.desktopChartPanel, pSm.desktopTblPanel)
     + secWrap('sec-endo', pEn.mobileChartPanel, pEn.mobileTblPanel, pEn.desktopChartPanel, pEn.desktopTblPanel);
 }
 
@@ -2729,6 +2742,7 @@ function init(){
     {id:'sec-screening',label:'الفحوصات'},
     {id:'sec-urgent',label:'العاجلة'},
     {id:'sec-home',label:'المنزلية'},
+    {id:'sec-smoking',label:'التدخين'},
     {id:'sec-endo',label:'التنظير'}
   ];
   function onScroll(){
