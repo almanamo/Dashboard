@@ -413,6 +413,7 @@ var WEEKS=[
   {label:"W15", month:"Jul", dateRange:"Jul 5-11",    quality:{se_mre:2,incident:0,good_catch:20}, emergency:{ctas12:19,ctas3:358,ctas45:2467},surgery:{emergency:15,routine:41,waiting:35,cancelled:1,cancel_reason:"No Show"}, clinics:{total:3413,virtual:747,no_show:200,no_show_pct:11},  satisfaction:{all:85.96,ed:85.96,clinics:96.79,inpatient:85.15}, complaints:{closed:69,not_closed:0}, capacity:{inpatients:212,bed_occ:53,lifesaving:11,emergency_ref:13,routine_ref:64}, screening:{breast:22,breast_pos:0,colon:74,colon_pos:3,stemi_total:0,stemi_out:0,stroke_total:1,stroke_out:0}, pharmacy:{inpatient:3157,clinics:1127,emergency:2906}, home_care:{visits:38}, smoking:{inperson:6,virtual:0}, endoscopy:{appoint:0,procedures:1} },
   {label:"W16", month:"Jul", dateRange:"Jul 12-18",   quality:{se_mre:1,incident:0,good_catch:19}, emergency:{ctas12:18,ctas3:421,ctas45:2467},surgery:{emergency:17,routine:41,waiting:29,cancelled:0,cancel_reason:"-"}, clinics:{total:3644,virtual:752,no_show:257,no_show_pct:13},  satisfaction:{all:88.37,ed:86.97,clinics:92.16,inpatient:85.15}, complaints:{closed:84,not_closed:0}, capacity:{inpatients:210,bed_occ:53,lifesaving:13,emergency_ref:16,routine_ref:44}, screening:{breast:28,breast_pos:0,colon:50,colon_pos:2,stemi_total:6,stemi_out:3,stroke_total:0,stroke_out:0}, pharmacy:{inpatient:3421,clinics:1130,emergency:3038}, home_care:{visits:38}, smoking:{inperson:6,virtual:0}, endoscopy:{appoint:0,procedures:15} } 
 ];
+WEEKS.forEach(function(w){ w.clinics.inperson = Math.max(0,(+w.clinics.total||0) - (+w.clinics.virtual||0) - (+w.clinics.no_show||0)); });
 var LW=WEEKS[WEEKS.length-1],PW=WEEKS.length>=2?WEEKS[WEEKS.length-2]:null;
 var isLight=false,visibleCount=1;
 
@@ -425,7 +426,7 @@ var FIELD_TYPE={
   'emergency.ctas12':'sum','emergency.ctas3':'sum','emergency.ctas45':'sum',
   'surgery.emergency':'sum','surgery.routine':'sum','surgery.waiting':'last',
   'surgery.cancelled':'sum','surgery.cancel_reason':'text',
-  'clinics.total':'sum','clinics.virtual':'sum','clinics.no_show':'sum','clinics.no_show_pct':'avg',
+  'clinics.total':'sum','clinics.virtual':'sum','clinics.no_show':'sum','clinics.no_show_pct':'avg','clinics.inperson':'sum',
   'satisfaction.all':'avg','satisfaction.ed':'avg','satisfaction.clinics':'avg','satisfaction.inpatient':'avg',
   'complaints.closed':'sum','complaints.not_closed':'sum',
   'capacity.inpatients':'sum','capacity.bed_occ':'avg',
@@ -485,7 +486,7 @@ function buildMonthlyData(){
         });
         return Object.keys(c).map(function(k){ return c[k]+' '+k; }).join('+');
       })()},
-      clinics:{total:agg('clinics.total'), virtual:agg('clinics.virtual'), no_show:agg('clinics.no_show'), no_show_pct:agg('clinics.no_show_pct')},
+      clinics:{total:agg('clinics.total'), virtual:agg('clinics.virtual'), no_show:agg('clinics.no_show'), no_show_pct:agg('clinics.no_show_pct'), inperson:agg('clinics.inperson')},
       satisfaction:{all:agg('satisfaction.all'), ed:agg('satisfaction.ed'), clinics:agg('satisfaction.clinics'), inpatient:agg('satisfaction.inpatient')},
       complaints:{closed:agg('complaints.closed'), not_closed:agg('complaints.not_closed')},
       capacity:{inpatients:agg('capacity.inpatients'), bed_occ:agg('capacity.bed_occ'), lifesaving:agg('capacity.lifesaving'), emergency_ref:agg('capacity.emergency_ref'), routine_ref:agg('capacity.routine_ref')},
@@ -1595,7 +1596,7 @@ function buildQuickOverview(controlsHtml){
     + donutCardWithKPI('العمليات', surDon, [{label:'طارئة',value:+lw.surgery.emergency||0,color:col.red},{label:'روتينية',value:+lw.surgery.routine||0,color:col.green},{label:'انتظار',value:+lw.surgery.waiting||0,color:col.amber,side:-1},{label:'ملغاة',value:+lw.surgery.cancelled||0,color:col.purple,side:-1}],['surgery.emergency','surgery.routine','surgery.waiting','surgery.cancelled'],'donut','surgery')
     + donutCardWithKPI('الصيدلية', phDon, [{label:'تنويم',value:+lw.pharmacy.inpatient||0,color:col.blue},{label:'عيادات',value:+lw.pharmacy.clinics||0,color:col.purple},{label:'طوارئ',value:+lw.pharmacy.emergency||0,color:col.amber}],['pharmacy.inpatient','pharmacy.clinics','pharmacy.emergency'],'donut','pharmacy')
     + donutCardWithKPI('الجودة', qualDon, [{label:'Incident',value:+lw.quality.incident||0,color:col.amber},{label:'Good Catch',value:+lw.quality.good_catch||0,color:col.green},{label:'SE/MRE',value:+lw.quality.se_mre||0,color:col.red}],['quality.incident','quality.good_catch','quality.se_mre'],'donut','quality')
-    + qCardZoomKPI('العيادات', clinDon.outerHTML + clinNoShowHtml, [{label:'حضوري',value:clinInPerson,color:col.teal},{label:'افتراضي',value:+lw.clinics.virtual||0,color:col.blue},{label:'No Show',value:clinNoShowCnt,color:col.red}],['clinics.total','clinics.virtual','clinics.no_show'],[{type:'generic'}],'clinics')
+    + qCardZoomKPI('العيادات', clinDon.outerHTML + clinNoShowHtml, [{label:'حضوري',value:clinInPerson,color:col.teal},{label:'افتراضي',value:+lw.clinics.virtual||0,color:col.blue},{label:'No Show',value:clinNoShowCnt,color:col.red}],['clinics.inperson','clinics.virtual','clinics.no_show'],[{type:'generic'}],'clinics')
     + donutCardWithKPI('الإحالات', refDon, [{label:'إنقاذ حياة',value:+lw.capacity.lifesaving||0,color:col.red},{label:'طارئة',value:+lw.capacity.emergency_ref||0,color:col.amber},{label:'روتينية',value:+lw.capacity.routine_ref||0,color:col.blue}],['capacity.lifesaving','capacity.emergency_ref','capacity.routine_ref'],'donut','capacity')
     + qCardZoomKPI('الطاقة الاستيعابية', '<div style="display:flex;justify-content:center;width:100%;">'+bedGauge.outerHTML+'</div>',
       [{label:'المنومون',value:+lw.capacity.inpatients||0,color:col.purple},{label:'إشغال الأسرة',value:+lw.capacity.bed_occ||0,color:col.teal}],
