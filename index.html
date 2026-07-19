@@ -378,7 +378,7 @@ td.outlier-cell::after{content:'';position:absolute;inset:2px;border-radius:3px;
     <div class="topbar-sub" id="topbar-sub">مقارنة أسابيع</div>
   </div>
   <div class="topbar-actions">
-    <a class="icon-btn" href="indexMaxMinMeanWithZoomFixedLegendsVer10.html" title="الإصدار السابق" style="text-decoration:none;font-size:9px;">⬅ الإصدار السابق</a>
+     <a class="icon-btn" href="indexMaxMinMeanWithZoomFixedLegendsVer10.html" title="الإصدار السابق" style="text-decoration:none;font-size:12px;font-weight:600;color:var(--muted);opacity:1;">⬅ الإصدار السابق</a>
     <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="تبديل المظهر">🌙</button>
   </div>
 </div>
@@ -1441,8 +1441,9 @@ function buildQuickOverview(controlsHtml){
     {label:'حضوري',   value:clinInPerson,              color:col.teal},
     {label:'افتراضي', value:+lw.clinics.virtual||0,   color:col.blue}
   ], 140);
+  var clinNoShowCnt = +lw.clinics.no_show||0;
   var clinNoShowPct = +lw.clinics.no_show_pct||0;
-  var clinNoShowHtml = '<div style="font-size:10px;color:var(--red);text-align:center;margin-top:4px;font-weight:700;">No Show: '+clinNoShowPct+'%</div>';
+  var clinNoShowHtml = '<div style="font-size:10px;color:var(--red);text-align:center;margin-top:4px;font-weight:700;">No Show: '+clinNoShowCnt+' ('+clinNoShowPct+'%)</div>';
 
   var refDon = makeDonut([
     {label:'إنقاذ حياة', value:+lw.capacity.lifesaving||0, color:col.red},
@@ -1594,7 +1595,7 @@ function buildQuickOverview(controlsHtml){
     + donutCardWithKPI('العمليات', surDon, [{label:'طارئة',value:+lw.surgery.emergency||0,color:col.red},{label:'روتينية',value:+lw.surgery.routine||0,color:col.green},{label:'انتظار',value:+lw.surgery.waiting||0,color:col.amber,side:-1},{label:'ملغاة',value:+lw.surgery.cancelled||0,color:col.purple,side:-1}],['surgery.emergency','surgery.routine','surgery.waiting','surgery.cancelled'],'donut','surgery')
     + donutCardWithKPI('الصيدلية', phDon, [{label:'تنويم',value:+lw.pharmacy.inpatient||0,color:col.blue},{label:'عيادات',value:+lw.pharmacy.clinics||0,color:col.purple},{label:'طوارئ',value:+lw.pharmacy.emergency||0,color:col.amber}],['pharmacy.inpatient','pharmacy.clinics','pharmacy.emergency'],'donut','pharmacy')
     + donutCardWithKPI('الجودة', qualDon, [{label:'Incident',value:+lw.quality.incident||0,color:col.amber},{label:'Good Catch',value:+lw.quality.good_catch||0,color:col.green},{label:'SE/MRE',value:+lw.quality.se_mre||0,color:col.red}],['quality.incident','quality.good_catch','quality.se_mre'],'donut','quality')
-    + qCardZoomKPI('العيادات', clinDon.outerHTML + clinNoShowHtml, [{label:'حضوري',value:clinInPerson,color:col.teal},{label:'افتراضي',value:+lw.clinics.virtual||0,color:col.blue},{label:'No Show',value:clinNoShowPct,color:col.red}],[null,'clinics.virtual','clinics.no_show_pct'],[{type:'generic'}],'clinics')
+    + qCardZoomKPI('العيادات', clinDon.outerHTML + clinNoShowHtml, [{label:'حضوري',value:clinInPerson,color:col.teal},{label:'افتراضي',value:+lw.clinics.virtual||0,color:col.blue},{label:'No Show',value:clinNoShowCnt,color:col.red}],['clinics.total','clinics.virtual','clinics.no_show'],[{type:'generic'}],'clinics')
     + donutCardWithKPI('الإحالات', refDon, [{label:'إنقاذ حياة',value:+lw.capacity.lifesaving||0,color:col.red},{label:'طارئة',value:+lw.capacity.emergency_ref||0,color:col.amber},{label:'روتينية',value:+lw.capacity.routine_ref||0,color:col.blue}],['capacity.lifesaving','capacity.emergency_ref','capacity.routine_ref'],'donut','capacity')
     + qCardZoomKPI('الطاقة الاستيعابية', '<div style="display:flex;justify-content:center;width:100%;">'+bedGauge.outerHTML+'</div>',
       [{label:'المنومون',value:+lw.capacity.inpatients||0,color:col.purple},{label:'إشغال الأسرة',value:+lw.capacity.bed_occ||0,color:col.teal}],
