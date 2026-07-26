@@ -55,6 +55,10 @@ body.light .topbar{background:var(--glass-bg);}
 .icon-btn{background:var(--card);border:1px solid var(--border2);color:var(--muted);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:all .2s;flex-shrink:0;}
 .icon-btn:hover{border-color:var(--blue);color:var(--blue);background:rgba(77,184,255,.08);transform:translateY(-1px);}
 .icon-btn:active{transform:scale(.93);}
+.ver-btn{background:var(--card);border:1px solid var(--border2);color:var(--txt-dim);padding:4px 12px;border-radius:8px;font-size:11px;font-weight:600;white-space:nowrap;cursor:pointer;transition:all .2s;flex-shrink:0;text-decoration:none;display:inline-flex;align-items:center;gap:4px;line-height:1.4;}
+.ver-btn:hover{border-color:var(--blue);color:var(--blue);background:rgba(77,184,255,.08);transform:translateY(-1px);}
+.ver-btn:active{transform:scale(.95);}
+body.light .ver-btn{color:var(--txt-dim);border-color:var(--border2);}
 
 .content{padding:14px 14px 30px;width:100%;max-width:1600px;margin:0 auto;}
 
@@ -64,7 +68,7 @@ body.light .topbar{background:var(--glass-bg);}
 .quick-overview-hdr .controls-row{background:none;border:none;margin:0;padding:0;border-radius:0;}
 
 .quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;}
-.quick-card{background:var(--card2);border:1px solid var(--border-hi);border-radius:10px;padding:10px 12px 8px;display:flex;flex-direction:column;align-items:center;position:relative;transition:border-color .2s,box-shadow .2s;}
+.quick-card{background:var(--card2);border:1px solid var(--border-hi);border-radius:10px;padding:10px 12px 8px;display:flex;flex-direction:column;align-items:center;position:relative;transition:border-color .2s,box-shadow .2s;min-width:0;}
 .quick-card:hover{border-color:var(--border2);box-shadow:0 2px 12px rgba(0,0,0,.2);}
 .quick-zoom-hint{position:absolute;top:6px;right:6px;font-size:10px;opacity:0;transition:opacity .2s;z-index:2;}
 .quick-zoom-trigger:hover .quick-zoom-hint{opacity:.6;}
@@ -72,7 +76,7 @@ body.light .topbar{background:var(--glass-bg);}
 .quick-card-content{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;flex:1;width:100%;}
 .quick-dtl{display:flex;gap:5px;margin-top:3px;justify-content:center;flex-wrap:wrap;}
 .quick-dtl .detail-btn{font-size:9px;padding:2px 6px;border-radius:5px;}
-.quick-card-content svg{flex-shrink:0;max-width:100%;}
+.quick-card-content svg{flex-shrink:0;max-width:100%;width:100%;height:auto;}
 .quick-card-content svg text:not([fill]){fill:var(--txt);}
 .donut-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 8px;width:100%;margin-top:2px;}
 .donut-leg-item{display:flex;align-items:center;gap:3px;font-size:8px;color:var(--txt-dim);white-space:nowrap;}
@@ -94,7 +98,7 @@ body.light .topbar{background:var(--glass-bg);}
 .week-btn{display:flex;align-items:center;gap:5px;background:rgba(77,184,255,.08);border:1px solid rgba(77,184,255,.28);color:var(--blue);padding:6px 13px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .2s;white-space:nowrap;}
 .week-btn:hover{background:rgba(77,184,255,.14);}
 .caret{font-size:8px;opacity:.6;transition:transform .2s;}.week-btn.open .caret{transform:rotate(180deg);}
-.week-dropdown{position:absolute;top:calc(100% + 7px);left:0;min-width:180px;background:var(--card2);border:1px solid var(--border2);border-radius:10px;overflow:hidden;z-index:2000;box-shadow:0 16px 40px rgba(0,0,0,.6);opacity:0;transform:translateY(-6px) scale(.97);pointer-events:none;transition:opacity .16s,transform .16s;}
+.week-dropdown{position:absolute;top:calc(100% + 7px);left:0;min-width:180px;background:var(--card2);border:1px solid var(--border2);border-radius:10px;max-height:min(420px,75vh);overflow-y:auto;overscroll-behavior:contain;z-index:2000;box-shadow:0 16px 40px rgba(0,0,0,.6);opacity:0;transform:translateY(-6px) scale(.97);pointer-events:none;transition:opacity .16s,transform .16s;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
 .week-dropdown.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
 .wk-opt{padding:10px 15px;font-size:12px;cursor:pointer;color:var(--txt-dim);display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid var(--border);transition:background .13s;}
 .wk-opt:last-child{border-bottom:none;}.wk-opt:hover{background:rgba(77,184,255,.07);color:var(--txt);}
@@ -216,6 +220,7 @@ body.light .hbar-lbl,body.light .hbar-val{color:var(--txt);}
   :root{--top-h:56px;}
   .quick-grid{grid-template-columns:repeat(2,1fr);}
   .controls-row{flex-direction:column;align-items:stretch;}
+  .ver-btn{font-size:10px;padding:3px 10px;}
 
 }
 
@@ -378,7 +383,7 @@ td.outlier-cell::after{content:'';position:absolute;inset:2px;border-radius:3px;
     <div class="topbar-sub" id="topbar-sub">مقارنة أسابيع</div>
   </div>
   <div class="topbar-actions">
-     <a class="icon-btn" href="indexMaxMinMeanWithZoomFixedLegendsVer10.html" title="الإصدار السابق" style="text-decoration:none;font-size:12px;font-weight:600;color:var(--muted);opacity:1;">⬅ الإصدار السابق</a>
+     <a class="ver-btn" href="indexMaxMinMeanWithZoomFixedLegendsVer10.html" title="الإصدار السابق">⬅ الإصدار السابق</a>
     <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="تبديل المظهر">🌙</button>
   </div>
 </div>
@@ -391,7 +396,7 @@ td.outlier-cell::after{content:'';position:absolute;inset:2px;border-radius:3px;
 
 <div class="footer">
   <div>🏥 المستشفى — لوحة الأداء</div>
-  <div id="footerTimestamp">🔄 آخر تحديث: 19 يوليو 2026</div>
+  <div id="footerTimestamp">🔄 آخر تحديث: 26 يوليو 2026</div>
 </div>
 
 <script>
@@ -411,7 +416,8 @@ var WEEKS=[
   {label:"W13", month:"Jun", dateRange:"Jun 21-27",   quality:{se_mre:2,incident:19,good_catch:7},emergency:{ctas12:18,ctas3:453,ctas45:2584},surgery:{emergency:18,routine:44,waiting:35,cancelled:0,cancel_reason:"_"}, clinics:{total:3264,virtual:676,no_show:181,no_show_pct:9}, satisfaction:{all:87.36,ed:78.42,clinics:87.86,inpatient:85.15}, complaints:{closed:105,not_closed:0}, capacity:{inpatients:240,bed_occ:68,lifesaving:11,emergency_ref:22,routine_ref:67}, screening:{breast:29,breast_pos:0,colon:58,colon_pos:2,stemi_total:1,stemi_out:0,stroke_total:1,stroke_out:0}, pharmacy:{inpatient:4141,clinics:1301,emergency:2879}, home_care:{visits:39}, smoking:{inperson:6,virtual:0}, endoscopy:{appoint:20,procedures:21} },
   {label:"W14", month:"Jul", dateRange:"Jun 28-Jul4", quality:{se_mre:0,incident:14,good_catch:14},emergency:{ctas12:19,ctas3:351,ctas45:2675},surgery:{emergency:13,routine:43,waiting:32,cancelled:1,cancel_reason:"Med.Ind."}, clinics:{total:3166,virtual:750,no_show:249,no_show_pct:13}, satisfaction:{all:87.37,ed:79.01,clinics:88.08,inpatient:85.15}, complaints:{closed:71,not_closed:0}, capacity:{inpatients:247,bed_occ:61,lifesaving:10,emergency_ref:11,routine_ref:57}, screening:{breast:34,breast_pos:0,colon:64,colon_pos:0,stemi_total:1,stemi_out:0,stroke_total:1,stroke_out:0}, pharmacy:{inpatient:4102,clinics:1215,emergency:2702}, home_care:{visits:35}, smoking:{inperson:7,virtual:0}, endoscopy:{appoint:0,procedures:0} },
   {label:"W15", month:"Jul", dateRange:"Jul 5-11",    quality:{se_mre:2,incident:0,good_catch:20}, emergency:{ctas12:19,ctas3:358,ctas45:2467},surgery:{emergency:15,routine:41,waiting:35,cancelled:1,cancel_reason:"No Show"}, clinics:{total:3413,virtual:747,no_show:200,no_show_pct:11},  satisfaction:{all:85.96,ed:85.96,clinics:96.79,inpatient:85.15}, complaints:{closed:69,not_closed:0}, capacity:{inpatients:212,bed_occ:53,lifesaving:11,emergency_ref:13,routine_ref:64}, screening:{breast:22,breast_pos:0,colon:74,colon_pos:3,stemi_total:0,stemi_out:0,stroke_total:1,stroke_out:0}, pharmacy:{inpatient:3157,clinics:1127,emergency:2906}, home_care:{visits:38}, smoking:{inperson:6,virtual:0}, endoscopy:{appoint:0,procedures:1} },
-  {label:"W16", month:"Jul", dateRange:"Jul 12-18",   quality:{se_mre:1,incident:0,good_catch:19}, emergency:{ctas12:18,ctas3:421,ctas45:2467},surgery:{emergency:17,routine:40,waiting:32,cancelled:0,cancel_reason:"-"}, clinics:{total:3644,virtual:752,no_show:257,no_show_pct:13},  satisfaction:{all:88.37,ed:86.97,clinics:92.16,inpatient:85.15}, complaints:{closed:84,not_closed:0}, capacity:{inpatients:210,bed_occ:53,lifesaving:13,emergency_ref:16,routine_ref:44}, screening:{breast:28,breast_pos:0,colon:50,colon_pos:2,stemi_total:6,stemi_out:3,stroke_total:0,stroke_out:0}, pharmacy:{inpatient:3421,clinics:1130,emergency:3038}, home_care:{visits:38}, smoking:{inperson:6,virtual:0}, endoscopy:{appoint:0,procedures:15} } 
+  {label:"W16", month:"Jul", dateRange:"Jul 12-18",   quality:{se_mre:1,incident:0,good_catch:19}, emergency:{ctas12:18,ctas3:421,ctas45:2467},surgery:{emergency:17,routine:40,waiting:32,cancelled:0,cancel_reason:"-"}, clinics:{total:3644,virtual:752,no_show:257,no_show_pct:13},  satisfaction:{all:88.37,ed:86.97,clinics:92.16,inpatient:85.15}, complaints:{closed:84,not_closed:0}, capacity:{inpatients:210,bed_occ:53,lifesaving:13,emergency_ref:16,routine_ref:44}, screening:{breast:28,breast_pos:0,colon:50,colon_pos:2,stemi_total:0,stemi_out:0,stroke_total:0,stroke_out:0}, pharmacy:{inpatient:3421,clinics:1130,emergency:3038}, home_care:{visits:38}, smoking:{inperson:6,virtual:0}, endoscopy:{appoint:0,procedures:15} },
+  {label:"W17", month:"Jul", dateRange:"Jul 19-25",   quality:{se_mre:1,incident:7,good_catch:25}, emergency:{ctas12:19,ctas3:371,ctas45:2407},surgery:{emergency:26,routine:37,waiting:28,cancelled:2,cancel_reason:"Med.Ind. - No Show"}, clinics:{total:3775,virtual:748,no_show:144,no_show_pct:6},  satisfaction:{all:88.47,ed:83.47,clinics:86.56,inpatient:85.15}, complaints:{closed:82,not_closed:0}, capacity:{inpatients:284,bed_occ:46,lifesaving:7,emergency_ref:19,routine_ref:61}, screening:{breast:65,breast_pos:1,colon:77,colon_pos:2,stemi_total:0,stemi_out:0,stroke_total:2,stroke_out:1}, pharmacy:{inpatient:4523,clinics:1191,emergency:3181}, home_care:{visits:39}, smoking:{inperson:8,virtual:0}, endoscopy:{appoint:4,procedures:17} } 
 ];
 WEEKS.forEach(function(w){ w.clinics.inperson = Math.max(0,(+w.clinics.total||0) - (+w.clinics.virtual||0) - (+w.clinics.no_show||0)); });
 var LW=WEEKS[WEEKS.length-1],PW=WEEKS.length>=2?WEEKS[WEEKS.length-2]:null;
@@ -630,7 +636,7 @@ function getOverviewMonthData(){
   return md[md.length-1];
 }
 
-var WK_LABELS = {1:'آخر أسبوع',2:'آخر أسبوعين',3:'آخر 3 أسابيع',4:'آخر 4 أسابيع',5:'آخر 5 أسابيع',6:'آخر 6 أسابيع',7:'آخر 7 أسابيع',8:'آخر 8 أسابيع',9:'آخر 9 أسابيع',10:'آخر 10 أسابيع',11:'آخر 11 أسبوع',12:'آخر 12 أسبوع',13:'آخر 13 أسبوع',14:'آخر 14 أسبوع',15:'آخر 15 أسبوع',16:'كل الأسابيع (16)'};
+var WK_LABELS = {1:'آخر أسبوع',2:'آخر أسبوعين',3:'آخر 3 أسابيع',4:'آخر 4 أسابيع',5:'آخر 5 أسابيع',6:'آخر 6 أسابيع',7:'آخر 7 أسابيع',8:'آخر 8 أسابيع',9:'آخر 9 أسابيع',10:'آخر 10 أسابيع',11:'آخر 11 أسبوع',12:'آخر 12 أسبوع',13:'آخر 13 أسبوع',14:'آخر 14 أسبوع',15:'آخر 15 أسبوع',16:'آخر 16 أسبوع',17:'كل الأسابيع (17)'};
 function toggleWeekMenu(e){ e.stopPropagation(); var dd=document.getElementById('weekDropdown'), btn=document.getElementById('weekBtn'); dd.classList.toggle('open', !dd.classList.contains('open')); btn.classList.toggle('open', !btn.classList.contains('open')); }
 function setWeeks(n){ visibleCount=n; document.querySelectorAll('.wk-opt').forEach(function(o){ o.classList.toggle('sel', parseInt(o.getAttribute('data-n'))===n); }); document.getElementById('weekBtnLabel').textContent=WK_LABELS[n]||n+' أسابيع'; document.getElementById('weekDropdown').classList.remove('open'); document.getElementById('weekBtn').classList.remove('open'); init(); }
 
@@ -729,6 +735,11 @@ function stat(fn, fromLabel){
 function kpiStats(fn, fromLabel){
   var s = stat(fn, fromLabel);
   var vw = allData();
+  if(fromLabel){
+    var idx=0;
+    for(var i=0; i<vw.length; i++){ if(vw[i].label===fromLabel){ idx=i; break; } }
+    vw = vw.slice(idx);
+  }
   var nums = vw.map(fn).filter(function(v){ return v!==null && v!==undefined && !isNaN(+v) && v!=='-' && v!=='—' && v!=='_'; }).map(Number);
   var hideStats = (nums.length <= 1);
   var hiddenClass = hideStats ? ' hidden' : '';
@@ -867,7 +878,7 @@ function makeStackedBar(data, colors, labels, maxVal, zeroNotes){
 /* ─── Donut Chart ─── */
 function makeDonut(segments, size){
   size = size || 140;
-  var px = Math.round(size*0.16), py = Math.round(size*0.12);
+  var px = Math.round(size*0.22), py = Math.round(size*0.18);
   var vw = size+2*px, vh = size+2*py;
   var ns='http://www.w3.org/2000/svg';
   var cx=size/2, cy=size/2, R=size*0.40, r=size*0.24;
@@ -928,18 +939,20 @@ function makeDonut(segments, size){
     labelItems.push({sign:sign, sx:sx, sy:sy, mx:mx, my:my, pct:pct, label:s.label, value:s.value, color:s.color});
     angle += sweep;
   });
-  var endR = R*1.40, minGap = Math.round(size*0.19);
+  var endR = R*1.55, minGap = Math.round(size*0.25);
   function spreadItems(items){
     if(items.length < 2) return;
     items.sort(function(a,b){ return a.my - b.my; });
-    var range = items[items.length-1].my - items[0].my;
-    var need = minGap * (items.length - 1);
-    if(need > range){
-      var extra = (need - range) / 2;
-      var startY = items[0].my - extra;
-      items.forEach(function(it, i){ it.ey = startY + i * need / (items.length - 1); });
-    } else {
-      items.forEach(function(it){ it.ey = it.my; });
+    items.forEach(function(it){ it.ey = it.my; });
+    for(var pass=0; pass<3; pass++){
+      for(var i=1;i<items.length;i++){
+        var gap=items[i].ey-items[i-1].ey;
+        if(gap<minGap){
+          var shift=(minGap-gap)/2;
+          items[i-1].ey-=shift;
+          items[i].ey+=shift;
+        }
+      }
     }
   }
   spreadItems(labelItems.filter(function(i){ return i.sign < 0; }));
@@ -1162,18 +1175,20 @@ function makeQuickPie(segments, size){
     labelItems.push({sign:sign, sx:sx, sy:sy, mx:mx, my:my, pct:pct, label:s.label, value:s.value, color:s.color});
     angle += sweep;
   });
-  var endR = R*1.40, minGap = Math.round(size*0.19);
+  var endR = R*1.55, minGap = Math.round(size*0.25);
   function spreadItems(items){
     if(items.length < 2) return;
     items.sort(function(a,b){ return a.my - b.my; });
-    var range = items[items.length-1].my - items[0].my;
-    var need = minGap * (items.length - 1);
-    if(need > range){
-      var extra = (need - range) / 2;
-      var startY = items[0].my - extra;
-      items.forEach(function(it, i){ it.ey = startY + i * need / (items.length - 1); });
-    } else {
-      items.forEach(function(it){ it.ey = it.my; });
+    items.forEach(function(it){ it.ey = it.my; });
+    for(var pass=0; pass<3; pass++){
+      for(var i=1;i<items.length;i++){
+        var gap=items[i].ey-items[i-1].ey;
+        if(gap<minGap){
+          var shift=(minGap-gap)/2;
+          items[i-1].ey-=shift;
+          items[i].ey+=shift;
+        }
+      }
     }
   }
   spreadItems(labelItems.filter(function(i){ return i.sign < 0; }));
@@ -1294,9 +1309,19 @@ function buildKPIGrid(segments, paths){
   if(!segments || !segments.length) return '';
   var allW = allData();
   var lw = getOverviewMonthData();
-  var curIdx = -1;
-  for(var i=0;i<allW.length;i++){ if(allW[i].label===lw.label){ curIdx=i; break; } }
-  var prevW = curIdx>0 ? allW[curIdx-1] : null;
+  var vw = getVW();
+  var prevW = null;
+  var statFromLabel = null;
+  if(vw && vw.length > 0 && allW && allW.length > 0){
+    var firstLabel = vw[0].label;
+    var startIdx = -1;
+    for(var i=0;i<allW.length;i++){ if(allW[i].label===firstLabel){ startIdx=i; break; } }
+    if(startIdx >= vw.length){
+      var prevSlice = allW.slice(startIdx - vw.length, startIdx);
+      prevW = prevSlice.length === 1 ? prevSlice[0] : aggregateData(prevSlice);
+    }
+    if(vw.length > 1) statFromLabel = firstLabel;
+  }
   var clsMap = {'var(--red)':'v-r','var(--green)':'v-g','var(--amber)':'v-a','var(--blue)':'v-b','var(--teal)':'v-t','var(--purple)':'v-p'};
   var kpis = segments.map(function(s, i){
     var p = paths && paths[i] ? paths[i] : null;
@@ -1305,7 +1330,7 @@ function buildKPIGrid(segments, paths){
     var curr = +s.value||0;
     var prev = prevW ? (+gpo(prevW, p)||0) : undefined;
     var statFn = makeStatFn(p);
-    var kh = kpi(s.label, ''+s.value, cls, curr, prev, statFn);
+    var kh = kpi(s.label, ''+s.value, cls, curr, prev, statFn, statFromLabel);
     if(p) kh = kh.replace('<div class="kpi"', '<div class="kpi" data-path="'+p+'"');
     return kh;
   }).join('');
@@ -2632,7 +2657,9 @@ function buildHTML(){
     + '<div class="wk-opt" data-n="12" onclick="setWeeks(12)">آخر 12 أسبوع <span class="wk-chk">✓</span></div>'
     + '<div class="wk-opt" data-n="13" onclick="setWeeks(13)">آخر 13 أسبوع <span class="wk-chk">✓</span></div>'
     + '<div class="wk-opt" data-n="14" onclick="setWeeks(14)">آخر 14 أسبوع <span class="wk-chk">✓</span></div>'
-    + '<div class="wk-opt" data-n="15" onclick="setWeeks(15)">كل الأسابيع (15) <span class="wk-chk">✓</span></div>'
+    + '<div class="wk-opt" data-n="15" onclick="setWeeks(15)">آخر 15 أسبوع <span class="wk-chk">✓</span></div>'
+    + '<div class="wk-opt" data-n="16" onclick="setWeeks(16)">آخر 16 أسبوع <span class="wk-chk">✓</span></div>'
+    + '<div class="wk-opt" data-n="17" onclick="setWeeks(17)">كل الأسابيع (17) <span class="wk-chk">✓</span></div>'
     + '</div>'
     + '</div>'
     + '<div class="month-selector" id="monthSelector" style="display:none;">'
