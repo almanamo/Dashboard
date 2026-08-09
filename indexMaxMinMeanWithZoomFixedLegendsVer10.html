@@ -417,6 +417,183 @@ div:not(.chart-zoom):not(.tbl-wrap):not(.quick-nav):not(.week-dropdown):not(.mon
   overflow: visible;
 }
 
+/* ═══════════════ الترقية العصريّة ═══════════════ */
+
+/* تبديل العرض أسبوعي/شهري */
+.view-toggle {
+  display:flex; align-items:center; gap:2px;
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:20px; padding:3px; flex-shrink:0;
+}
+.vt-btn {
+  border:none; background:transparent; color:var(--muted);
+  font-family:var(--font); font-size:10px; font-weight:600;
+  padding:4px 11px; border-radius:16px; cursor:pointer;
+  transition:all .2s; -webkit-tap-highlight-color:transparent;
+}
+.vt-btn.active {
+  background:rgba(77,184,255,.16); color:var(--blue);
+  box-shadow:0 1px 4px rgba(0,0,0,.2);
+}
+.vt-divider { width:1px; height:14px; background:var(--border2); opacity:.5; }
+
+/* منتقي الشهور (نمط الشهر الأخضر) */
+.month-selector{position:relative;}
+.month-btn{display:flex;align-items:center;gap:5px;background:rgba(61,214,140,.08);border:1px solid rgba(61,214,140,.3);color:var(--green);padding:6px 13px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .2s;white-space:nowrap;}
+.month-btn:hover{background:rgba(61,214,140,.14);}
+.month-btn .caret2{font-size:8px;opacity:.6;transition:transform .2s;}.month-btn.open .caret2{transform:rotate(180deg);}
+.month-dropdown{position:absolute;top:calc(100% + 7px);left:0;min-width:155px;background:var(--card2);border:1px solid var(--border2);border-radius:10px;overflow:hidden;z-index:2000;box-shadow:0 16px 40px rgba(0,0,0,.6);opacity:0;transform:translateY(-6px) scale(.97);pointer-events:none;transition:opacity .16s,transform .16s;}
+.month-dropdown.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+.mo-opt{padding:9px 14px;font-size:12px;cursor:pointer;color:var(--txt-dim);display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid var(--border);transition:background .13s;}
+.mo-opt:last-child{border-bottom:none;}.mo-opt:hover{background:rgba(61,214,140,.07);color:var(--txt);}
+.mo-opt.sel{color:var(--green);background:rgba(61,214,140,.09);font-weight:600;}
+.mo-opt .mo-chk{opacity:0;font-size:10px;}.mo-opt.sel .mo-chk{opacity:1;}
+
+/* النظرة العامة السريعة */
+.quick-overview {
+  margin:2px 0 18px;
+  border:1px solid var(--border-hi);
+  border-radius:var(--r);
+  background:linear-gradient(160deg,var(--card) 0%,var(--bg2) 100%);
+  padding:14px 16px 16px;
+  position:relative; overflow:hidden;
+}
+.quick-overview::before {
+  content:''; position:absolute; top:-60px; left:-60px;
+  width:180px; height:180px; border-radius:50%;
+  background:radial-gradient(circle,rgba(77,184,255,.12),transparent 70%);
+  pointer-events:none;
+}
+.quick-overview-hdr {
+  display:flex; align-items:center; gap:8px;
+  font-size:12px; font-weight:700; color:var(--txt-dim);
+  margin-bottom:12px;
+}
+.quick-overview-hdr .upd-badge {
+  margin-right:auto; font-size:9px; font-weight:600;
+  color:var(--blue); background:rgba(77,184,255,.12);
+  border:1px solid rgba(77,184,255,.25);
+  padding:2px 9px; border-radius:12px; white-space:nowrap;
+}
+.quick-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:10px;
+}
+.quick-card {
+  background:var(--card); border:1px solid var(--border-hi);
+  border-radius:11px; padding:11px 13px;
+  position:relative; overflow:hidden;
+  border-top:2px solid var(--qc-c,var(--border2));
+  transition:transform .15s, box-shadow .15s;
+}
+.quick-card:hover { transform:translateY(-2px); box-shadow:0 8px 22px rgba(0,0,0,.28); }
+.quick-card::after {
+  content:''; position:absolute; inset:0;
+  border-radius:11px;
+  background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,transparent 55%);
+  pointer-events:none;
+}
+.quick-card-title { font-size:10px; color:var(--txt-dim); font-weight:500; opacity:.85; }
+.quick-card-val  { font-size:23px; font-weight:800; line-height:1.15; margin-top:5px; letter-spacing:-.5px; }
+.quick-card-sub  { font-size:9px; color:var(--muted); margin-top:3px; display:flex; align-items:center; gap:4px; }
+.quick-card-sub .q-up  { color:var(--green); }
+.quick-card-sub .q-dn  { color:var(--red); }
+.quick-card-sub .q-flat{ color:var(--muted); }
+
+/* شارة قسم محدث */
+.update-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:9px; font-weight:700; color:var(--blue);
+  background:rgba(77,184,255,.12);
+  border:1px solid rgba(77,184,255,.25);
+  padding:1px 8px; border-radius:10px;
+  margin-inline-start:auto; white-space:nowrap;
+}
+
+/* قيمة إحصائية صغيرة داخل KPI (avg/min/max) */
+.kpi-stats {
+  display:flex; gap:8px; margin-top:7px; flex-wrap:wrap;
+}
+.kpi-stat {
+  font-size:8.5px; color:var(--muted); line-height:1.3;
+  padding:1px 5px; border-radius:5px;
+  background:rgba(77,184,255,.06);
+}
+.kpi-stat b { font-weight:700; color:var(--txt-dim); }
+
+/* حركة دخول الأقسام */
+@keyframes riseIn {
+  from { opacity:0; transform:translateY(6px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.sec-hdr, .kpi, .quick-card, .chart-card, .tbl-wrap {
+  animation:riseIn .35s ease both;
+}
+
+/* تحسين سهم الاتجاه في KPI */
+.kpi-trend {
+  font-size:10px; font-weight:800;
+  padding:2px 7px; border-radius:12px;
+  display:inline-flex; align-items:center; gap:1px;
+}
+.trend-up { color:var(--green); background:rgba(61,214,140,.13); }
+.trend-dn { color:var(--red);  background:rgba(255,95,107,.13); }
+.trend-flat { color:var(--muted); background:rgba(122,138,158,.12); }
+
+/* نظرة عامة شهرية */
+.month-summary {
+  border:1px solid var(--border-hi); border-radius:var(--r);
+  background:var(--card); padding:14px 16px; margin-bottom:18px;
+}
+.month-summary-hdr {
+  font-size:12px; font-weight:700; color:var(--txt-dim);
+  display:flex; align-items:center; gap:8px; margin-bottom:12px;
+}
+.month-summary-hdr .update-badge { margin-inline-start:auto; }
+.month-chip-grid {
+  display:grid; gap:8px;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+}
+.month-chip {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:10px; padding:9px 12px;
+  display:flex; align-items:center; gap:10px;
+  cursor:pointer; transition:all .18s;
+}
+.month-chip:hover { border-color:rgba(77,184,255,.35); transform:translateY(-1px); }
+.month-chip.sel { border-color:var(--blue); background:rgba(77,184,255,.1); }
+.mchip-name { font-size:11px; font-weight:700; color:var(--txt); }
+.mchip-wks  { font-size:9px; color:var(--muted); margin-top:1px; }
+.mchip-arrow{ margin-inline-start:auto; color:var(--blue); font-size:12px; }
+
+/* وضع شهري: بطاقات ملخص */
+.mpanel-grid { display:grid; gap:10px; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); }
+.mpanel {
+  background:var(--card); border:1px solid var(--border-hi);
+  border-radius:11px; padding:12px 14px;
+  border-top:2px solid var(--mp-c,var(--border2));
+}
+.mpanel-title { font-size:10px; font-weight:600; color:var(--txt-dim); }
+.mpanel-row { display:flex; align-items:baseline; gap:6px; margin-top:6px; }
+.mpanel-val { font-size:20px; font-weight:800; line-height:1; }
+.mpanel-sub { font-size:9px; color:var(--muted); margin-top:4px; }
+.mpanel-vs  { font-size:9px; color:var(--muted); margin-top:2px; }
+.mpanel-vs b { color:var(--txt-dim); }
+.mpanel-vs .q-up { color:var(--green); } .mpanel-vs .q-dn { color:var(--red); }
+
+/* توهج على hover لبطاقات الرسم */
+.chart-card { transition:box-shadow .2s, border-color .2s; }
+.chart-card:hover { border-color:rgba(77,184,255,.3); box-shadow:0 10px 30px rgba(0,0,0,.22); }
+
+/* شارة الزر: تنبيه لطيف */
+@keyframes pulseDot { 0%,100%{opacity:1} 50%{opacity:.35} }
+.pulse-dot {
+  display:inline-block; width:6px; height:6px; border-radius:50%;
+  background:var(--green); margin-inline-start:2px;
+  animation:pulseDot 2s infinite;
+}
+
 </style>
 </head>
 <body>
@@ -428,37 +605,26 @@ div:not(.chart-zoom):not(.tbl-wrap):not(.quick-nav):not(.week-dropdown):not(.mon
     <div class="topbar-sub" id="topbar-sub">مقارنة أسابيع</div>
   </div>
   <div class="topbar-actions">
-    <a class="icon-btn" href="index.html" title="الإصدار الجديد" style="text-decoration:none;font-size:12px;font-weight:600;color:var(--muted);opacity:1;">الإصدار الجديد ➡</a>
+    <div class="view-toggle">
+      <button class="vt-btn active" id="vt-weekly" onclick="setViewMode('weekly')">أسبوعي</button>
+      <div class="vt-divider"></div>
+      <button class="vt-btn" id="vt-monthly" onclick="setViewMode('monthly')">شهري</button>
+    </div>
     <div class="week-selector" id="weekSelector">
       <button class="week-btn" id="weekBtn" onclick="toggleWeekMenu(event)">
-        📅 <span id="weekBtnLabel">
-         كل الأسابيع (18)
-          </span>
+        📅 <span id="weekBtnLabel"></span>
         <span class="caret">▾</span>
       </button>
       <div class="week-dropdown" id="weekDropdown">
-        <div class="wk-opt" data-n="2"  onclick="setWeeks(2)">آخر أسبوعين <span class="wk-chk">✓</span></div>
-        <div class="wk-opt" data-n="3"  onclick="setWeeks(3)">آخر 3 أسابيع <span class="wk-chk">✓</span></div>
-        <div class="wk-opt" data-n="4"  onclick="setWeeks(4)">آخر 4 أسابيع <span class="wk-chk">✓</span></div>
-        <div class="wk-opt" data-n="5"  onclick="setWeeks(5)">آخر 5 أسابيع <span class="wk-chk">✓</span></div>
-        <div class="wk-opt" data-n="6"  onclick="setWeeks(6)">آخر 6 أسابيع <span class="wk-chk">✓</span></div>
-        <div class="wk-opt" data-n="7"  onclick="setWeeks(7)">آخر 7 أسابيع <span class="wk-chk">✓</span></div>
-        <div class="wk-opt" data-n="8"  onclick="setWeeks(8)">آخر 8 أسابيع <span class="wk-chk">✓</span></div>
-        <div class="wk-opt" data-n="9"  onclick="setWeeks(9)">آخر 9 أسابيع <span class="wk-chk">✓</span></div>
-        <div class="wk-opt" data-n="10"  onclick="setWeeks(10)">آخر 10 أسابيع <span class="wk-chk">✓</span></div>
-        <div class="wk-opt" data-n="11"  onclick="setWeeks(11)">آخر 11 أسبوع <span class="wk-chk">✓</span></div>
-        <div class="wk-opt" data-n="12"  onclick="setWeeks(12)">آخر 12 أسبوع <span class="wk-chk">✓</span></div>
-        <div class="wk-opt" data-n="13"  onclick="setWeeks(13)">آخر 13 أسبوع <span class="wk-chk">✓</span></div>
-        <div class="wk-opt" data-n="14"  onclick="setWeeks(14)">آخر 14 أسبوع <span class="wk-chk">✓</span></div>
-        <div class="wk-opt" data-n="15"  onclick="setWeeks(15)">آخر 15 أسبوع <span class="wk-chk">✓</span></div>
-        <div class="wk-opt" data-n="16"  onclick="setWeeks(16)">آخر 16 أسبوع <span class="wk-chk">✓</span></div>
-        <div class="wk-opt" data-n="17"  onclick="setWeeks(17)">آخر 17 أسبوع <span class="wk-chk">✓</span></div>
-        <div class="wk-opt sel" data-n="18" onclick="setWeeks(18)">كل الأسابيع (18) <span class="wk-chk">✓</span></div>
       </div>
     </div>
 
-  
+    <div class="month-selector" id="monthSelector" style="display:none;">
+      <button class="month-btn" id="monthBtn" onclick="toggleMonthMenu(event)">📅 <span id="monthBtnLabel">📊 كل الشهور</span><span class="caret2">▾</span></button>
+      <div class="month-dropdown" id="monthDropdown"></div>
+    </div>
 
+    <a class="icon-btn" href="index.html" title="الإصدار الجديد" style="text-decoration:none;font-size:12px;font-weight:600;color:var(--muted);opacity:1;">الإصدار الجديد ➡</a>
     <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">☀️ فاتح</button>
   </div>
 </div>
@@ -487,38 +653,111 @@ div:not(.chart-zoom):not(.tbl-wrap):not(.quick-nav):not(.week-dropdown):not(.mon
   <div id="footer-txt">🔄 آخر تحديث: 2 أوغست 2026</div>
 </div>
 
+<script src="data.js"></script>
 <script>
-/* ════════════════════════════════════════════
-   البيانات — 17 أسابيع (بدون تغيير)
-════════════════════════════════════════════ */
-var WEEKS = [
-  { label:"W1", dateRange:"4 Mar-29 Apr", quality:{se_mre:1,incident:22,good_catch:2}, emergency:{ctas12:49,ctas3:496,ctas45:3256}, surgery:{emergency:23,routine:41,waiting:34,cancelled:1,cancel_reason:"Medical Indication"}, clinics:{total:2820,virtual:572,no_show:463,no_show_pct:16}, satisfaction:{all:87.99,ed:81,clinics:88.83,inpatient:77.04}, complaints:{closed:85,not_closed:0}, capacity:{inpatients:221,bed_occ:63,lifesaving:13,emergency_ref:19,routine_ref:44}, screening:{breast:43,breast_pos:0,colon:42,colon_pos:4,stemi_total:'-',stemi_out:'-',stroke_total:'-',stroke_out:'-'}, pharmacy:{inpatient:2796,clinics:1207,emergency:3536}, home_care:{visits:35}, smoking:{inperson:6,virtual:2}, endoscopy:{appoint:"-",procedures:"-"} },
-  { label:"W2", dateRange:"5-11 Apr", quality:{se_mre:1,incident:31,good_catch:1}, emergency:{ctas12:16,ctas3:549,ctas45:3147}, surgery:{emergency:18,routine:56,waiting:39,cancelled:2,cancel_reason:"Medical Indication - No Show"}, clinics:{total:2967,virtual:628,no_show:466,no_show_pct:15}, satisfaction:{all:87.32,ed:73.08,clinics:82.74,inpatient:85.15}, complaints:{closed:67,not_closed:0}, capacity:{inpatients:227,bed_occ:61,lifesaving:13,emergency_ref:16,routine_ref:51}, screening:{breast:42,breast_pos:0,colon:87,colon_pos:1,stemi_total:'-',stemi_out:'-',stroke_total:'-',stroke_out:'-'}, pharmacy:{inpatient:4400,clinics:1145,emergency:3438}, home_care:{visits:37}, smoking:{inperson:5,virtual:4}, endoscopy:{appoint:"-",procedures:"-"} },
-  { label:"W3", dateRange:"12-18 Apr", quality:{se_mre:0,incident:20,good_catch:1}, emergency:{ctas12:14,ctas3:427,ctas45:3212}, surgery:{emergency:15,routine:49,waiting:46,cancelled:1,cancel_reason:"No Show"}, clinics:{total:3181,virtual:683,no_show:390,no_show_pct:12}, satisfaction:{all:86.44,ed:72.07,clinics:86.17,inpatient:85.15}, complaints:{closed:59,not_closed:0}, capacity:{inpatients:230,bed_occ:61,lifesaving:10,emergency_ref:9,routine_ref:55}, screening:{breast:52,breast_pos:2,colon:64,colon_pos:1,stemi_total:'-',stemi_out:'-',stroke_total:'-',stroke_out:'-'}, pharmacy:{inpatient:4539,clinics:1178,emergency:3456}, home_care:{visits:39}, smoking:{inperson:10,virtual:3}, endoscopy:{appoint:"-",procedures:"-"} },
-  { label:"W4", dateRange:"19-25 Apr", quality:{se_mre:1,incident:25,good_catch:3}, emergency:{ctas12:15,ctas3:437,ctas45:2866}, surgery:{emergency:12,routine:64,waiting:43,cancelled:2,cancel_reason:"Medical Indication - No Show"}, clinics:{total:3389,virtual:731,no_show:442,no_show_pct:13}, satisfaction:{all:86.75,ed:75.55,clinics:82.55,inpatient:85.15}, complaints:{closed:65,not_closed:0}, capacity:{inpatients:221,bed_occ:60,lifesaving:7,emergency_ref:11,routine_ref:50}, screening:{breast:67,breast_pos:0,colon:55,colon_pos:2,stemi_total:'-',stemi_out:'-',stroke_total:'-',stroke_out:'-'}, pharmacy:{inpatient:4400,clinics:1314,emergency:3182}, home_care:{visits:37}, smoking:{inperson:4,virtual:4}, endoscopy:{appoint:"-",procedures:"-"} },
-  { label:"W5", dateRange:"26 Apr- 3 May", quality:{se_mre:0,incident:34,good_catch:1}, emergency:{ctas12:18,ctas3:399,ctas45:3056}, surgery:{emergency:21,routine:54,waiting:48,cancelled:2,cancel_reason:"Medical Indication - No Show"}, clinics:{total:3453,virtual:717,no_show:525,no_show_pct:15}, satisfaction:{all:86.74,ed:75.21,clinics:86.58,inpatient:85.15}, complaints:{closed:82,not_closed:0}, capacity:{inpatients:224,bed_occ:64,lifesaving:10,emergency_ref:10,routine_ref:62}, screening:{breast:65,breast_pos:0,colon:50,colon_pos:2,stemi_total:1,stemi_out:0,stroke_total:3,stroke_out:0}, pharmacy:{inpatient:2982,clinics:1281,emergency:3272}, home_care:{visits:38}, smoking:{inperson:10,virtual:6}, endoscopy:{appoint:"_",procedures:"_"} },
-  { label:"W6", dateRange:"3-9 May", quality:{se_mre:0,incident:37,good_catch:2}, emergency:{ctas12:18,ctas3:446,ctas45:3216}, surgery:{emergency:14,routine:77,waiting:44,cancelled:1,cancel_reason:"No Show"}, clinics:{total:3249,virtual:649,no_show:340,no_show_pct:10.46}, satisfaction:{all:86.89,ed:74.92,clinics:87.10,inpatient:85.15}, complaints:{closed:69,not_closed:0}, capacity:{inpatients:267,bed_occ:68,lifesaving:14,emergency_ref:14,routine_ref:47}, screening:{breast:46,breast_pos:1,colon:57,colon_pos:0,stemi_total:2,stemi_out:2,stroke_total:5,stroke_out:3}, pharmacy:{inpatient:2548,clinics:1306,emergency:3246}, home_care:{visits:39}, smoking:{inperson:8,virtual:2}, endoscopy:{appoint:14,procedures:16} },
-  { label:"W7", dateRange:"10-16 May", quality:{se_mre:1,incident:33,good_catch:1}, emergency:{ctas12:13,ctas3:429,ctas45:2744}, surgery:{emergency:13,routine:59,waiting:52,cancelled:1,cancel_reason:"No Show"}, clinics:{total:3383,virtual:661,no_show:376,no_show_pct:10}, satisfaction:{all:86.95,ed:74.92,clinics:87.47,inpatient:85.15}, complaints:{closed:70,not_closed:0}, capacity:{inpatients:269,bed_occ:65,lifesaving:9,emergency_ref:12,routine_ref:50}, screening:{breast:45,breast_pos:0,colon:48,colon_pos:2,stemi_total:1,stemi_out:1,stroke_total:7,stroke_out:3}, pharmacy:{inpatient:4068,clinics:1340,emergency:3422}, home_care:{visits:38}, smoking:{inperson:9,virtual:8}, endoscopy:{appoint:13,procedures:12} },
-  { label:"W8", dateRange:"17-23 May", quality:{se_mre:2,incident:23,good_catch:0}, emergency:{ctas12:16,ctas3:846,ctas45:2736}, surgery:{emergency:19,routine:53,waiting:23,cancelled:0,cancel_reason:"_"}, clinics:{total:3287,virtual:655,no_show:217,no_show_pct:6.6}, satisfaction:{all:87.07,ed:74.16,clinics:85.76,inpatient:85.15}, complaints:{closed:76,not_closed:0}, capacity:{inpatients:241,bed_occ:65,lifesaving:9,emergency_ref:13,routine_ref:38}, screening:{breast:27,breast_pos:0,colon:38,colon_pos:0,stemi_total:0,stemi_out:0,stroke_total:4,stroke_out:3}, pharmacy:{inpatient:1960,clinics:1250,emergency:3273}, home_care:{visits:36}, smoking:{inperson:12,virtual:3}, endoscopy:{appoint:18,procedures:9} },
-  { label:"W9", dateRange:"24-30 May", quality:{se_mre:2,incident:19,good_catch:4}, emergency:{ctas12:13,ctas3:537,ctas45:2785}, surgery:{emergency:17,routine:36,waiting:30,cancelled:0,cancel_reason:"_"}, clinics:{total:1882,virtual:364,no_show:94,no_show_pct:11}, satisfaction:{all:86.97,ed:75.79,clinics:87.36,inpatient:85.15}, complaints:{closed:78,not_closed:0}, capacity:{inpatients:198,bed_occ:52,lifesaving:17,emergency_ref:15,routine_ref:19}, screening:{breast:8,breast_pos:0,colon:0,colon_pos:0,stemi_total:0,stemi_out:0,stroke_total:4,stroke_out:3}, pharmacy:{inpatient:1472,clinics:669,emergency:3209}, home_care:{visits:32}, smoking:{inperson:4,virtual:7}, endoscopy:{appoint:9,procedures:4} },
-  { label:"W10", dateRange:"31May-6Jun", quality:{se_mre:0,incident:19,good_catch:1}, emergency:{ctas12:13,ctas3:431,ctas45:3316}, surgery:{emergency:9,routine:32,waiting:42,cancelled:1,cancel_reason:"Medical Indication"}, clinics:{total:2996,virtual:378,no_show:265,no_show_pct:15.7}, satisfaction:{all:"-",ed:79.62,clinics:87.08,inpatient:85.15}, complaints:{closed:89,not_closed:0}, capacity:{inpatients:235,bed_occ:61,lifesaving:5,emergency_ref:9,routine_ref:27}, screening:{breast:15,breast_pos:1,colon:23,colon_pos:0,stemi_total:0,stemi_out:0,stroke_total:1,stroke_out:0}, pharmacy:{inpatient:1867,clinics:1138,emergency:3701}, home_care:{visits:28}, smoking:{inperson:7,virtual:7}, endoscopy:{appoint:8,procedures:10} },
-  { label:"W11", dateRange:"Jun 7-13", quality:{se_mre:0,incident:31,good_catch:0}, emergency:{ctas12:16,ctas3:474,ctas45:2818}, surgery:{emergency:17,routine:59,waiting:40,cancelled:1,cancel_reason:"Anasthesia"}, clinics:{total:3359,virtual:619,no_show:216,no_show_pct:11}, satisfaction:{all:81.69,ed:76.34,clinics:85.88,inpatient:85.15}, complaints:{closed:86,not_closed:0}, capacity:{inpatients:280,bed_occ:70,lifesaving:13,emergency_ref:17,routine_ref:45}, screening:{breast:53,breast_pos:0,colon:54,colon_pos:0,stemi_total:0,stemi_out:0,stroke_total:1,stroke_out:1}, pharmacy:{inpatient:4489,clinics:1262,emergency:3105}, home_care:{visits:40}, smoking:{inperson:6,virtual:5}, endoscopy:{appoint:18,procedures:13} },
-  { label:"W12", dateRange:"Jun 14-20", quality:{se_mre:0,incident:39,good_catch:3}, emergency:{ctas12:19,ctas3:449,ctas45:2528}, surgery:{emergency:10,routine:62,waiting:30,cancelled:5,cancel_reason:"No Show, 4 Medical Indications"}, clinics:{total:3486,virtual:670,no_show:104,no_show_pct:5}, satisfaction:{all:87.25,ed:78.17,clinics:88.01,inpatient:85.15}, complaints:{closed:90,not_closed:0}, capacity:{inpatients:245,bed_occ:62,lifesaving:11,emergency_ref:18,routine_ref:43}, screening:{breast:38,breast_pos:2,colon:83,colon_pos:3,stemi_total:1,stemi_out:0,stroke_total:2,stroke_out:0}, pharmacy:{inpatient:4113,clinics:1338,emergency:2747}, home_care:{visits:41}, smoking:{inperson:6,virtual:5}, endoscopy:{appoint:21,procedures:20} },
-  { label:"W13", dateRange:"Jun 21-27", quality:{se_mre:2,incident:19,good_catch:7}, emergency:{ctas12:18,ctas3:453,ctas45:2584}, surgery:{emergency:18,routine:44,waiting:35,cancelled:0,cancel_reason:"_"}, clinics:{total:3264,virtual:676,no_show:181,no_show_pct:9}, satisfaction:{all:87.36,ed:78.42,clinics:87.86,inpatient:85.15}, complaints:{closed:105,not_closed:0}, capacity:{inpatients:240,bed_occ:68,lifesaving:11,emergency_ref:22,routine_ref:67}, screening:{breast:29,breast_pos:0,colon:58,colon_pos:2,stemi_total:1,stemi_out:0,stroke_total:1,stroke_out:0}, pharmacy:{inpatient:4141,clinics:1301,emergency:2879}, home_care:{visits:39}, smoking:{inperson:6,virtual:0}, endoscopy:{appoint:20,procedures:21} },
-  { label:"W14", dateRange:"Jun 28-Jul4", quality:{se_mre:0,incident:14,good_catch:14}, emergency:{ctas12:19,ctas3:370,ctas45:2286}, surgery:{emergency:13,routine:43,waiting:32,cancelled:1,cancel_reason:"Medical Indication"}, clinics:{total:3166,virtual:750,no_show:249,no_show_pct:13}, satisfaction:{all:87.37,ed:79.01,clinics:88.08,inpatient:85.15}, complaints:{closed:71,not_closed:0}, capacity:{inpatients:247,bed_occ:61,lifesaving:10,emergency_ref:11,routine_ref:57}, screening:{breast:34,breast_pos:0,colon:64,colon_pos:0,stemi_total:1,stemi_out:0,stroke_total:1,stroke_out:0}, pharmacy:{inpatient:4102,clinics:1215,emergency:2702}, home_care:{visits:35}, smoking:{inperson:7,virtual:0}, endoscopy:{appoint:0,procedures:0} },
-  { label:"W15", dateRange:"Jul 5-11", quality:{se_mre:2,incident:0,good_catch:20}, emergency:{ctas12:19,ctas3:358,ctas45:2467}, surgery:{emergency:15,routine:41,waiting:35,cancelled:1,cancel_reason:"No Show"}, clinics:{total:3413,virtual:747,no_show:200,no_show_pct:11}, satisfaction:{all:85.96,ed:85.96,clinics:96.79,inpatient:85.15}, complaints:{closed:69,not_closed:0}, capacity:{inpatients:212,bed_occ:53,lifesaving:11,emergency_ref:13,routine_ref:64}, screening:{breast:22,breast_pos:0,colon:74,colon_pos:3,stemi_total:0,stemi_out:0,stroke_total:1,stroke_out:0}, pharmacy:{inpatient:3157,clinics:1127,emergency:2906}, home_care:{visits:38}, smoking:{inperson:6,virtual:0}, endoscopy:{appoint:0,procedures:1} },
-  { label:"W16", dateRange:"Jul 12-18",quality:{se_mre:1,incident:0,good_catch:19}, emergency:{ctas12:18,ctas3:421,ctas45:2467},surgery:{emergency:17,routine:40,waiting:32,cancelled:0,cancel_reason:"-"}, clinics:{total:3644,virtual:752,no_show:257,no_show_pct:13},  satisfaction:{all:88.37,ed:86.97,clinics:92.16,inpatient:85.15}, complaints:{closed:84,not_closed:0}, capacity:{inpatients:210,bed_occ:53,lifesaving:13,emergency_ref:16,routine_ref:44}, screening:{breast:28,breast_pos:0,colon:50,colon_pos:2,stemi_total:0,stemi_out:0,stroke_total:0,stroke_out:0}, pharmacy:{inpatient:3421,clinics:1130,emergency:3038}, home_care:{visits:38}, smoking:{inperson:6,virtual:0}, endoscopy:{appoint:0,procedures:15} },
-  { label:"W17", dateRange:"Jul 19-25",   quality:{se_mre:1,incident:7,good_catch:25}, emergency:{ctas12:19,ctas3:371,ctas45:2407},surgery:{emergency:26,routine:37,waiting:28,cancelled:2,cancel_reason:"Med.Ind. - No Show"}, clinics:{total:3775,virtual:748,no_show:144,no_show_pct:6},  satisfaction:{all:88.47,ed:83.47,clinics:86.56,inpatient:85.15}, complaints:{closed:82,not_closed:0}, capacity:{inpatients:284,bed_occ:46,lifesaving:7,emergency_ref:19,routine_ref:61}, screening:{breast:65,breast_pos:1,colon:77,colon_pos:2,stemi_total:0,stemi_out:0,stroke_total:2,stroke_out:1}, pharmacy:{inpatient:4523,clinics:1191,emergency:3181}, home_care:{visits:39}, smoking:{inperson:8,virtual:0}, endoscopy:{appoint:4,procedures:17} },
-  { label:"W18", dateRange:"Jul 26-Aug 1", quality:{se_mre:1,incident:7,good_catch:17}, emergency:{ctas12:21,ctas3:331,ctas45:2514},surgery:{emergency:18,routine:38,waiting:32,cancelled:1,cancel_reason:"Emergency"}, clinics:{total:3965,virtual:885,no_show:131,no_show_pct:6},  satisfaction:{all:88.51,ed:84.31,clinics:87.62,inpatient:85.15}, complaints:{closed:95,not_closed:0}, capacity:{inpatients:215,bed_occ:64,lifesaving:8,emergency_ref:19,routine_ref:48}, screening:{breast:85,breast_pos:2,colon:95,colon_pos:2,stemi_total:0,stemi_out:0,stroke_total:1,stroke_out:0}, pharmacy:{inpatient:3875,clinics:1282,emergency:3068}, home_care:{visits:38}, smoking:{inperson:"-",virtual:"-"}, endoscopy:{appoint:19,procedures:15} } 
-];
 
 var LW           = WEEKS[WEEKS.length - 1];
 var PW           = WEEKS.length >= 2 ? WEEKS[WEEKS.length - 2] : null; /* الأسبوع السابق للمقارنة */
 var isLight      = false;
-var visibleCount = 18;
+var visibleCount = WEEKS.length;
+var viewMode     = 'weekly';     /* weekly | monthly */
+var selectedMonth = null;        /* null = كل الشهور */
+
+/* ════ أنواع الحقول للتجميع الشهري ════ */
+var FIELD_TYPE={
+  'quality.se_mre':'sum','quality.incident':'sum','quality.good_catch':'sum',
+  'emergency.ctas12':'sum','emergency.ctas3':'sum','emergency.ctas45':'sum',
+  'surgery.emergency':'sum','surgery.routine':'sum','surgery.waiting':'last',
+  'surgery.cancelled':'sum','surgery.cancel_reason':'text',
+  'clinics.total':'sum','clinics.virtual':'sum','clinics.no_show':'sum','clinics.no_show_pct':'avg',
+  'satisfaction.all':'avg','satisfaction.ed':'avg','satisfaction.clinics':'avg','satisfaction.inpatient':'avg',
+  'complaints.closed':'sum','complaints.not_closed':'sum',
+  'capacity.inpatients':'sum','capacity.bed_occ':'avg',
+  'capacity.lifesaving':'sum','capacity.emergency_ref':'sum','capacity.routine_ref':'sum',
+  'screening.breast':'sum','screening.breast_pos':'sum','screening.colon':'sum','screening.colon_pos':'sum',
+  'screening.stemi_total':'sum','screening.stemi_out':'sum','screening.stroke_total':'sum','screening.stroke_out':'sum',
+  'pharmacy.inpatient':'sum','pharmacy.clinics':'sum','pharmacy.emergency':'sum',
+  'home_care.visits':'sum',
+  'endoscopy.appoint':'sum','endoscopy.procedures':'sum'
+};
+
+/* ════ بناء بيانات شهرية ════ */
+function buildMonthlyData(){
+  var groups = {}, order = [];
+  WEEKS.forEach(function(w){
+    var m = w.month;
+    if(!groups[m]){ groups[m] = []; order.push(m); }
+    groups[m].push(w);
+  });
+  var seen = {}, ordU = [];
+  order.forEach(function(m){ if(!seen[m]){ seen[m]=1; ordU.push(m); } });
+  ordU = ordU.filter(function(m){ return groups[m].length >= 1; });
+  return ordU.map(function(m){
+    var wks = groups[m];
+    function gv(w,path){ var p=path.split('.'); var o=w; for(var i=0;i<p.length;i++){ o=o?o[p[i]]:undefined; } return o; }
+    function agg(path){
+      var type = FIELD_TYPE[path] || 'sum';
+      var nums = wks.map(function(w){ var v=gv(w,path); return (v===null||v===undefined||v==='-'||v==='\u2014'||v==='_')?null:+v; }).filter(function(v){ return v!==null&&!isNaN(v); });
+      if(!nums.length) return 0;
+      if(type==='sum') return nums.reduce(function(a,b){ return a+b; }, 0);
+      if(type==='avg'){ var s=nums.reduce(function(a,b){ return a+b; }, 0); return Math.round(s/nums.length*10)/10; }
+      if(type==='last') return nums[nums.length-1];
+      return 0;
+    }
+    return {
+      label: m, month: m, _wkCount: wks.length,
+      dateRange: wks[0].dateRange.split('-')[0]+' \u2013 '+wks[wks.length-1].dateRange.split('-').pop(),
+      quality:{se_mre:agg('quality.se_mre'), incident:agg('quality.incident'), good_catch:agg('quality.good_catch')},
+      emergency:{ctas12:agg('emergency.ctas12'), ctas3:agg('emergency.ctas3'), ctas45:agg('emergency.ctas45')},
+      surgery:{emergency:agg('surgery.emergency'), routine:agg('surgery.routine'), waiting:agg('surgery.waiting'), cancelled:agg('surgery.cancelled'), cancel_reason:(function(){
+        var reasons = wks.map(function(w){ return gv(w,'surgery.cancel_reason')||''; }).filter(function(v){ return v&&v!=='\u2014'&&v!=='-'&&v!=='_'; });
+        if(!reasons.length) return '\u2014';
+        var c={};
+        function normCat(t){ return /^med\.?\s*ind/i.test(t) ? 'Medical Indication' : t; }
+        reasons.forEach(function(r){
+          if(r.indexOf('+')>0){ r.split('+').forEach(function(p){ var m=p.match(/^(\d+)\s*(.+)/); if(m){ var t=normCat(m[2].trim()); c[t]=(c[t]||0)+parseInt(m[1]); } else { var t=normCat(p.trim()); c[t]=(c[t]||0)+1; } }); }
+          else if(r.indexOf('-')>0){ r.split(/\s*-\s*/).forEach(function(p){ var t=normCat(p.trim()); c[t]=(c[t]||0)+1; }); }
+          else { var t=normCat(r.trim()); c[t]=(c[t]||0)+1; }
+        });
+        return Object.keys(c).map(function(k){ return c[k]+' '+k; }).join('+');
+      })()},
+      clinics:{total:agg('clinics.total'), virtual:agg('clinics.virtual'), no_show:agg('clinics.no_show'), no_show_pct:agg('clinics.no_show_pct')},
+      satisfaction:{all:agg('satisfaction.all'), ed:agg('satisfaction.ed'), clinics:agg('satisfaction.clinics'), inpatient:agg('satisfaction.inpatient')},
+      complaints:{closed:agg('complaints.closed'), not_closed:agg('complaints.not_closed')},
+      capacity:{inpatients:agg('capacity.inpatients'), bed_occ:agg('capacity.bed_occ'), lifesaving:agg('capacity.lifesaving'), emergency_ref:agg('capacity.emergency_ref'), routine_ref:agg('capacity.routine_ref')},
+      screening:{breast:agg('screening.breast'), breast_pos:agg('screening.breast_pos'), colon:agg('screening.colon'), colon_pos:agg('screening.colon_pos'), stemi_total:agg('screening.stemi_total'), stemi_out:agg('screening.stemi_out'), stroke_total:agg('screening.stroke_total'), stroke_out:agg('screening.stroke_out')},
+      pharmacy:{inpatient:agg('pharmacy.inpatient'), clinics:agg('pharmacy.clinics'), emergency:agg('pharmacy.emergency')},
+      home_care:{visits:agg('home_care.visits')},
+      endoscopy:{appoint:agg('endoscopy.appoint'), procedures:agg('endoscopy.procedures')}
+    };
+  });
+}
+
+function getVW(){
+  if(viewMode==='monthly') {
+    var allMonths = buildMonthlyData();
+    if(!allMonths || allMonths.length === 0) { return WEEKS.slice(-1); }
+    if(selectedMonth === null) { return allMonths; }
+    var filtered = allMonths.filter(function(m){ return m.label === selectedMonth; });
+    return filtered.length > 0 ? filtered : allMonths;
+  }
+  var weeks = WEEKS.slice(Math.max(0, WEEKS.length-visibleCount));
+  return weeks.length > 0 ? weeks : WEEKS.slice(-1);
+}
+
+function getAvailableMonths(){
+  var groups={}, order=[];
+  WEEKS.forEach(function(w){
+    if(!groups[w.month]){ groups[w.month]=0; order.push(w.month); }
+    groups[w.month]++;
+  });
+  var seen={}, uniq=[];
+  order.forEach(function(m){ if(!seen[m]){ seen[m]=1; uniq.push(m); } });
+  return uniq.filter(function(m){ return groups[m]>=1; });
+}
 
 /* ════ مساعدات ════ */
-function getVisibleWeeks() { return WEEKS.slice(Math.max(0, WEEKS.length - visibleCount)); }
+function getVisibleWeeks() { return getVW(); }
 function labels()  { return getVisibleWeeks().map(function(w){ return w.label; }); }
 function vals(fn)  { return getVisibleWeeks().map(fn); }
 function fmt(n)    { return String(n); }
@@ -530,13 +769,68 @@ function toggleWeekMenu(e) {
   var open=dd.classList.contains('open');
   dd.classList.toggle('open',!open); btn.classList.toggle('open',!open);
 }
-var WK_LABELS = {2:'آخر أسبوعين',3:'آخر 3 أسابيع',4:'آخر 4 أسابيع',5:'آخر 5 أسابيع',6:'آخر 6 أسابيع',7:'آخر 7 أسابيع',8:'آخر 8 أسابيع',9:'آخر 9 أسابيع',10:'آخر 10 أسابيع',11:'آخر 11 أسبوع',12:'آخر 12 أسبوع',13:'آخر 13 أسبوع',14:'آخر 14 أسبوع',15:'آخر 15 أسبوع',16:'آخر 16 أسبوع',17:'آخر 17 أسبوع',18:'كل الأسابيع (18)'};
+function wkLabel(n,total){ if(n===total) return 'كل الأسابيع ('+total+')'; if(n===1) return 'آخر أسبوع'; if(n===2) return 'آخر أسبوعين'; if(n>=3&&n<=10) return 'آخر '+n+' أسابيع'; return 'آخر '+n+' أسبوع'; }
+function buildWeekDropdown(){
+  var dd=document.getElementById('weekDropdown'); if(!dd) return;
+  var h='';
+  for(var wi=1; wi<=WEEKS.length; wi++){
+    h += '<div class="wk-opt'+(wi===visibleCount?' sel':'')+'" data-n="'+wi+'" onclick="setWeeks('+wi+')">'+wkLabel(wi,WEEKS.length)+' <span class="wk-chk">✓</span></div>';
+  }
+  dd.innerHTML=h;
+  var bl=document.getElementById('weekBtnLabel');
+  if(bl) bl.textContent=wkLabel(visibleCount,WEEKS.length);
+}
 function setWeeks(n) {
   visibleCount = n;
   document.querySelectorAll('.wk-opt').forEach(function(o){ o.classList.toggle('sel', parseInt(o.getAttribute('data-n'))===n); });
-  document.getElementById('weekBtnLabel').textContent = WK_LABELS[n]||n+' أسابيع';
+  document.getElementById('weekBtnLabel').textContent = wkLabel(n,WEEKS.length);
   document.getElementById('weekDropdown').classList.remove('open');
   document.getElementById('weekBtn').classList.remove('open');
+  init();
+}
+/* ════ منتقي الشهور + تبديل العرض ════ */
+function buildMonthDropdown(){
+  var months = getAvailableMonths();
+  var dd = document.getElementById('monthDropdown');
+  if(!dd) return;
+  var isAll = (selectedMonth === null);
+  var html = '<div class="mo-opt'+(isAll?' sel':'')+'" onclick="setSelectedMonth(null)">📊 كل الشهور <span class="mo-chk">✓</span></div>';
+  html += months.map(function(m){
+    return '<div class="mo-opt'+(selectedMonth===m?' sel':'')+'" onclick="setSelectedMonth(\''+m+'\')">'+m+' <span class="mo-chk">✓</span></div>';
+  }).join('');
+  dd.innerHTML = html;
+}
+function toggleMonthMenu(e){
+  e.stopPropagation();
+  buildMonthDropdown();
+  var dd=document.getElementById('monthDropdown'), btn=document.getElementById('monthBtn');
+  var open=dd.classList.contains('open');
+  dd.classList.toggle('open',!open); btn.classList.toggle('open',!open);
+}
+function setSelectedMonth(m){
+  selectedMonth = m;
+  var lbl = document.getElementById('monthBtnLabel');
+  if(lbl) lbl.textContent = (m===null) ? '📊 كل الشهور' : m;
+  document.getElementById('monthDropdown').classList.remove('open');
+  document.getElementById('monthBtn').classList.remove('open');
+  init();
+}
+function setViewMode(mode){
+  viewMode = mode;
+  document.getElementById('vt-weekly').classList.toggle('active', mode==='weekly');
+  document.getElementById('vt-monthly').classList.toggle('active', mode==='monthly');
+  var ws=document.getElementById('weekSelector');
+  var ms=document.getElementById('monthSelector');
+  if(ws) ws.style.display = mode==='monthly' ? 'none' : '';
+  if(ms) ms.style.display = mode==='monthly' ? '' : 'none';
+  if(mode==='monthly'){
+    var md = buildMonthlyData();
+    selectedMonth = md.length > 0 ? md[md.length-1].label : null;
+    var lbl=document.getElementById('monthBtnLabel');
+    if(lbl) lbl.textContent = selectedMonth || '📊 كل الشهور';
+  } else {
+    selectedMonth = null;
+  }
   init();
 }
 document.addEventListener('click', function(e) {
@@ -544,6 +838,11 @@ document.addEventListener('click', function(e) {
   if (s&&!s.contains(e.target)) {
     document.getElementById('weekDropdown').classList.remove('open');
     document.getElementById('weekBtn').classList.remove('open');
+  }
+  var ms=document.getElementById('monthSelector');
+  if (ms&&!ms.contains(e.target)) {
+    document.getElementById('monthDropdown').classList.remove('open');
+    document.getElementById('monthBtn').classList.remove('open');
   }
 });
 document.getElementById('weekDropdown').addEventListener('wheel', function(e){
@@ -1143,7 +1442,7 @@ function buildFullHTML() {
 )
     +section('sec-satisfaction','😊','تجربة المريض والبلاغات',
   '<div class="kpi-grid">'
-    +kpi('جميع الخدمات',LW.satisfaction.all+'%','v-g',+LW.satisfaction.all, P && +P.satisfaction.all)
+    +kpi('جميع الخدمات',(LW.satisfaction.all===null?'—':LW.satisfaction.all)+'%','v-g',+LW.satisfaction.all||0, P && +P.satisfaction.all||0)
     +kpi('الطوارئ',LW.satisfaction.ed+'%','v-g',+LW.satisfaction.ed, P && +P.satisfaction.ed)
     +kpi('العيادات',LW.satisfaction.clinics+'%','v-g',+LW.satisfaction.clinics, P && +P.satisfaction.clinics)
     +kpi('التنويم',LW.satisfaction.inpatient+'%','v-g',+LW.satisfaction.inpatient, P && +P.satisfaction.inpatient)
@@ -1151,7 +1450,7 @@ function buildFullHTML() {
     +kpi('غير مغلقة',''+LW.complaints.not_closed,'v-g',+LW.complaints.not_closed, P && +P.complaints.not_closed)
   +'</div>'
   +'<div class="chart-grid"><div class="chart-card"><div class="chart-card-title">📊 رضا المرضى (%)</div><div id="ch-sat"></div></div></div>'
-  +tbl('المؤشر',rowRaw('جميع الخدمات %',function(w){return w.satisfaction.all+'%';},'v-g')+rowRaw('الطوارئ %',function(w){return w.satisfaction.ed+'%';},'v-g')+rowRaw('العيادات %',function(w){return w.satisfaction.clinics+'%';},'v-g')+rowRaw('التنويم %',function(w){return w.satisfaction.inpatient+'%';},'v-g')+row('بلاغات مغلقة',function(w){return w.complaints.closed;},'v-g')+row('غير مغلقة',function(w){return w.complaints.not_closed;},'v-g'))
+  +tbl('المؤشر',rowRaw('جميع الخدمات %',function(w){return (w.satisfaction.all===null)?'—':w.satisfaction.all+'%';},'v-g')+rowRaw('الطوارئ %',function(w){return w.satisfaction.ed+'%';},'v-g')+rowRaw('العيادات %',function(w){return w.satisfaction.clinics+'%';},'v-g')+rowRaw('التنويم %',function(w){return w.satisfaction.inpatient+'%';},'v-g')+row('بلاغات مغلقة',function(w){return w.complaints.closed;},'v-g')+row('غير مغلقة',function(w){return w.complaints.not_closed;},'v-g'))
 )
     +section('sec-capacity','📋','الطاقة الاستيعابية والإحالات',
       '<div class="kpi-grid">'
@@ -1193,14 +1492,12 @@ function buildFullHTML() {
       +'<div class="chart-grid"><div class="chart-card"><div class="chart-card-title">📊 مسارات الرعاية العاجلة</div><div id="ch-models"></div></div></div>'
       +tbl('المسار',row('STEMI-Total',function(w){var v=w.screening.stemi_total; return (v==='-'||v==='\u2014')?'\u2014':v;},'v-r')+row('STEMI-Out',function(w){var v=w.screening.stemi_out; return (v==='-'||v==='\u2014')?'\u2014':v;},'v-r')+row('Stroke-Total',function(w){var v=w.screening.stroke_total; return (v==='-'||v==='\u2014')?'\u2014':v;},'v-r')+row('Stroke-Out',function(w){var v=w.screening.stroke_out; return (v==='-'||v==='\u2014')?'\u2014':v;},'v-r'))
     )
-    +section('sec-home','🏠','الرعاية المنزلية — 🚭 عيادة التدخين',
+    +section('sec-home','🏠','الرعاية المنزلية',
       '<div class="kpi-grid">'
         +kpi('زيارات منزلية',''+LW.home_care.visits,'v-t',LW.home_care.visits,P&&P.home_care.visits)
-        +kpi('تدخين حضوري',''+LW.smoking.inperson,'',LW.smoking.inperson,P&&P.smoking.inperson)
-        +kpi('تدخين افتراضي',''+LW.smoking.virtual,'',LW.smoking.virtual,P&&P.smoking.virtual)
       +'</div>'
-      +'<div class="chart-grid"><div class="chart-card"><div class="chart-card-title">📊 الرعاية المنزلية وعيادة التدخين</div><div id="ch-home"></div></div></div>'
-      +tbl('الخدمة',row('زيارات منزلية',function(w){return w.home_care.visits;},'v-t')+row('تدخين حضوري',function(w){return w.smoking.inperson;})+row('تدخين افتراضي',function(w){return w.smoking.virtual;}))
+      +'<div class="chart-grid"><div class="chart-card"><div class="chart-card-title">📊 الرعاية المنزلية</div><div id="ch-home"></div></div></div>'
+      +tbl('الخدمة',row('زيارات منزلية',function(w){return w.home_care.visits;},'v-t'))
     )
     +section('sec-endo','🔭','عيادة أمراض جهاز الهضم والتنظير',
   '<div class="kpi-grid">'
@@ -1241,7 +1538,7 @@ function buildCharts() {
   drawSVGBarChart('ch-pharm',lb,[{label:'\u062a\u0646\u0648\u064a\u0645',data:vals(function(w){return w.pharmacy.inpatient;}),color:col.blue},{label:'\u0639\u064a\u0627\u062f\u0627\u062a',data:vals(function(w){return w.pharmacy.clinics;}),color:col.purple},{label:'\u0637\u0648\u0627\u0631\u0626',data:vals(function(w){return w.pharmacy.emergency;}),color:col.amber}]);
   drawSVGBarChart('ch-screening',lb,[{label:'\u0641\u062d\u0635 \u0627\u0644\u062b\u062f\u064a',data:vals(function(w){return w.screening.breast;}),color:col.purple},{label:'\u0625\u064a\u062c\u0627\u0628\u064a \u062b\u062f\u064a',data:vals(function(w){return w.screening.breast_pos;}),color:col.red},{label:'\u0641\u062d\u0635 \u0627\u0644\u0642\u0648\u0644\u0648\u0646',data:vals(function(w){return w.screening.colon;}),color:col.teal},{label:'\u0625\u064a\u062c\u0627\u0628\u064a \u0642\u0648\u0644\u0648\u0646',data:vals(function(w){return w.screening.colon_pos;}),color:col.amber}]);
   drawSVGBarChart('ch-models',lb,[{label:'STEMI-Total',data:sv(function(w){return w.screening.stemi_total;}),color:col.purple},{label:'STEMI-Out',data:sv(function(w){return w.screening.stemi_out;}),color:col.amber},{label:'Stroke-Total',data:sv(function(w){return w.screening.stroke_total;}),color:col.blue},{label:'Stroke-Out',data:sv(function(w){return w.screening.stroke_out;}),color:col.red}]);
-  drawSVGBarChart('ch-home',lb,[{label:'\u0631\u0639\u0627\u064a\u0629 \u0645\u0646\u0632\u0644\u064a\u0629',data:vals(function(w){return w.home_care.visits;}),color:col.green},{label:'\u062a\u062f\u062e\u064a\u0646 \u062d\u0636\u0648\u0631\u064a',data:vals(function(w){return w.smoking.inperson;}),color:col.blue},{label:'\u062a\u062f\u062e\u064a\u0646 \u0627\u0641\u062a\u0631\u0627\u0636\u064a',data:vals(function(w){return w.smoking.virtual;}),color:col.purple}]);
+  drawSVGBarChart('ch-home',lb,[{label:'\u0631\u0639\u0627\u064a\u0629 \u0645\u0646\u0632\u0644\u064a\u0629',data:vals(function(w){return w.home_care.visits;}),color:col.green}]);
   drawSVGBarChart('ch-endoscopy',lb,[{label:'\u0645\u0648\u0627\u0639\u064a\u062f',data:sv(function(w){return w.endoscopy.appoint;}),color:col.green},{label:'\u0625\u062c\u0631\u0627\u0621\u0627\u062a \u0645\u0646\u062c\u0632\u0629',data:sv(function(w){return w.endoscopy.procedures;}),color:col.blue}]);
 }
 
@@ -1250,13 +1547,34 @@ function buildCharts() {
 ════════════════════════════════════════════ */
 function init() {
   try {
+    var vw = getVW();
+    if(!vw || vw.length === 0) { vw = [WEEKS[WEEKS.length-1]]; }
+    LW = vw[vw.length-1];
+    PW = vw.length >= 2 ? vw[vw.length-2] : null;
+    if(!LW) { LW = WEEKS[WEEKS.length-1]; }
+
     var main = document.getElementById('main-content');
     main.innerHTML = buildFullHTML();
-    var vw = getVisibleWeeks();
-    document.getElementById('topbar-sub').textContent =
-      '\u0639\u0631\u0636: '+vw.length+' \u0623\u0633\u0627\u0628\u064a\u0639 ('+vw[0].label+' \u2192 '+vw[vw.length-1].label+')';
-    //document.getElementById('footer-txt').textContent =
-    //  '\uD83D\uDDD3\uFE0F \u064a\u0634\u0645\u0644: '+vw.map(function(w){return w.label;}).join(' \u00B7 ')+' \u2014 \u0622\u062e\u0631 \u062a\u062d\u062f\u064a\u062b: 31 \u0645\u0627\u064a\u0648 2026';
+
+    var sub = document.getElementById('topbar-sub');
+    if(viewMode === 'monthly'){
+      sub.textContent = '\u0627\u0644\u0639\u0631\u0636 \u0627\u0644\u0634\u0647\u0631\u064a \u2014 ' + vw.map(function(w){ return w.label; }).join(' \u2192 ');
+    } else {
+      sub.textContent = '\u0639\u0631\u0636: '+vw.length+' \u0623\u0633\u0627\u0628\u064a\u0639 ('+vw[0].label+' \u2192 '+vw[vw.length-1].label+')';
+    }
+
+    var wLbl = document.getElementById('weekBtnLabel');
+    if(wLbl) wLbl.textContent = wkLabel(visibleCount, WEEKS.length);
+    var mLbl = document.getElementById('monthBtnLabel');
+    if(mLbl) mLbl.textContent = viewMode==='monthly' ? (selectedMonth || '\uD83D\uDCCA \u0643\u0644 \u0627\u0644\u0634\u0647\u0648\u0631') : '\uD83D\uDCCA \u0643\u0644 \u0627\u0644\u0634\u0647\u0648\u0631';
+    document.getElementById('vt-weekly').classList.toggle('active', viewMode==='weekly');
+    document.getElementById('vt-monthly').classList.toggle('active', viewMode==='monthly');
+    var ws = document.getElementById('weekSelector');
+    var ms = document.getElementById('monthSelector');
+    if(ws) ws.style.display = viewMode==='monthly' ? 'none' : '';
+    if(ms) ms.style.display = viewMode==='monthly' ? '' : 'none';
+    document.querySelectorAll('.wk-opt').forEach(function(o){ o.classList.toggle('sel', parseInt(o.getAttribute('data-n'))===visibleCount); });
+
     /* setTimeout: يمنح iOS وقتاً لرسم DOM قبل استعلام clientWidth */
     setTimeout(function(){
       try { buildCharts(); } catch(ce){ /* الرسوم اختيارية */ }
@@ -1275,6 +1593,7 @@ function toggleTheme() {
   init();
 }
 
+buildWeekDropdown();
 init();
 </script>
 </body>
